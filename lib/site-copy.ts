@@ -191,7 +191,7 @@ const siteCopy = {
     },
     metadata: {
       home: {
-        title: "Fovea - 说话、捕捉、投递，一气呵成。",
+        title: "Fovea - 起心动念，言取合一。",
         description:
           "不再手动复制粘贴上下文。Fovea 将你的语音、截图和选中文本组装成一个完整提示词，再投递给任意 AI。",
       },
@@ -217,8 +217,8 @@ const siteCopy = {
     home: {
       hero: {
         badge: "BETA ACCESS 现已开放",
-        titleLine1: "说话、捕捉、投递。",
-        titleHighlight: "一气呵成。",
+        titleLine1: "起心动念，",
+        titleHighlight: "言取合一。",
         subtitle:
           "不再手动复制粘贴上下文。Fovea 将你的语音、截图和选中文本组装成一个完整提示词，再投递给任意 AI。",
         subtitleStrong: "一次捕捉，一次发送，不再手动拼接。",

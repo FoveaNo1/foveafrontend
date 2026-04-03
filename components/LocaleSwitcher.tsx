@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import type { Locale } from "../lib/site-locale";
 
 type LocaleSwitcherProps = {
@@ -15,6 +14,11 @@ type LocaleSwitcherProps = {
 
 function persistLocale(locale: Locale) {
   document.cookie = `fovea_locale=${locale}; path=/; max-age=31536000; samesite=lax`;
+}
+
+function switchLocale(locale: Locale, href: string) {
+  persistLocale(locale);
+  window.location.assign(href);
 }
 
 export default function LocaleSwitcher({
@@ -33,9 +37,9 @@ export default function LocaleSwitcher({
     <div className={`inline-flex items-center gap-2 ${className}`.trim()}>
       <span className="text-[11px] uppercase tracking-[0.2em] text-[#666]">{label}</span>
       <div className="inline-flex rounded-full border border-[#333] bg-[#0E0E0E]/90 p-1 backdrop-blur">
-        <Link
-          href={englishHref}
-          onClick={() => persistLocale("en")}
+        <button
+          type="button"
+          onClick={() => switchLocale("en", englishHref)}
           className={`${baseClasses} ${
             currentLocale === "en"
               ? "border-[#00FFC2]/40 bg-[#00FFC2]/10 text-[#EDEDED]"
@@ -43,10 +47,10 @@ export default function LocaleSwitcher({
           }`}
         >
           {englishLabel}
-        </Link>
-        <Link
-          href={chineseHref}
-          onClick={() => persistLocale("zh")}
+        </button>
+        <button
+          type="button"
+          onClick={() => switchLocale("zh", chineseHref)}
           className={`${baseClasses} ${
             currentLocale === "zh"
               ? "border-[#00FFC2]/40 bg-[#00FFC2]/10 text-[#EDEDED]"
@@ -54,7 +58,7 @@ export default function LocaleSwitcher({
           }`}
         >
           {chineseLabel}
-        </Link>
+        </button>
       </div>
     </div>
   );
