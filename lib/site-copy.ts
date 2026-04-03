@@ -122,7 +122,7 @@ const siteCopy = {
       badge: "BETA DOWNLOADS",
       title: "Download Fovea for macOS",
       intro:
-        "This page is the stable install entry for approved beta users. First-time installs happen here. Existing installs receive in-app updates through Sparkle.",
+        "This page is the stable install entry for approved beta users. First-time installs happen here. Existing users can update directly in the app without re-downloading.",
       statusNote:
         "Downloads are not live yet. We are keeping the page in place now so the rollout can switch on without another website update.",
       macLabel: "macOS App",
@@ -299,7 +299,7 @@ const siteCopy = {
       badge: "BETA 下载入口",
       title: "下载 Fovea macOS 版本",
       intro:
-        "这里会作为已获批 Beta 用户的稳定安装入口。首次安装走这里；已经安装的用户后续会通过 Sparkle 在 App 内更新。",
+        "这里会作为已获批 Beta 用户的稳定安装入口。首次安装走这里；已经安装的用户后续可直接在 App 内更新，无需重新下载。",
       statusNote:
         "下载尚未开放。我们先把页面结构预留出来，等准备就绪后可以直接切换上线，而不需要再改官网。",
       macLabel: "macOS App",
