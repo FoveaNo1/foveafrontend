@@ -38,6 +38,7 @@ export default function FeedbackPageContent({ locale }: FeedbackPageContentProps
           title: title.trim(),
           description: description.trim(),
           contact: contact.trim() || null,
+          locale,
         }),
       });
 

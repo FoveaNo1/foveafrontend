@@ -14,6 +14,7 @@ const FeedbackSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200),
   description: z.string().min(1, 'Description is required').max(5000),
   contact: z.string().max(200).nullable().optional(),
+  locale: z.enum(['en', 'zh']).optional(),
 });
 
 export async function POST(request: Request) {
@@ -28,10 +29,16 @@ export async function POST(request: Request) {
       );
     }
 
-    const { type, title, description, contact } = result.data;
+    const { type, title, description, contact, locale } = result.data;
+
+    // 自动收集的上下文（与 subscribe/route.ts 保持一致风格）
+    const country = request.headers.get('x-vercel-ip-country') || null;
+    const userAgent = request.headers.get('user-agent') || null;
 
     if (isDevelopmentMode) {
-      console.log('[Dev Mode] Feedback submitted:', { type, title, description, contact });
+      console.log('[Dev Mode] Feedback submitted:', {
+        type, title, description, contact, locale, country, user_agent: userAgent,
+      });
       return NextResponse.json({ message: 'Success (Development Mode)' }, { status: 200 });
     }
 
@@ -42,6 +49,9 @@ export async function POST(request: Request) {
         title,
         description,
         contact: contact || null,
+        locale: locale || null,
+        country,
+        user_agent: userAgent,
       }]);
 
     if (insertError) throw insertError;
