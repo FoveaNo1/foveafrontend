@@ -11,7 +11,7 @@ type DownloadPageContentProps = {
   locale: Locale;
 };
 
-const DMG_URL = "https://updates.hellofovea.com/releases/Fovea-0.2.0-beta.7.dmg";
+const DMG_URL = "https://updates.hellofovea.com/releases/latest.dmg";
 const EXTENSION_URL = "https://updates.hellofovea.com/extensions/Fovea-Companion-2.0.0.zip";
 
 /** Download window: 73 hours from activation. Set to null to disable. */
