@@ -14,21 +14,8 @@ type DownloadPageContentProps = {
 const DMG_URL = "https://updates.hellofovea.com/releases/latest.dmg";
 const EXTENSION_URL = "https://updates.hellofovea.com/extensions/Fovea-Companion-2.0.0.zip";
 
-/** Download window: 73 hours from activation. Set to null to disable. */
-const DOWNLOAD_OPENS_AT: string | null = "2026-04-17T03:00:00Z";
-const DOWNLOAD_WINDOW_HOURS = 73;
-
-function isDownloadActive(): boolean {
-  if (!DOWNLOAD_OPENS_AT) return false;
-  const opens = new Date(DOWNLOAD_OPENS_AT).getTime();
-  const closes = opens + DOWNLOAD_WINDOW_HOURS * 3600_000;
-  const now = Date.now();
-  return now >= opens && now < closes;
-}
-
 export default function DownloadPageContent({ locale }: DownloadPageContentProps) {
   const copy = getSiteCopy(locale);
-  const active = isDownloadActive();
 
   return (
     <main className="min-h-screen bg-[#050505] px-6 py-16 text-[#EDEDED] selection:bg-[#00FFC2] selection:text-[#050505]">
@@ -74,24 +61,13 @@ export default function DownloadPageContent({ locale }: DownloadPageContentProps
 
             {/* Download Button */}
             <div className="mt-6">
-              {active ? (
-                <a
-                  href={DMG_URL}
-                  className="group inline-flex items-center gap-2 rounded-xl bg-[#00FFC2] px-8 py-4 text-base font-bold text-[#050505] transition-all hover:shadow-[0_0_30px_rgba(0,255,194,0.4)] active:scale-[0.98]"
-                >
-                  <ArrowDownToLine className="h-4 w-4 transition-transform group-hover:translate-y-0.5" />
-                  {copy.download.macButton}
-                </a>
-              ) : (
-                <button
-                  type="button"
-                  disabled
-                  className="inline-flex cursor-not-allowed items-center gap-2 rounded-xl bg-[#333] px-8 py-4 text-base font-bold text-[#888]"
-                >
-                  <ArrowDownToLine className="h-4 w-4" />
-                  {copy.download.macButtonInactive}
-                </button>
-              )}
+              <a
+                href={DMG_URL}
+                className="group inline-flex items-center gap-2 rounded-xl bg-[#00FFC2] px-8 py-4 text-base font-bold text-[#050505] transition-all hover:shadow-[0_0_30px_rgba(0,255,194,0.4)] active:scale-[0.98]"
+              >
+                <ArrowDownToLine className="h-4 w-4 transition-transform group-hover:translate-y-0.5" />
+                {copy.download.macButton}
+              </a>
             </div>
 
             {/* Requirements */}
