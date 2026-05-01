@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { getSiteCopy } from "./site-copy";
-import type { Locale } from "./site-locale";
 
 type PageKey = "home" | "download" | "feedback" | "pricing" | "privacy";
 
@@ -12,25 +11,18 @@ const canonicalPaths: Record<PageKey, string> = {
   privacy: "/privacy",
 };
 
-export function buildPageMetadata(locale: Locale, page: PageKey): Metadata {
-  const copy = getSiteCopy(locale).metadata[page];
-  const englishPath = canonicalPaths[page];
-  const chinesePath = page === "privacy" ? undefined : englishPath === "/" ? "/zh" : `/zh${englishPath}`;
-  const canonical = locale === "zh" && chinesePath ? chinesePath : englishPath;
+export function buildPageMetadata(page: PageKey): Metadata {
+  const copy = getSiteCopy().metadata[page];
+  const canonical = canonicalPaths[page];
 
   return {
     title: copy.title,
     description: copy.description,
     alternates: {
       canonical,
-      languages: chinesePath
-        ? {
-            en: englishPath,
-            zh: chinesePath,
-          }
-        : {
-            en: englishPath,
-          },
+      languages: {
+        en: canonical,
+      },
     },
     openGraph: {
       title: copy.title,

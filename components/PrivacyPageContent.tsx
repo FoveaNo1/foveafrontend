@@ -3,7 +3,16 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, CheckCircle2, Database, EyeOff, LockKeyhole, Mic2, MonitorUp, ShieldCheck } from "lucide-react";
+import {
+  ArrowLeft,
+  CheckCircle2,
+  Database,
+  EyeOff,
+  LockKeyhole,
+  Mic2,
+  MonitorUp,
+  ShieldCheck,
+} from "lucide-react";
 import SiteFooter from "./SiteFooter";
 
 const principles = [
@@ -36,10 +45,6 @@ export default function PrivacyPageContent() {
             <ArrowLeft className="h-4 w-4" />
             Back to Home
           </Link>
-          <div className="hidden items-center gap-4 text-sm font-medium text-[#5E6861] sm:flex">
-            <Link href="/pricing" className="transition hover:text-[#111315]">Pricing</Link>
-            <Link href="/feedback" className="transition hover:text-[#111315]">Feedback</Link>
-          </div>
         </header>
 
         <motion.section
@@ -57,15 +62,19 @@ export default function PrivacyPageContent() {
               Clear capture. Clear control.
             </h1>
             <p className="mt-5 text-lg leading-8 text-[#5A665F]">
-              Fovea is a multimodal input tool. It handles the material you actively capture for
-              the current action: voice, text, images, and visible screen details.
+              Fovea is a multimodal input tool. It handles the material you
+              actively capture for the current action: voice, text, images, and
+              visible screen details.
             </p>
             <p className="mt-4 text-sm text-[#6A756E]">Last updated: April 2026</p>
           </div>
 
           <div className="grid gap-3">
             {principles.map((item) => (
-              <div key={item.title} className="rounded-2xl border border-[#DDE4DC] bg-white p-5 shadow-[0_12px_40px_rgba(37,48,41,0.05)]">
+              <div
+                key={item.title}
+                className="rounded-2xl border border-[#DDE4DC] bg-white p-5 shadow-[0_12px_40px_rgba(37,48,41,0.05)]"
+              >
                 <div className="flex items-start gap-4">
                   <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#E9F8F2] text-[#0D8F69]">
                     {item.icon}

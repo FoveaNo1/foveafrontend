@@ -1,186 +1,298 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowLeft, Check, CreditCard, Sparkles } from "lucide-react";
-import LocaleSwitcher from "./LocaleSwitcher";
+import { ArrowLeft, Check, CheckCircle2, ChevronDown } from "lucide-react";
 import SiteFooter from "./SiteFooter";
 import { getSiteCopy } from "../lib/site-copy";
-import { localizedPath, type Locale } from "../lib/site-locale";
 
-type PricingPageContentProps = {
-  locale: Locale;
-};
+const proFeatures = [
+  "Unlimited captures",
+  "Browser companion (Cursor, Codex, MCP)",
+  "Priority model routing",
+  "Custom hotkeys & templates",
+  "Early access to new delivery targets",
+  "Prioritized feature requests",
+];
 
-export default function PricingPageContent({ locale }: PricingPageContentProps) {
-  const copy = getSiteCopy(locale);
-  const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
+const freeFeatures = [
+  "50 captures / week",
+  "Voice + text + image input",
+  "On-device session history",
+  "Personal dictionary",
+];
+
+const captureRows: [string, string, string][] = [
+  ["Captures per week", "50", "Unlimited"],
+  ["Voice + text + image", "check", "check"],
+  ["Browser companion", "—", "check"],
+  ["Custom hotkeys", "—", "check"],
+  ["Priority model routing", "—", "check"],
+  ["Personal dictionary", "check", "check"],
+  ["Early access", "—", "check"],
+  ["Prioritized requests", "—", "check"],
+];
+
+const securityRows: [string, string, string][] = [
+  ["Zero cloud retention", "check", "check"],
+  ["Never used to train models", "check", "check"],
+  ["On-device session history", "check", "check"],
+  ["GDPR-aligned data controls", "check", "check"],
+];
+
+const faqItems = [
+  {
+    question: "When does paid billing start?",
+    answer:
+      "Paid plans will be introduced with advance notice. Until then, the macOS beta is open to use.",
+  },
+  {
+    question: "Is there a free trial of Pro?",
+    answer:
+      "When billing turns on, every new account starts on a 30-day Pro trial. After that, you switch to Free unless you upgrade.",
+  },
+  {
+    question: "How do I cancel?",
+    answer:
+      "From the Account page inside the Fovea app. You keep Pro until the end of the billing period.",
+  },
+  {
+    question: "What counts as a capture?",
+    answer:
+      "One delivery action — including any voice, text selections, and screenshots packaged in that session.",
+  },
+  {
+    question: "What payment methods do you accept?",
+    answer: "All major cards via Stripe. Team plans support invoicing.",
+  },
+  {
+    question: "Do you offer refunds?",
+    answer: "14-day refund on first paid month, no questions asked.",
+  },
+];
+
+function ComparisonCell({ value }: { value: string }) {
+  if (value === "check") {
+    return <Check className="mx-auto h-5 w-5 text-[#0D8F69]" />;
+  }
+  if (value === "—") {
+    return <span className="text-[#A4AEA7]">—</span>;
+  }
+  return <span className="text-sm text-[#111315]">{value}</span>;
+}
+
+export default function PricingPageContent() {
+  const copy = getSiteCopy();
 
   return (
     <main className="min-h-screen bg-[#F7F8F4] px-5 py-5 text-[#111315] selection:bg-[#12B886]/20 selection:text-[#111315] sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
+        {/* Header */}
         <header className="flex items-center justify-between gap-4 rounded-2xl border border-[#DDE4DC] bg-white/85 px-4 py-3 shadow-[0_10px_30px_rgba(17,19,21,0.05)] backdrop-blur">
           <Link
-            href={localizedPath("/", locale)}
+            href="/"
             className="inline-flex items-center gap-2 text-sm font-medium text-[#5E6861] transition hover:text-[#111315]"
           >
             <ArrowLeft className="h-4 w-4" />
             <span className="hidden sm:inline">{copy.nav.backHome}</span>
-            <span className="sm:hidden">{locale === "zh" ? "返回" : "Back"}</span>
+            <span className="sm:hidden">Back</span>
           </Link>
-
-          <LocaleSwitcher
-            currentLocale={locale}
-            englishHref="/pricing"
-            chineseHref="/zh/pricing"
-            englishLabel={copy.common.english}
-            chineseLabel={copy.common.chinese}
-            label={copy.common.localeLabel}
-            variant="light"
-            className="hidden sm:inline-flex"
-          />
         </header>
 
+        {/* Headline */}
         <motion.section
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55 }}
           className="mx-auto max-w-3xl py-16 text-center md:py-20"
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-[#C8D6CE] bg-white px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-[#4E5A53]">
-            <Sparkles className="h-3.5 w-3.5 text-[#12B886]" />
-            {copy.pricing.badge}
-          </span>
-          <h1 className="mt-5 text-4xl font-semibold tracking-tight text-[#111315] sm:text-6xl">
-            {copy.pricing.title}
+          <h1 className="text-4xl font-semibold tracking-tight text-[#111315] sm:text-6xl">
+            One price. Every modality. Every model.
           </h1>
-          <p className="mt-5 text-lg leading-8 text-[#5A665F]">{copy.pricing.intro}</p>
-
-          <div className="mt-8 inline-flex rounded-2xl border border-[#D8E1DA] bg-white p-1 shadow-[0_10px_30px_rgba(17,19,21,0.05)]">
-            <button
-              type="button"
-              onClick={() => setBilling("monthly")}
-              className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${
-                billing === "monthly" ? "bg-[#111315] text-white" : "text-[#5E6861] hover:text-[#111315]"
-              }`}
-            >
-              {copy.pricing.billingToggle.monthly}
-            </button>
-            <button
-              type="button"
-              onClick={() => setBilling("annual")}
-              className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${
-                billing === "annual" ? "bg-[#111315] text-white" : "text-[#5E6861] hover:text-[#111315]"
-              }`}
-            >
-              {copy.pricing.billingToggle.annual}
-              <span className="ml-2 rounded-full bg-[#E9F8F2] px-2 py-0.5 text-xs text-[#0D8F69]">
-                {copy.pricing.billingToggle.save}
-              </span>
-            </button>
-          </div>
+          <p className="mt-5 text-lg leading-8 text-[#5A665F]">
+            Lock in the early-bird annual price before paid billing turns on.
+          </p>
         </motion.section>
 
-        <section className="grid gap-4 md:grid-cols-3">
-          {copy.pricing.plans.map((plan) => {
-            const displayPrice = billing === "annual" && plan.name === "Pro" ? "$115" : plan.price;
-            const displayPeriod = billing === "annual" && plan.name === "Pro"
-              ? locale === "zh" ? "每年" : "per year"
-              : plan.period;
+        {/* Plans grid */}
+        <section className="mx-auto grid max-w-5xl gap-4 lg:grid-cols-2">
+          {/* Pro card */}
+          <motion.article
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true, margin: "-80px" }}
+            className="flex flex-col rounded-[24px] border border-[#0D8F69] bg-gradient-to-br from-[#F1FBF6] to-[#E9F8F2] p-8 shadow-[0_16px_50px_rgba(37,48,41,0.06)]"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-3xl font-semibold text-[#111315]">Pro</h2>
+                <p className="mt-1 text-sm text-[#5F6A63]">For power users</p>
+              </div>
+              <span className="rounded-full bg-[#0D8F69] px-3 py-1 text-xs font-semibold text-white">
+                Most popular
+              </span>
+            </div>
 
-            return (
-              <motion.article
-                key={plan.name}
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true, margin: "-80px" }}
-                className={`flex min-h-[520px] flex-col rounded-[24px] border p-6 ${
-                  plan.featured
-                    ? "border-[#111315] bg-[#111315] text-white shadow-[0_24px_70px_rgba(17,19,21,0.22)]"
-                    : "border-[#DDE4DC] bg-white text-[#111315] shadow-[0_16px_50px_rgba(37,48,41,0.06)]"
-                }`}
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h2 className="text-xl font-semibold">{plan.name}</h2>
-                    <p className={`mt-2 text-sm leading-6 ${plan.featured ? "text-white/70" : "text-[#5F6A63]"}`}>
-                      {plan.description}
-                    </p>
-                  </div>
-                  {plan.featured && (
-                    <span className="rounded-full bg-[#E9F8F2] px-3 py-1 text-xs font-semibold text-[#0D8F69]">
-                      Pro
-                    </span>
-                  )}
-                </div>
+            <div className="mt-8">
+              <span className="text-6xl font-semibold tracking-tight text-[#111315]">$9.9</span>
+              <span className="ml-2 text-sm text-[#6A756E]">USD</span>
+              <p className="mt-1 text-sm text-[#6A756E]">/ member / month, billed yearly</p>
+            </div>
 
-                <div className="mt-8">
-                  <span className="text-5xl font-semibold tracking-tight">{displayPrice}</span>
-                  <span className={`ml-2 text-sm ${plan.featured ? "text-white/60" : "text-[#6A756E]"}`}>
-                    {displayPeriod}
-                  </span>
-                </div>
+            <p className="mt-3 text-sm text-[#6A756E]">
+              <span className="line-through">$24</span>{" "}
+              <span>$24 when billed monthly</span>
+            </p>
 
-                <Link
-                  href={localizedPath(plan.href, locale)}
-                  className={`mt-8 inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition ${
-                    plan.featured
-                      ? "bg-white text-[#111315] hover:bg-[#E9F8F2]"
-                      : "border border-[#D8E1DA] bg-[#F8FAF7] text-[#111315] hover:border-[#AFC2B5]"
-                  }`}
-                >
-                  <CreditCard className="h-4 w-4" />
-                  {plan.cta}
-                </Link>
+            <Link
+              href="/checkout"
+              className="mt-8 inline-flex items-center justify-center gap-2 rounded-xl bg-[#111315] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#2a2d30]"
+            >
+              Get started
+            </Link>
 
-                <div className={`mt-8 h-px ${plan.featured ? "bg-white/15" : "bg-[#E3E9E5]"}`} />
+            <div className="mt-8 h-px bg-[#C8D6CE]" />
 
-                <ul className="mt-6 space-y-3">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-3 text-sm leading-6">
-                      <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
-                        plan.featured ? "bg-white/12 text-[#8CE8CB]" : "bg-[#E9F8F2] text-[#0D8F69]"
-                      }`}>
-                        <Check className="h-3.5 w-3.5" />
-                      </span>
-                      <span className={plan.featured ? "text-white/78" : "text-[#526058]"}>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </motion.article>
-            );
-          })}
+            <p className="mt-6 text-xs font-semibold uppercase tracking-[0.12em] text-[#5F6A63]">
+              Everything in Free, plus:
+            </p>
+
+            <ul className="mt-4 space-y-3">
+              {proFeatures.map((feature) => (
+                <li key={feature} className="flex items-start gap-3 text-sm leading-6">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#0D8F69]" />
+                  <span className="text-[#3A4A40]">{feature}</span>
+                </li>
+              ))}
+            </ul>
+          </motion.article>
+
+          {/* Free card */}
+          <motion.article
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            viewport={{ once: true, margin: "-80px" }}
+            className="flex flex-col rounded-[24px] border border-[#DDE4DC] bg-white p-8 shadow-[0_16px_50px_rgba(37,48,41,0.06)]"
+          >
+            <div>
+              <h2 className="text-3xl font-semibold text-[#111315]">Free</h2>
+              <p className="mt-1 text-sm text-[#5F6A63]">For beginners</p>
+            </div>
+
+            <div className="mt-8">
+              <span className="text-6xl font-semibold tracking-tight text-[#111315]">$0</span>
+              <span className="ml-2 text-sm text-[#6A756E]">USD</span>
+              <p className="mt-1 text-sm text-[#6A756E]">/ member / month</p>
+            </div>
+
+            <Link
+              href="/download"
+              className="mt-8 inline-flex items-center justify-center gap-2 rounded-xl border border-[#D8E1DA] bg-white px-5 py-3 text-sm font-semibold text-[#111315] transition hover:border-[#AFC2B5]"
+            >
+              Create account
+            </Link>
+
+            <div className="mt-8 h-px bg-[#E3E9E5]" />
+
+            <ul className="mt-6 space-y-3">
+              {freeFeatures.map((feature) => (
+                <li key={feature} className="flex items-start gap-3 text-sm leading-6">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#7A857D]" />
+                  <span className="text-[#526058]">{feature}</span>
+                </li>
+              ))}
+            </ul>
+          </motion.article>
         </section>
 
-        <p className="mx-auto mt-8 max-w-3xl text-center text-sm leading-6 text-[#6A756E]">
-          {copy.pricing.note}
-        </p>
+        {/* Plans & features comparison table */}
+        <section className="mx-auto mt-20 max-w-5xl">
+          <div className="text-center">
+            <h2 className="text-3xl font-semibold tracking-tight text-[#111315]">
+              Plans &amp; features
+            </h2>
+            <p className="mt-3 text-base text-[#5A665F]">
+              Full breakdown across plans.
+            </p>
+          </div>
 
-        <section className="mx-auto max-w-4xl py-20">
-          <h2 className="text-center text-3xl font-semibold tracking-tight text-[#111315]">{copy.pricing.faqTitle}</h2>
-          <div className="mt-8 grid gap-3">
-            {copy.pricing.faqs.map((faq) => (
-              <div key={faq.question} className="rounded-2xl border border-[#DDE4DC] bg-white p-5">
-                <h3 className="text-base font-semibold text-[#111315]">{faq.question}</h3>
-                <p className="mt-2 text-sm leading-6 text-[#5F6A63]">{faq.answer}</p>
+          <div className="mt-10 overflow-hidden rounded-[24px] border border-[#DDE4DC] bg-white">
+            {/* Table header */}
+            <div className="grid grid-cols-[1.6fr_repeat(2,1fr)] border-b border-[#DDE4DC] px-6 py-4">
+              <div />
+              <div className="text-center text-sm font-semibold text-[#111315]">Free</div>
+              <div className="text-center text-sm font-semibold text-[#111315]">Pro</div>
+            </div>
+
+            {/* Capture & delivery */}
+            <div className="bg-[#F8FAF7] px-6 py-3">
+              <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[#5F6A63]">
+                Capture &amp; delivery
+              </span>
+            </div>
+            {captureRows.map(([name, free, pro]) => (
+              <div
+                key={name}
+                className="grid grid-cols-[1.6fr_repeat(2,1fr)] border-t border-[#EEF1EC] px-6 py-3.5"
+              >
+                <div className="text-sm text-[#3A4A40]">{name}</div>
+                <div className="text-center">
+                  <ComparisonCell value={free} />
+                </div>
+                <div className="text-center">
+                  <ComparisonCell value={pro} />
+                </div>
               </div>
+            ))}
+
+            {/* Security & privacy */}
+            <div className="border-t border-[#DDE4DC] bg-[#F8FAF7] px-6 py-3">
+              <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[#5F6A63]">
+                Security &amp; privacy
+              </span>
+            </div>
+            {securityRows.map(([name, free, pro]) => (
+              <div
+                key={name}
+                className="grid grid-cols-[1.6fr_repeat(2,1fr)] border-t border-[#EEF1EC] px-6 py-3.5"
+              >
+                <div className="text-sm text-[#3A4A40]">{name}</div>
+                <div className="text-center">
+                  <ComparisonCell value={free} />
+                </div>
+                <div className="text-center">
+                  <ComparisonCell value={pro} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* FAQ section */}
+        <section className="mx-auto max-w-4xl py-20">
+          <h2 className="text-center text-3xl font-semibold tracking-tight text-[#111315]">
+            Pricing FAQ
+          </h2>
+          <div className="mt-8 grid gap-3">
+            {faqItems.map((faq) => (
+              <details
+                key={faq.question}
+                className="group rounded-2xl border border-[#DDE4DC] bg-white p-5"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold text-[#111315]">
+                  {faq.question}
+                  <ChevronDown className="h-5 w-5 shrink-0 text-[#A4AEA7] transition-transform duration-200 group-open:rotate-180" />
+                </summary>
+                <p className="mt-3 text-sm leading-6 text-[#5F6A63]">{faq.answer}</p>
+              </details>
             ))}
           </div>
         </section>
       </div>
 
-      <SiteFooter
-        text={copy.common.footer}
-        variant="light"
-        pricingHref={localizedPath("/pricing", locale)}
-        feedbackHref={localizedPath("/feedback", locale)}
-        pricingLabel={copy.common.pricingLinkLabel}
-        feedbackLabel={copy.common.feedbackLinkLabel}
-        privacyLabel={copy.common.privacyLinkLabel}
-        termsLabel={copy.common.termsLinkLabel}
-      />
+      <SiteFooter text="© 2026 FOVEA AI. ALL RIGHTS RESERVED." variant="light" />
     </main>
   );
 }

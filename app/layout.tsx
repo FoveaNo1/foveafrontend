@@ -1,6 +1,5 @@
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -15,22 +14,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://hellofovea.com'),
+  metadataBase: new URL("https://hellofovea.com"),
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const requestHeaders = await headers();
-  const localeHeader = requestHeaders.get("x-fovea-locale");
-  const lang = localeHeader === "zh" ? "zh" : "en";
-
   return (
-    <html lang={lang} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} bg-[#F7F8F4] text-[#111315] antialiased`}
       >
         {children}
         <SpeedInsights />

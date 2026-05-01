@@ -5,10 +5,7 @@ import {
   ArrowRight,
   CheckCircle2,
   ClipboardCopy,
-  Code2,
-  FileSearch,
   LockKeyhole,
-  MessageSquareText,
   MousePointerClick,
   ShieldCheck,
   Sparkles,
@@ -20,12 +17,6 @@ type AboutFoveaProps = {
 };
 
 const AboutFovea = ({ copy }: AboutFoveaProps) => {
-  const useCaseIcons = [
-    <Code2 key="debug" className="h-5 w-5" />,
-    <FileSearch key="research" className="h-5 w-5" />,
-    <MessageSquareText key="brief" className="h-5 w-5" />,
-  ];
-
   return (
     <section className="bg-white px-5 py-24 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl space-y-24">
@@ -61,34 +52,6 @@ const AboutFovea = ({ copy }: AboutFoveaProps) => {
               tone="active"
             />
           </motion.div>
-        </div>
-
-        <div>
-          <div className="mb-10 max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D8F69]">{copy.useCases.eyebrow}</p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-[#111315] sm:text-5xl">
-              {copy.useCases.title}
-            </h2>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-3">
-            {copy.useCases.items.map((item, index) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.06, duration: 0.5 }}
-                viewport={{ once: true, margin: "-80px" }}
-                className="rounded-2xl border border-[#DDE4DC] bg-[#F8FAF7] p-6"
-              >
-                <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-[#E9F8F2] text-[#0D8F69]">
-                  {useCaseIcons[index]}
-                </div>
-                <h3 className="text-lg font-semibold text-[#111315]">{item.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-[#5F6A63]">{item.description}</p>
-              </motion.div>
-            ))}
-          </div>
         </div>
 
         <div className="grid overflow-hidden rounded-[28px] border border-[#DDE4DC] bg-[#F8FAF7] lg:grid-cols-[0.9fr_1.1fr]">

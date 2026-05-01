@@ -1,27 +1,290 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ---------------------------------------------------------------
+   Fovea — Light theme tokens
+   --------------------------------------------------------------- */
+@theme {
+  /* Surface */
+  --color-bg:           #F7F8F4;
+  --color-surface:      #FFFFFF;
+  --color-surface-soft: #F8FAF7;
+  --color-surface-tint: #EDF1EC;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  /* Border */
+  --color-border:        #DDE4DC;
+  --color-border-soft:   #E3E9E5;
+  --color-border-strong: #C8D6CE;
+
+  /* Ink (text) */
+  --color-ink:   #111315;
+  --color-ink-2: #4F5B54;
+  --color-ink-3: #6A756E;
+  --color-ink-4: #88938C;
+
+  /* Brand (mint) */
+  --color-brand:        #12B886;
+  --color-brand-deep:   #0D8F69;
+  --color-brand-tint:   #E9F8F2;
+  --color-brand-tint-2: #F1FAF6;
+
+  /* Optional accent (sand) — for Pro / featured cells */
+  --color-sand:      #C29A55;
+  --color-sand-tint: #F5EEDF;
+
+  /* Status */
+  --color-danger:      #B42318;
+  --color-danger-tint: #FFF5F5;
+
+  /* Radii (4-step) */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+
+  /* Elevation (3-step) */
+  --shadow-e1: 0 1px 0 rgba(17,19,21,0.02);
+  --shadow-e2: 0 12px 30px rgba(17,19,21,0.06);
+  --shadow-e3: 0 24px 60px rgba(17,19,21,0.10);
+
+  /* Type */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: var(--color-bg);
+  --foreground: var(--color-ink);
+}
+
+html {
+  background: var(--background);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
+
+/* ── Voice waveform ── */
+@keyframes wave { 0%,100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } }
+.wbar { height: 100%; animation: wave 1.2s ease-in-out infinite; transform-origin: center; }
+.wbar:nth-child(2){animation-delay:.08s}.wbar:nth-child(3){animation-delay:.16s}.wbar:nth-child(4){animation-delay:.24s}
+.wbar:nth-child(5){animation-delay:.32s}.wbar:nth-child(6){animation-delay:.18s}.wbar:nth-child(7){animation-delay:.05s}
+.wbar:nth-child(8){animation-delay:.22s}.wbar:nth-child(9){animation-delay:.30s}.wbar:nth-child(10){animation-delay:.12s}
+.wbar:nth-child(11){animation-delay:.04s}.wbar:nth-child(12){animation-delay:.26s}.wbar:nth-child(13){animation-delay:.14s}
+.wbar:nth-child(14){animation-delay:.20s}.wbar:nth-child(15){animation-delay:.10s}.wbar:nth-child(16){animation-delay:.28s}
+.wbar:nth-child(17){animation-delay:.06s}.wbar:nth-child(18){animation-delay:.24s}
+
+/* ── Parallel capture chips and thumbnails ── */
+@keyframes chipIn {
+  0%   { opacity: 0; transform: translate3d(-14px, 10px, 0) scale(0.96); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+.capture-chip {
+  opacity: 0;
+  animation: chipIn .72s cubic-bezier(.22, 1, .36, 1) both;
+  will-change: transform, opacity;
+}
+.capture-chip-1 { animation-delay: .35s; }
+.capture-chip-2 { animation-delay: .78s; }
+
+@keyframes thumbIn {
+  0%   { opacity: 0; transform: translate3d(0, 18px, 0) scale(0.94); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+.capture-thumb {
+  opacity: 0;
+  animation: thumbIn .78s cubic-bezier(.22, 1, .36, 1) both;
+  will-change: transform, opacity;
+}
+.capture-thumb-1 { animation-delay: 1.12s; }
+.capture-thumb-2 { animation-delay: 1.55s; }
+
+/* ── Selection · Text — cursor → I-beam → drag-select ── */
+.capture-block { isolation: isolate; }
+.selection-card {
+  --sel-start-x: 145px;
+  --sel-end-x: 260px;
+  --sel-y: 48px;
+}
+.selection-card-2 {
+  --sel-start-x: 14px;
+  --sel-end-x: calc(100% - 28px);
+}
+.sel-target {
+  background-image: linear-gradient(#B4D5FE, #B4D5FE);
+  background-size: 0% 100%;
+  background-repeat: no-repeat;
+  background-position: left center;
+  animation: selBg 4.8s ease-in-out infinite;
+  border-radius: 1px;
+}
+.selection-card .sel-target {
+  animation-duration: 7.2s;
+  animation-delay: .45s;
+}
+.selection-card-1 .sel-target { animation-name: selectionBgOne; }
+.selection-card-2 .sel-target { animation-name: selectionBgTwo; }
+@keyframes selBg {
+  0%, 28%   { background-size: 0%   100%; }
+  55%       { background-size: 100% 100%; }
+  88%       { background-size: 100% 100%; }
+  96%, 100% { background-size: 0%   100%; }
+}
+@keyframes selectionBgOne {
+  0%, 16%   { background-size: 0% 100%; }
+  28%       { background-size: 100% 100%; }
+  44%       { background-size: 100% 100%; }
+  50%, 100% { background-size: 0% 100%; }
+}
+@keyframes selectionBgTwo {
+  0%, 52%   { background-size: 0% 100%; }
+  64%       { background-size: 100% 100%; }
+  82%       { background-size: 100% 100%; }
+  90%, 100% { background-size: 0% 100%; }
+}
+.sel-cursor { position: absolute; pointer-events: none; z-index: 5; }
+.sel-cursor-arrow {
+  width: 14px; height: 18px;
+  animation: selArrow 4.8s ease-in-out infinite;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.18));
+}
+.selection-card .sel-cursor-arrow {
+  animation-name: selectionArrow;
+  animation-duration: 7.2s;
+  animation-delay: .45s;
+}
+.selection-card-1 .sel-cursor-arrow { animation-name: selectionArrowOne; }
+.selection-card-2 .sel-cursor-arrow { animation-name: selectionArrowTwo; }
+@keyframes selArrow {
+  0%        { left: 100%; top: 100%; opacity: 0; }
+  5%        { opacity: 1; }
+  24%       { left: 120px; top: 32px; opacity: 1; }
+  32%, 100% { left: 120px; top: 32px; opacity: 0; }
+}
+@keyframes selectionArrow {
+  0%        { left: calc(100% - 12px); top: calc(100% - 12px); opacity: 0; }
+  5%        { opacity: 1; }
+  24%       { left: var(--sel-start-x); top: var(--sel-y); opacity: 1; }
+  32%, 100% { left: var(--sel-start-x); top: var(--sel-y); opacity: 0; }
+}
+@keyframes selectionArrowOne {
+  0%        { left: calc(100% - 12px); top: calc(100% - 12px); opacity: 0; }
+  5%        { opacity: 1; }
+  18%       { left: var(--sel-start-x); top: var(--sel-y); opacity: 1; }
+  24%, 100% { left: var(--sel-start-x); top: var(--sel-y); opacity: 0; }
+}
+@keyframes selectionArrowTwo {
+  0%, 50%   { left: calc(100% - 12px); top: calc(100% - 12px); opacity: 0; }
+  54%       { opacity: 1; }
+  60%       { left: var(--sel-start-x); top: var(--sel-y); opacity: 1; }
+  66%, 100% { left: var(--sel-start-x); top: var(--sel-y); opacity: 0; }
+}
+.sel-cursor-ibeam {
+  width: 8px; height: 14px;
+  animation: selIbeam 4.8s ease-in-out infinite;
+}
+.selection-card .sel-cursor-ibeam {
+  animation-name: selectionIbeam;
+  animation-duration: 7.2s;
+  animation-delay: .45s;
+}
+.selection-card-1 .sel-cursor-ibeam { animation-name: selectionIbeamOne; }
+.selection-card-2 .sel-cursor-ibeam { animation-name: selectionIbeamTwo; }
+@keyframes selIbeam {
+  0%, 30%   { left: 120px; top: 32px; opacity: 0; }
+  34%       { left: 120px; top: 32px; opacity: 1; }
+  55%       { left: 220px; top: 32px; opacity: 1; }
+  88%       { left: 220px; top: 32px; opacity: 1; }
+  94%, 100% { left: 220px; top: 32px; opacity: 0; }
+}
+@keyframes selectionIbeam {
+  0%, 30%   { left: var(--sel-start-x); top: var(--sel-y); opacity: 0; }
+  34%       { left: var(--sel-start-x); top: var(--sel-y); opacity: 1; }
+  55%       { left: var(--sel-end-x); top: var(--sel-y); opacity: 1; }
+  88%       { left: var(--sel-end-x); top: var(--sel-y); opacity: 1; }
+  94%, 100% { left: var(--sel-end-x); top: var(--sel-y); opacity: 0; }
+}
+@keyframes selectionIbeamOne {
+  0%, 22%   { left: var(--sel-start-x); top: var(--sel-y); opacity: 0; }
+  25%       { left: var(--sel-start-x); top: var(--sel-y); opacity: 1; }
+  36%       { left: var(--sel-end-x); top: var(--sel-y); opacity: 1; }
+  44%       { left: var(--sel-end-x); top: var(--sel-y); opacity: 1; }
+  50%, 100% { left: var(--sel-end-x); top: var(--sel-y); opacity: 0; }
+}
+@keyframes selectionIbeamTwo {
+  0%, 64%   { left: var(--sel-start-x); top: var(--sel-y); opacity: 0; }
+  67%       { left: var(--sel-start-x); top: var(--sel-y); opacity: 1; }
+  76%       { left: var(--sel-end-x); top: var(--sel-y); opacity: 1; }
+  84%       { left: var(--sel-end-x); top: var(--sel-y); opacity: 1; }
+  90%, 100% { left: var(--sel-end-x); top: var(--sel-y); opacity: 0; }
+}
+
+/* ── Screenshot — crosshair drags rect, then flash ── */
+.snap-demo {
+  --snap-left: 17px;
+  --snap-top: 43px;
+  --snap-width: calc(100% - 44px);
+  --snap-height: 42px;
+  --snap-delay: .8s;
+}
+.snap-demo-2 {
+  --snap-left: 17px;
+  --snap-top: 39px;
+  --snap-width: calc(100% - 54px);
+  --snap-height: 36px;
+  --snap-delay: 2.2s;
+}
+.snap-rect {
+  position: absolute; left: var(--snap-left, 6px); top: var(--snap-top, 24px);
+  width: 0; height: 0;
+  border: 1px dashed #0D8F69;
+  background: rgba(18,184,134,0.08);
+  pointer-events: none;
+  animation: snapDrag 4.8s ease-in-out infinite;
+  animation-delay: var(--snap-delay, 0s);
+}
+@keyframes snapDrag {
+  0%, 8%    { width: 0;     height: 0;    opacity: 0; }
+  12%       { width: 0;     height: 0;    opacity: 1; }
+  50%       { width: var(--snap-width, 250px); height: var(--snap-height, 34px); opacity: 1; }
+  62%       { width: var(--snap-width, 250px); height: var(--snap-height, 34px); opacity: 1; }
+  78%       { width: var(--snap-width, 250px); height: var(--snap-height, 34px); opacity: 1; }
+  88%, 100% { width: var(--snap-width, 250px); height: var(--snap-height, 34px); opacity: 0; }
+}
+.snap-crosshair {
+  position: absolute;
+  width: 18px; height: 18px;
+  pointer-events: none;
+  animation: snapCursor 4.8s ease-in-out infinite;
+  animation-delay: var(--snap-delay, 0s);
+}
+@keyframes snapCursor {
+  0%, 6%    { left: 100%; top: 100%; opacity: 0; }
+  11%       { left: calc(var(--snap-left, 6px) - 8px); top: calc(var(--snap-top, 24px) - 8px); opacity: 1; }
+  50%       { left: calc(var(--snap-left, 6px) + var(--snap-width, 250px) - 8px); top: calc(var(--snap-top, 24px) + var(--snap-height, 34px) - 8px); opacity: 1; }
+  62%       { left: calc(var(--snap-left, 6px) + var(--snap-width, 250px) - 8px); top: calc(var(--snap-top, 24px) + var(--snap-height, 34px) - 8px); opacity: 1; }
+  78%, 100% { left: calc(var(--snap-left, 6px) + var(--snap-width, 250px) - 8px); top: calc(var(--snap-top, 24px) + var(--snap-height, 34px) - 8px); opacity: 0; }
+}
+.snap-flash {
+  position: absolute; inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  animation: snapFlash 4.8s ease-in-out infinite;
+  animation-delay: var(--snap-delay, 0s);
+}
+@keyframes snapFlash {
+  0%, 60% { opacity: 0; }
+  65%     { opacity: 0.9; }
+  72%     { opacity: 0.5; }
+  78%     { opacity: 0; }
+  100%    { opacity: 0; }
+}
+
+/* ── Marquee ── */
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.marquee-track { animation: marquee 38s linear infinite; }
