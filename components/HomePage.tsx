@@ -1,10 +1,8 @@
 'use client';
 
-import Link from 'next/link';
 import {
   ArrowRight,
   ClipboardCopy,
-  Download,
   Image as ImageIcon,
   Layers,
   Mic2,
@@ -184,27 +182,6 @@ export default function HomePage() {
                 Fovea assembles the package in the background — voice transcription, material organization, and instruction assembly all happen automatically.
               </p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Bottom CTA ── */}
-      <section className="bg-white px-5 py-24 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl rounded-[28px] border border-[#DDE4DC] bg-[#F7F8F4] px-8 py-16 text-center shadow-[0_24px_70px_rgba(37,48,41,0.08)]">
-          <h2 className="text-3xl font-semibold tracking-tight text-[#111315] sm:text-5xl">
-            Stop copying, pasting, re-explaining.
-          </h2>
-          <p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-[#5A665F]">
-            macOS 13+. No card required.
-          </p>
-          <div className="mt-8 flex justify-center">
-            <Link
-              href="/download"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#111315] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_16px_40px_rgba(17,19,21,0.16)] transition hover:-translate-y-0.5 hover:bg-[#202521]"
-            >
-              <Download className="h-4 w-4" />
-              Download for macOS
-            </Link>
           </div>
         </div>
       </section>

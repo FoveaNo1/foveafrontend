@@ -130,19 +130,22 @@ export default function PricingPageContent() {
                 <p className="mt-1 text-sm text-[#5F6A63]">For power users</p>
               </div>
               <span className="rounded-full bg-[#0D8F69] px-3 py-1 text-xs font-semibold text-white">
-                Most popular
+                Early bird
               </span>
             </div>
 
             <div className="mt-8">
-              <span className="text-6xl font-semibold tracking-tight text-[#111315]">$9.9</span>
-              <span className="ml-2 text-sm text-[#6A756E]">USD</span>
+              <div className="flex items-baseline gap-3">
+                <span className="text-2xl font-semibold text-[#8A958E] line-through">$15</span>
+                <span className="text-6xl font-semibold tracking-tight text-[#111315]">$9</span>
+                <span className="text-sm text-[#6A756E]">USD</span>
+              </div>
               <p className="mt-1 text-sm text-[#6A756E]">/ member / month, billed yearly</p>
             </div>
 
             <p className="mt-3 text-sm text-[#6A756E]">
-              <span className="line-through">$24</span>{" "}
-              <span>$24 when billed monthly</span>
+              Early-bird annual price. Monthly is <span className="line-through">$30</span>{" "}
+              $20.
             </p>
 
             <Link
@@ -188,10 +191,10 @@ export default function PricingPageContent() {
             </div>
 
             <Link
-              href="/download"
+              href="/login?next=/account"
               className="mt-8 inline-flex items-center justify-center gap-2 rounded-xl border border-[#D8E1DA] bg-white px-5 py-3 text-sm font-semibold text-[#111315] transition hover:border-[#AFC2B5]"
             >
-              Create account
+              Start free
             </Link>
 
             <div className="mt-8 h-px bg-[#E3E9E5]" />

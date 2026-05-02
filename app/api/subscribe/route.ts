@@ -27,7 +27,7 @@ async function hasValidMxRecord(domain: string): Promise<boolean> {
   try {
     const mxRecords = await dns.resolveMx(domain);
     return mxRecords && mxRecords.length > 0;
-  } catch (error) {
+  } catch {
     return false;
   }
 }

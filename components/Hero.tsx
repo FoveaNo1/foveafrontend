@@ -44,20 +44,17 @@ export default function Hero({ downloadHref }: HeroProps) {
     <section className="bg-[#F7F8F4] px-5 pt-5 text-[#111315] sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-7xl">
         {/* Nav */}
-        <header className="flex items-center justify-between gap-4 rounded-2xl border border-[#DDE4DC] bg-white/85 px-4 py-3 shadow-[0_10px_30px_rgba(17,19,21,0.05)] backdrop-blur">
-          <Link href="/" className="flex items-center gap-3">
-            <Image src="/fovea-logo.png" alt="Fovea" width={36} height={36} className="h-9 w-9 rounded-xl" />
-            <span className="text-sm font-semibold tracking-tight">Fovea</span>
-          </Link>
-          <nav className="hidden items-center gap-6 text-sm font-medium text-[#5E6861] md:flex">
-            <a href="#guide" className="transition hover:text-[#111315]">How it works</a>
-            <a href="#features" className="transition hover:text-[#111315]">Features</a>
-            <Link href="/pricing" className="transition hover:text-[#111315]">Pricing</Link>
-          </nav>
-          <div className="flex items-center gap-3">
-            <Link href="/login" className="hidden h-10 items-center px-2 text-sm font-medium text-[#5E6861] transition hover:text-[#111315] sm:inline-flex">
-              Sign in
+        <header className="flex items-center gap-3">
+          <div className="flex min-w-0 flex-1 items-center justify-between gap-4 rounded-2xl border border-[#DDE4DC] bg-white/85 px-4 py-3 shadow-[0_10px_30px_rgba(17,19,21,0.05)] backdrop-blur">
+            <Link href="/" className="flex min-w-0 items-center gap-3">
+              <Image src="/fovea-logo.png" alt="Fovea" width={36} height={36} className="h-9 w-9 rounded-xl" />
+              <span className="text-sm font-semibold tracking-tight">Fovea</span>
             </Link>
+            <nav className="hidden items-center gap-6 text-sm font-medium text-[#5E6861] md:flex">
+              <a href="#guide" className="transition hover:text-[#111315]">How it works</a>
+              <a href="#features" className="transition hover:text-[#111315]">Features</a>
+              <Link href="/pricing" className="transition hover:text-[#111315]">Pricing</Link>
+            </nav>
             <Link
               href={downloadHref}
               className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-[#111315] px-4 text-sm font-semibold text-white transition hover:bg-[#1F2421]"
@@ -66,6 +63,13 @@ export default function Hero({ downloadHref }: HeroProps) {
               <span>Download for macOS</span>
             </Link>
           </div>
+
+          <Link
+            href="/login"
+            className="hidden h-12 shrink-0 items-center rounded-2xl border border-[#DDE4DC] bg-white/85 px-5 text-sm font-medium text-[#5E6861] shadow-[0_10px_30px_rgba(17,19,21,0.05)] backdrop-blur transition hover:text-[#111315] lg:inline-flex"
+          >
+            Sign in
+          </Link>
         </header>
 
         {/* Centered hero */}
@@ -82,9 +86,6 @@ export default function Hero({ downloadHref }: HeroProps) {
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-[#4F5B54] sm:text-xl">
             Press a hotkey. Speak your intent, grab text, snap a screenshot — Fovea packages it all and drops it into wherever you&apos;re working.
           </p>
-          <div className="mt-9 flex flex-col items-center justify-center gap-3">
-            <p className="text-xs uppercase tracking-[0.18em] text-[#7A857D]">macOS 13+ &nbsp;&middot;&nbsp; No card required</p>
-          </div>
 
           {/* Demo: same capture → structured deliver */}
           <div className="mx-auto mt-12 grid max-w-6xl gap-5 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">

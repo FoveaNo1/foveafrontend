@@ -1,13 +1,116 @@
 "use client";
 
-import { useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import type { Provider } from "@supabase/supabase-js";
 import SiteFooter from "./SiteFooter";
+import { getSupabaseBrowserClient } from "../lib/supabase-browser";
+
+function readNextPath() {
+  if (typeof window === "undefined") {
+    return "/account";
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const next = params.get("next");
+
+  if (next && next.startsWith("/") && !next.startsWith("//")) {
+    return next;
+  }
+
+  return "/account";
+}
 
 export default function LoginPageContent() {
-  const [authMode, setAuthMode] = useState<"link" | "password">("link");
-  const [isSignup, setIsSignup] = useState(false);
+  const [email, setEmail] = useState("");
+  const [nextPath] = useState(readNextPath);
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const supabase = getSupabaseBrowserClient();
+    if (!supabase) {
+      return;
+    }
+
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        window.location.replace(nextPath);
+      }
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        window.location.replace(nextPath);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [nextPath]);
+
+  function getAuthRedirectUrl() {
+    return `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`;
+  }
+
+  async function handleEmailAuth(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setMessage(null);
+    setErrorMessage(null);
+
+    const supabase = getSupabaseBrowserClient();
+    if (!supabase) {
+      setErrorMessage(
+        "Supabase auth is not configured yet. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.",
+      );
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: getAuthRedirectUrl(),
+          shouldCreateUser: true,
+        },
+      });
+      if (error) throw error;
+      setMessage("Magic link sent. Check your email to continue.");
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Unable to sign in.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleOAuth(provider: Provider) {
+    setMessage(null);
+    setErrorMessage(null);
+
+    const supabase = getSupabaseBrowserClient();
+    if (!supabase) {
+      setErrorMessage(
+        "Supabase auth is not configured yet. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.",
+      );
+      return;
+    }
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: getAuthRedirectUrl(),
+      },
+    });
+
+    if (error) {
+      setErrorMessage(error.message);
+    }
+  }
 
   return (
     <main className="min-h-screen bg-[#F7F8F4] px-5 py-5 text-[#111315] selection:bg-[#12B886]/20 selection:text-[#111315] sm:px-6 lg:px-8">
@@ -22,71 +125,36 @@ export default function LoginPageContent() {
             Back to Home
           </Link>
 
-          <p className="text-sm text-[#5E6861]">
-            {isSignup ? "Already have an account? " : "No account yet? "}
-            <button
-              type="button"
-              onClick={() => setIsSignup((v) => !v)}
-              className="font-medium text-[#111315] underline underline-offset-2 transition hover:text-[#0D8F69]"
-            >
-              {isSignup ? "Sign in" : "Create one"}
-            </button>
-          </p>
+          <p className="text-sm font-medium text-[#5E6861]">Secure sign-in</p>
         </header>
 
         {/* ── Auth card ── */}
         <div className="mx-auto max-w-[440px] py-20">
           {/* Logo */}
           <Link href="/" className="mb-8 flex items-center justify-center gap-3">
-            <img
+            <Image
               src="/fovea-logo.png"
               alt="Fovea"
-              className="h-12 w-12 rounded-2xl"
+              width={48}
+              height={48}
+              className="rounded-2xl"
             />
             <span className="text-xl font-semibold text-[#111315]">Fovea</span>
           </Link>
 
           <h1 className="text-center text-2xl font-semibold tracking-tight text-[#111315]">
-            {isSignup ? "Create your account." : "Welcome back."}
+            Welcome back.
           </h1>
           <p className="mt-2 text-center text-sm leading-6 text-[#5A665F]">
-            {isSignup
-              ? "Sign up to get started with Fovea."
-              : "Sign in to manage your subscription, devices, and capture history."}
+            Sign in to manage your subscription, devices, and capture history.
           </p>
 
           {/* Card */}
           <div className="mt-8 rounded-[24px] border border-[#DDE4DC] bg-white p-6 shadow-[0_24px_70px_rgba(37,48,41,0.06)]">
-            {/* Segmented control */}
-            <div className="grid grid-cols-2 gap-1 rounded-xl border border-[#DDE4DC] bg-[#F8FAF7] p-1">
-              <button
-                type="button"
-                onClick={() => setAuthMode("link")}
-                className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
-                  authMode === "link"
-                    ? "bg-white text-[#111315] shadow-sm"
-                    : "text-[#5E6861]"
-                }`}
-              >
-                Magic link
-              </button>
-              <button
-                type="button"
-                onClick={() => setAuthMode("password")}
-                className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
-                  authMode === "password"
-                    ? "bg-white text-[#111315] shadow-sm"
-                    : "text-[#5E6861]"
-                }`}
-              >
-                Password
-              </button>
-            </div>
-
             {/* Form */}
             <form
-              onSubmit={(e) => e.preventDefault()}
-              className="mt-5 space-y-4"
+              onSubmit={handleEmailAuth}
+              className="space-y-4"
             >
               <div>
                 <label
@@ -98,47 +166,35 @@ export default function LoginPageContent() {
                 <input
                   id="email"
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@company.com"
+                  required
                   className="h-11 w-full rounded-xl border border-[#DDE4DC] bg-white px-3 text-sm text-[#111315] placeholder:text-[#A3ADA6] focus:border-[#12B886] focus:outline-none focus:ring-1 focus:ring-[#12B886]"
                 />
               </div>
 
-              {authMode === "password" && (
-                <div>
-                  <div className="mb-1.5 flex items-center justify-between">
-                    <label
-                      htmlFor="password"
-                      className="text-sm font-medium text-[#111315]"
-                    >
-                      Password
-                    </label>
-                    <Link
-                      href="/login"
-                      className="text-xs font-medium text-[#0D8F69] transition hover:text-[#0A7356]"
-                    >
-                      Forgot?
-                    </Link>
-                  </div>
-                  <input
-                    id="password"
-                    type="password"
-                    className="h-11 w-full rounded-xl border border-[#DDE4DC] bg-white px-3 text-sm text-[#111315] focus:border-[#12B886] focus:outline-none focus:ring-1 focus:ring-[#12B886]"
-                  />
-                </div>
-              )}
-
               <button
                 type="submit"
-                className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#111315] text-sm font-semibold text-white transition hover:bg-[#222]"
+                disabled={isLoading}
+                className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#111315] text-sm font-semibold text-white transition hover:bg-[#222] disabled:cursor-not-allowed disabled:opacity-70"
               >
-                {authMode === "link"
-                  ? "Send magic link"
-                  : isSignup
-                    ? "Create account"
-                    : "Sign in"}
+                {isLoading ? "Sending..." : "Send magic link"}
                 <ArrowRight className="h-4 w-4" />
               </button>
             </form>
+
+            {message && (
+              <p className="mt-4 rounded-xl border border-[#C8EBD9] bg-[#F1FBF6] px-4 py-3 text-sm leading-6 text-[#0D7256]">
+                {message}
+              </p>
+            )}
+
+            {errorMessage && (
+              <p className="mt-4 rounded-xl border border-[#F0D6D6] bg-[#FFF8F8] px-4 py-3 text-sm leading-6 text-[#A43B3B]">
+                {errorMessage}
+              </p>
+            )}
 
             {/* Divider */}
             <div className="my-5 flex items-center gap-3">
@@ -151,6 +207,7 @@ export default function LoginPageContent() {
             <div className="grid gap-2">
               <button
                 type="button"
+                onClick={() => handleOAuth("google")}
                 className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#DDE4DC] bg-white text-sm font-semibold text-[#111315] transition hover:bg-[#F8FAF7]"
               >
                 <svg className="h-4 w-4" viewBox="0 0 24 24">
@@ -176,6 +233,7 @@ export default function LoginPageContent() {
 
               <button
                 type="button"
+                onClick={() => handleOAuth("apple")}
                 className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#DDE4DC] bg-white text-sm font-semibold text-[#111315] transition hover:bg-[#F8FAF7]"
               >
                 <svg className="h-4 w-4" viewBox="0 0 24 24" fill="#111315">

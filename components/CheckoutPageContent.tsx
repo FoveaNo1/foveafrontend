@@ -4,41 +4,45 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Check, Lock, Sparkles, Info } from "lucide-react";
 import SiteFooter from "./SiteFooter";
+import { createBillingCheckout, type BillingCycle } from "../lib/billing-client";
+import { getSupabaseBrowserClient } from "../lib/supabase-browser";
 
-type BillingCycle = "yearly" | "quarterly" | "monthly";
+type CheckoutPageContentProps = {
+  initialCycle: BillingCycle;
+  initialNotice: string | null;
+};
 
 const cycleOptions: {
   id: BillingCycle;
   label: string;
   badge?: string;
   badgeClass?: string;
+  regularPricePerMonth: string;
   pricePerMonth: string;
   billedNote?: string;
+  regularTotal: string;
   total: string;
 }[] = [
   {
     id: "yearly",
     label: "Yearly",
-    badge: "Save 60%",
+    badge: "Save 40%",
     badgeClass: "bg-[#E9F8F2] text-[#0D8F69]",
-    pricePerMonth: "$9.9",
-    billedNote: "Billed as one payment of $118.8 USD",
-    total: "$118.8",
-  },
-  {
-    id: "quarterly",
-    label: "Quarterly",
-    badge: "Save 33%",
-    badgeClass: "bg-[#F1F4EE] text-[#5F6A63]",
-    pricePerMonth: "$16",
-    billedNote: "Billed as one payment of $48 USD",
-    total: "$48",
+    regularPricePerMonth: "$15",
+    pricePerMonth: "$9",
+    billedNote: "Billed as one payment of $108 USD",
+    regularTotal: "$180",
+    total: "$108",
   },
   {
     id: "monthly",
     label: "Monthly",
-    pricePerMonth: "$24",
-    total: "$24",
+    badge: "Save 33%",
+    badgeClass: "bg-[#F1F4EE] text-[#5F6A63]",
+    regularPricePerMonth: "$30",
+    pricePerMonth: "$20",
+    regularTotal: "$30",
+    total: "$20",
   },
 ];
 
@@ -46,8 +50,6 @@ function cycleDescription(cycle: BillingCycle): string {
   switch (cycle) {
     case "yearly":
       return "Yearly";
-    case "quarterly":
-      return "Quarterly";
     case "monthly":
       return "Monthly";
   }
@@ -56,18 +58,61 @@ function cycleDescription(cycle: BillingCycle): string {
 function cycleSavings(cycle: BillingCycle): string | null {
   switch (cycle) {
     case "yearly":
-      return "Save 60%";
-    case "quarterly":
-      return "Save 33%";
+      return "Save 40%";
     case "monthly":
-      return null;
+      return "Save 33%";
   }
 }
 
-export default function CheckoutPageContent() {
-  const [cycle, setCycle] = useState<BillingCycle>("yearly");
+export default function CheckoutPageContent({
+  initialCycle,
+  initialNotice,
+}: CheckoutPageContentProps) {
+  const [cycle, setCycle] = useState<BillingCycle>(initialCycle);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [noticeMessage, setNoticeMessage] = useState<string | null>(initialNotice);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const selected = cycleOptions.find((o) => o.id === cycle)!;
+
+  async function handleCheckout() {
+    setNoticeMessage(null);
+    setErrorMessage(null);
+
+    const supabase = getSupabaseBrowserClient();
+    if (!supabase) {
+      setErrorMessage(
+        "Supabase auth is not configured yet. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.",
+      );
+      return;
+    }
+
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
+
+    if (error) {
+      setErrorMessage(error.message);
+      return;
+    }
+
+    if (!session?.access_token) {
+      window.location.href = `/login?next=${encodeURIComponent(`/checkout?cycle=${cycle}`)}`;
+      return;
+    }
+
+    setIsRedirecting(true);
+    try {
+      const url = await createBillingCheckout(session.access_token, {
+        billingCycle: cycle,
+      });
+      window.location.assign(url);
+    } catch (err) {
+      setIsRedirecting(false);
+      setErrorMessage(err instanceof Error ? err.message : "Failed to create checkout.");
+    }
+  }
 
   return (
     <main className="min-h-screen bg-[#F7F8F4] px-5 py-5 text-[#111315] selection:bg-[#12B886]/20 selection:text-[#111315] sm:px-6 lg:px-8">
@@ -83,7 +128,7 @@ export default function CheckoutPageContent() {
           </Link>
           <div className="inline-flex items-center gap-2 text-sm text-[#5E6861]">
             <Lock className="h-4 w-4" />
-            <span className="hidden sm:inline">Secure checkout via Stripe</span>
+            <span className="hidden sm:inline">Secure checkout</span>
           </div>
         </header>
 
@@ -127,6 +172,9 @@ export default function CheckoutPageContent() {
             <h1 className="text-2xl font-semibold tracking-tight text-[#111315] sm:text-3xl">
               Choose your billing cycle
             </h1>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-[#5A665F]">
+              Early-bird pricing: $15/month becomes $9 with annual billing; $30/month becomes $20 monthly.
+            </p>
 
             <div className="mt-8 space-y-4">
               {cycleOptions.map((option) => {
@@ -142,7 +190,7 @@ export default function CheckoutPageContent() {
                   >
                     {option.id === "yearly" && (
                       <span className="absolute -top-3 left-5 rounded-full bg-[#0D8F69] px-3 py-1 text-xs font-semibold text-white">
-                        Most popular
+                        Early bird
                       </span>
                     )}
 
@@ -172,6 +220,9 @@ export default function CheckoutPageContent() {
 
                       <div className="text-right">
                         <div className="text-base font-semibold text-[#111315]">
+                          <span className="mr-2 text-sm font-medium text-[#8A958E] line-through">
+                            {option.regularPricePerMonth}
+                          </span>
                           {option.pricePerMonth}{" "}
                           <span className="text-sm font-normal text-[#6A756E]">USD / month</span>
                         </div>
@@ -187,11 +238,25 @@ export default function CheckoutPageContent() {
 
             <button
               type="button"
-              className="mt-8 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0D8F69] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-[#0B7A5A]"
+              onClick={handleCheckout}
+              disabled={isRedirecting}
+              className="mt-8 flex w-full items-center justify-center gap-2 rounded-xl bg-[#0D8F69] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-[#0B7A5A] disabled:cursor-not-allowed disabled:opacity-70"
             >
-              Next: Payment details
+              {isRedirecting ? "Opening checkout..." : "Continue"}
               <ArrowRight className="h-4 w-4" />
             </button>
+
+            {errorMessage && (
+              <p className="mt-4 rounded-xl border border-[#F0D6D6] bg-[#FFF8F8] px-4 py-3 text-sm leading-6 text-[#A43B3B]">
+                {errorMessage}
+              </p>
+            )}
+
+            {noticeMessage && (
+              <p className="mt-4 rounded-xl border border-[#DDE4DC] bg-white px-4 py-3 text-sm leading-6 text-[#5A665F]">
+                {noticeMessage}
+              </p>
+            )}
 
             <p className="mt-4 text-center text-xs leading-5 text-[#A4AEA7]">
               By continuing you agree to our{" "}
@@ -227,16 +292,21 @@ export default function CheckoutPageContent() {
 
             <div className="flex items-baseline justify-between gap-4">
               <span className="text-sm font-medium text-[#3A4A40]">Total for today</span>
-              <span className="text-xl font-semibold text-[#111315]">
-                {selected.total}{" "}
-                <span className="text-sm font-normal text-[#6A756E]">USD</span>
-              </span>
+              <div className="text-right">
+                <span className="mr-2 text-sm font-medium text-[#8A958E] line-through">
+                  {selected.regularTotal}
+                </span>
+                <span className="text-xl font-semibold text-[#111315]">
+                  {selected.total}{" "}
+                  <span className="text-sm font-normal text-[#6A756E]">USD</span>
+                </span>
+              </div>
             </div>
 
             {cycleSavings(cycle) && (
               <div className="mt-2 flex justify-end">
                 <span className="rounded-full bg-[#E9F8F2] px-2.5 py-0.5 text-xs font-semibold text-[#0D8F69]">
-                  {cycleSavings(cycle)}
+                  Early bird · {cycleSavings(cycle)}
                 </span>
               </div>
             )}
@@ -250,7 +320,7 @@ export default function CheckoutPageContent() {
 
             <div className="mt-4 flex items-center justify-center gap-2 text-xs text-[#A4AEA7]">
               <Lock className="h-3.5 w-3.5" />
-              Payments secured by Stripe
+              Secure payment
             </div>
           </aside>
         </div>

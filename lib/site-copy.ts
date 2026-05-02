@@ -221,7 +221,7 @@ const siteCopy = {
       billingToggle: {
         monthly: "Monthly",
         annual: "Annual",
-        save: "Save 20%",
+        save: "Save 40%",
       },
       plans: [
         {
@@ -241,8 +241,8 @@ const siteCopy = {
         },
         {
           name: "Pro",
-          price: "$12",
-          period: "per month",
+          price: "$9",
+          period: "per month, billed yearly",
           description: "For daily workflows that depend on fast multimodal input.",
           cta: "Start with beta",
           href: "/download",
@@ -295,7 +295,7 @@ const siteCopy = {
       badge: "BETA DOWNLOADS",
       title: "Download Fovea for macOS",
       intro:
-        "Get started with Fovea. Download the macOS app, sign up, and you're ready to go. Existing users receive automatic updates inside the app.",
+        "Get started with Fovea. Download the macOS app, sign in, and you're ready to go. Existing users receive automatic updates inside the app.",
       macLabel: "macOS APP",
       macTitle: "Primary beta download",
       macButton: "Download for macOS",

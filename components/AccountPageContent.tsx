@@ -1,10 +1,77 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, CircleCheck, Monitor } from "lucide-react";
 import SiteFooter from "./SiteFooter";
+import { createBillingPortal } from "../lib/billing-client";
+import { getSupabaseBrowserClient, isSupabaseBrowserConfigured } from "../lib/supabase-browser";
 
 export default function AccountPageContent() {
+  const [email, setEmail] = useState(() =>
+    isSupabaseBrowserConfigured() ? "Loading..." : "Supabase auth is not configured",
+  );
+  const [initial, setInitial] = useState("F");
+  const [isPortalLoading, setIsPortalLoading] = useState(false);
+  const [billingError, setBillingError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const supabase = getSupabaseBrowserClient();
+    if (!supabase) {
+      return;
+    }
+
+    supabase.auth.getSession().then(({ data }) => {
+      const userEmail = data.session?.user.email;
+      if (!data.session || !userEmail) {
+        window.location.replace("/login?next=/account");
+        return;
+      }
+
+      setEmail(userEmail);
+      setInitial(userEmail.slice(0, 1).toUpperCase());
+    });
+  }, []);
+
+  async function handleSignOut() {
+    const supabase = getSupabaseBrowserClient();
+    if (!supabase) {
+      window.location.href = "/login";
+      return;
+    }
+
+    await supabase.auth.signOut();
+    window.location.href = "/";
+  }
+
+  async function handleBillingPortal() {
+    setBillingError(null);
+
+    const supabase = getSupabaseBrowserClient();
+    if (!supabase) {
+      setBillingError("Supabase auth is not configured yet.");
+      return;
+    }
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) {
+      window.location.href = "/login?next=/account";
+      return;
+    }
+
+    setIsPortalLoading(true);
+    try {
+      const url = await createBillingPortal(session.access_token);
+      window.location.assign(url);
+    } catch (err) {
+      setBillingError(err instanceof Error ? err.message : "Unable to open billing portal.");
+      setIsPortalLoading(false);
+    }
+  }
+
   return (
     <main className="min-h-screen bg-[#F7F8F4] px-5 py-5 text-[#111315] selection:bg-[#12B886]/20 selection:text-[#111315] sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
@@ -18,23 +85,24 @@ export default function AccountPageContent() {
             Back to Home
           </Link>
 
-          <Link
-            href="/login"
+          <button
+            type="button"
+            onClick={handleSignOut}
             className="text-sm font-medium text-[#5E6861] transition hover:text-[#111315]"
           >
             Sign out
-          </Link>
+          </button>
         </header>
 
         {/* ── User header ── */}
         <section className="flex flex-wrap items-center gap-4 py-12">
           <div className="grid h-14 w-14 place-items-center rounded-full bg-[#0D8F69]">
-            <span className="text-lg font-semibold text-white">A</span>
+            <span className="text-lg font-semibold text-white">{initial}</span>
           </div>
 
           <div>
-            <h1 className="text-2xl font-semibold text-[#111315]">Alex Chen</h1>
-            <p className="text-sm text-[#5A665F]">alex@hellofovea.com</p>
+            <h1 className="text-2xl font-semibold text-[#111315]">Fovea account</h1>
+            <p className="text-sm text-[#5A665F]">{email}</p>
           </div>
 
           <div className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-[#C8D6CE] bg-white px-3 py-1.5">
@@ -58,18 +126,33 @@ export default function AccountPageContent() {
                   Beta &mdash; open access
                 </h2>
                 <p className="mt-2 text-sm leading-6 text-[#5A665F]">
-                  You&apos;re on the macOS beta. Paid plans will be introduced
-                  with advance notice.
+                  Your subscription state is synced from Stripe through the Fovea backend.
                 </p>
               </div>
-              <Link
-                href="/pricing"
-                className="inline-flex h-10 items-center gap-2 rounded-xl bg-[#111315] px-4 text-sm font-semibold text-white transition hover:bg-[#222]"
-              >
-                See plans
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  href="/pricing"
+                  className="inline-flex h-10 items-center gap-2 rounded-xl bg-[#111315] px-4 text-sm font-semibold text-white transition hover:bg-[#222]"
+                >
+                  See plans
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <button
+                  type="button"
+                  onClick={handleBillingPortal}
+                  disabled={isPortalLoading}
+                  className="inline-flex h-10 items-center rounded-xl border border-[#D8E1DA] bg-white px-4 text-sm font-semibold text-[#111315] transition hover:border-[#AFC2B5] disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {isPortalLoading ? "Opening..." : "Manage billing"}
+                </button>
+              </div>
             </div>
+
+            {billingError && (
+              <p className="mt-4 rounded-xl border border-[#F0D6D6] bg-[#FFF8F8] px-4 py-3 text-sm leading-6 text-[#A43B3B]">
+                {billingError}
+              </p>
+            )}
 
             <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
               <div>
@@ -144,22 +227,17 @@ export default function AccountPageContent() {
             <div className="mt-5 space-y-0">
               <div className="flex items-center justify-between border-b border-[#EFF1ED] py-3 text-sm">
                 <span className="text-[#5A665F]">Display name</span>
-                <span className="font-medium text-[#111315]">Alex Chen</span>
+                <span className="font-medium text-[#111315]">Fovea user</span>
               </div>
               <div className="flex items-center justify-between border-b border-[#EFF1ED] py-3 text-sm">
                 <span className="text-[#5A665F]">Email</span>
                 <span className="font-medium text-[#111315]">
-                  alex@hellofovea.com
+                  {email}
                 </span>
               </div>
               <div className="flex items-center justify-between py-3 text-sm">
-                <span className="text-[#5A665F]">Password</span>
-                <Link
-                  href="/login"
-                  className="font-medium text-[#0D8F69] transition hover:text-[#0A7356]"
-                >
-                  Change
-                </Link>
+                <span className="text-[#5A665F]">Sign-in method</span>
+                <span className="font-medium text-[#111315]">Magic link / OAuth</span>
               </div>
             </div>
           </div>
