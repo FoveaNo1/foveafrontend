@@ -4,6 +4,7 @@
 **日期**: 2026-06-21
 **改动文件**: `components/PrivacyPageContent.tsx`, `components/TermsPageContent.tsx`
 **状态**: 本地 commit,**未 push、未发布**。
+**Rev 2 (2026-06-21)**: 已纳入同事 review(2×P1 + 1×P2)——见 §4 标注 *(rev2)* 的条目;核心是把"整库/媒体留本机 vs 文本+元数据摘要外传"讲准、删掉不实的 "read-only"、ToS 去掉 "optional" 歧义。
 **性质**: 工程师起草的法律文案对照修订。**发布前需真人律师过一遍**——本文档只做"代码事实 ↔ 文案声明"的工程对照,不构成法律意见。
 
 ---
@@ -47,7 +48,8 @@ Fovea 近几个月在客户端 + 后端上线了 **Memory 层** 和 **MCP 连接
 | Memory **本机** SQLite,含 question/answer/source url·domain·title/截图 ref/gaze/标签 | `fovea-mac/FoveaMac/Models/HistoryStore.swift:1780`(recent_memory)、`:2685`(memory_vectors) |
 | Memory 捕获**默认开**(opt-out),但 onboarding 有披露 | `AppDelegate.swift:24`(默认 true)、`HistoryStore.swift:854`、`OnboardingView.swift:141`(末页披露)、`MemoryLinkIntroSheet` |
 | **唯一被证伪的声明**:开 Memory 页会**自动**把衍生文本 POST 后端(organize/embed),非"重新提交" | `fovea-mac/FoveaMac/MainWindow/MemoryView.swift:228`(`.onAppear { autoOrganizeIfNeeded(); backfillVectorsIfNeeded() }`)、`:815`、`:829` |
-| organize/embed 只送**衍生文本**(问题/摘要/标签),**不送**截图/音频/文件路径 | `HistoryItem.swift:257-332`(MemoryOrganizerRequest.Event)、`BackendMessages.swift`(MemoryEmbedRequest = `texts:[String]`) |
+| organize 送**文本+元数据摘要**(问题/精炼问题/答案摘要/来源 app·url·title/证据文字/gaze),**不送**截图/音频/`file://` 路径(脱敏) | `HistoryItem.swift:264-296`(Event = source + content{userQuestion,refinedQuestion,answer} + evidence;`redactedSource`/`redactedEvidence` 仅 null 掉 `file://`)、`BackendMessages.swift`(MemoryEmbedRequest = `texts:[String]`) |
+| MCP 连接器**不是 read-only**:含 `forget_fovea_memory`(本地 soft-delete)+ 每次调用写 `audit.sqlite` | `fovea-memory-mcp/fovea-memory-mcp.js:697,731`(forget 工具)、`:520,525`(UPDATE soft-delete)、`:70,798`(writeAudit) |
 | MCP 外泄链路:本机 DB → 本机 node 进程 → 用户自己的 AI 客户端,**Fovea 服务器不在其中**;用户手动安装 | `fovea-memory-mcp/fovea-memory-mcp.js:30-50, 743-764`;`fovea-mac/.../MCPIntegrationInstaller.swift:9-10`(`npx -y github:hellofovea/fovea-memory-mcp`,公开仓,直装可用) |
 
 > 复核建议:上面每条都给了 file:line,可在对应仓库直接核。后端"零留存"是整个判断的支点——grep 各 handler 确认只有 `LogLLMUsage`、无任何 content 落库即可。
@@ -63,11 +65,12 @@ Fovea 近几个月在客户端 + 后端上线了 **Memory 层** 和 **MCP 连接
    *(注:本次改动**不削减**任何用户权利,故**不触发**"通知用户"那一支——该支只对"reduce your rights"的变更适用。)*
 
 2. **修正 "Customer Content You Provide" 第 2 段(唯一的真·错句)**
-   原文绝对句:"This local data is **not automatically uploaded** to our servers **unless you explicitly re-submit** a previous request." 被代码证伪——开 Memory 页/建记忆时会**自动**把衍生文本发去后端 organize/embed(见 §3)。
-   修法:**保留**对音频/截图/prompt 的强承诺(永不自动上传)+ 服务器零留存;**只**补上"衍生短文本会实时中转给处理转发+第三方 AI 后立即丢弃、索引写回本机,且可能自动触发"。措辞上明确"derived **text excerpts** ... **never** your audio, screenshots, or files",把强声明的边界划清。
+   原文绝对句:"This local data is **not automatically uploaded** to our servers **unless you explicitly re-submit** a previous request." 被代码证伪——开 Memory 页/建记忆时会**自动**把文本+元数据摘要发去后端 organize/embed(见 §3)。
+   修法 *(rev2 已修准)*:强承诺**重新划界到"整个 Memory 库 + 媒体(音频/截图/文件)留在本机、服务器不留存"**(而不是"prompts",因为问题文本本身会被外传——这正是同事 P1#1 指出的冲突);外传的是 "**short text and metadata excerpts**",并据 §3 显式列出包含 **来源 app·url·title 与 gaze**,不再只写"问题/摘要/标签"。On-Device Memory 段首句也同步从"never uploaded"改为"库与媒体留本机、摘要可实时中转但不入服务器",消除两处自相矛盾。
 
 3. **新增 `On-Device Memory` 段**(放在 "Information We Collect" 之后,独立成节,**不**放进"我们收集"里)
-   为什么不是"零披露所以必须补":本机存储其实已被旧 para 2 + Retention 行以 "local session history" 覆盖过。但旧文案只列了"audio/screenshots/prompts",**漏了** source URL/gaze/选区/标签/embeddings,且没讲它是**默认开、持久、可控**。所以这是**完整性/清晰度**补充,框定为 (b) 本机+用户掌控,并把 **Memory Connector** 作为 (c) 用户自助导出在此中性说明(明确"Fovea 服务器不在链路、只读、只暴露你标记可见的")。
+   为什么不是"零披露所以必须补":本机存储其实已被旧 para 2 + Retention 行以 "local session history" 覆盖过。但旧文案只列了"audio/screenshots/prompts",**漏了** source URL/gaze/选区/标签/embeddings,且没讲它是**默认开、持久、可控**。所以这是**完整性/清晰度**补充,框定为 (b) 本机+用户掌控,并把 **Memory Connector** 作为 (c) 用户自助导出在此中性说明。
+   *(rev2 已修)* 连接器**不写 "read-only"**(同事 P1#2:`forget_fovea_memory` 会本地 soft-delete、且写 `audit.sqlite`);改为"runs locally、只暴露你标记可见的、可执行本地动作(如被调用时 soft-delete 一条记忆)、在本机留访问日志、Fovea 服务器不在链路"。
    **红线**:全段不得出现 "we collect Memory" / "we store your Memory",也不得进 "Sharing With Others"——否则反把准确文档改成不准确。
 
 4. **新增 `Your Rights and Choices` 段**(放在 "Permissions We Request" 之后)
@@ -78,8 +81,9 @@ Fovea 近几个月在客户端 + 后端上线了 **Memory 层** 和 **MCP 连接
 
 5. **`Last updated` 同步 → `June 2026`**
 
-6. **§4 "Our Services" 补一句**:承认 Fovea 维护可选本机 Memory + 可选本机连接器,指向 Privacy。
+6. **§4 "Our Services" 补一句**:承认 Fovea 维护本机 Memory + 可选本机连接器,指向 Privacy。
    §4 原本只说"capture context and assembles it into prompts",没提持久 Memory/连接器——补一句中性说明对齐现实即可。**§3 / §7 保持原样**(已核为准确,见 §5)。
+   *(rev2 已修)* Memory 不再写 "optional"(同事 P2:默认开,写 optional 会被读成 opt-in);改为 "**user-controlled on-device Memory ... on by default ... you can disable or delete**"。连接器仍是 optional(确属用户主动安装)。
 
 ---
 
@@ -121,6 +125,7 @@ git diff main...docs/privacy-terms-memory-disclosure -- components/   # 看纯�
 - [ ] **`fovea-web` 镜像仓**(`hellofovea/fovea-web`,org 与域名一致,带 `/zh`):它的 Privacy 文案与本仓**已 diverged**(更旧)。若它也在 hellofovea.com 线上提供 /privacy、/terms,需把同等修订**镜像**过去。本分支只改了 `foveafrontend`(其文案与线上截图逐字一致)。
 - [ ] **App Store 隐私营养标签**复核(User Content/截图/音频/浏览/gaze):属 app 侧,不在本网页仓范围。
 - [ ] `/zh` 中文版 Privacy/Terms(若有)同步。
+- [ ] **App 自身文案也把 MCP 叫 "read-only"**(`fovea-mac/.../Loc.swift:288` 安装提示词 + 公开仓 README),但 `forget_fovea_memory` 会 soft-delete——同 P1#2,属 app/仓侧 copy 不一致,需另行修正(本网页分支已改准)。
 - [ ] 产品侧(另议,非本分支):下载页 "Add to Chrome" 卡片建议移除(扩展 release 关着、`debugger` 权限 CWS-hostile);MCP 安装暂留 app 内 + 独立 docs 页;公开仓 README 仍写 `npx -y fovea-memory-mcp@1`(npm 未发布会 404),需改 `github:` 形式或 npm publish。
 
 ---

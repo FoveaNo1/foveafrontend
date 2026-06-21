@@ -67,11 +67,11 @@ export default function TermsPageContent() {
                 service may be interrupted without prior notice.
               </p>
               <p className="mt-2">
-                Fovea can also keep an optional on-device Memory of your past
-                interactions and, if you choose, let external AI tools you connect
-                read it through an optional local connector. These features are
-                described in our Privacy Policy, and you can disable or delete your
-                Memory at any time.
+                Fovea can also keep a user-controlled on-device Memory of your
+                past interactions, which is on by default and which you can
+                disable or delete at any time. If you choose, you can let external
+                AI tools you connect read it through an optional local connector.
+                These features are described in our Privacy Policy.
               </p>
               <p className="mt-2">
                 We grant you a revocable, non-exclusive, non-transferable,

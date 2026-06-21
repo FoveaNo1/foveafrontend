@@ -49,15 +49,17 @@ export default function PrivacyPageContent() {
               <p className="mt-2">
                 Your device may store a local session history and an on-device
                 Memory — including audio, screenshots, and generated prompts —
-                until you choose to delete it. Your audio, screenshots, and saved
-                prompts stay on your device and are never uploaded to our servers
-                unless you explicitly re-submit a previous request.
+                until you choose to delete it. The full Memory database and its
+                media (your audio, screenshots, and files) stay on your device; we
+                do not upload or retain them on our servers unless you explicitly
+                re-submit a previous request.
               </p>
               <p className="mt-2">
                 To organize and index your Memory so it can be searched, short
-                text excerpts derived from it (such as your question, the answer
-                summary, and tags — never your audio, screenshots, or files) may
-                be sent in real time to our processing relay and third-party AI
+                text and metadata excerpts derived from it — such as your
+                question, the answer summary, the source app, website, or title
+                you were viewing, on-screen selections, and gaze signals — may be
+                sent in real time to our processing relay and third-party AI
                 providers, then immediately discarded; the resulting search index
                 is written back to your device. This can happen automatically —
                 for example when a memory is created or when you open the Memory
@@ -94,13 +96,15 @@ export default function PrivacyPageContent() {
             <LegalSection title="On-Device Memory">
               <p className="mt-3">
                 To help your AI tools recall earlier context, Fovea can keep a
-                Memory of your past interactions. This Memory is stored only on
-                your device — it is never uploaded to or retained on Fovea&apos;s
-                servers. It may include your questions, answer summaries, the
-                source app, website URL, and title of the context you were
-                viewing, on-screen selections, gaze signals, screenshots,
+                Memory of your past interactions. The Memory database and its
+                media are stored on your device and are not retained on
+                Fovea&apos;s servers. It may include your questions, answer
+                summaries, the source app, website URL, and title of the context
+                you were viewing, on-screen selections, gaze signals, screenshots,
                 automatically generated tags, and locally computed search
-                embeddings.
+                embeddings. As described above, short text and metadata excerpts
+                may be relayed in real time to organize and index your Memory, but
+                are not stored on our servers.
               </p>
               <p className="mt-2">
                 Memory is on by default, and the app explains it when you first
@@ -117,8 +121,10 @@ export default function PrivacyPageContent() {
                 including their screenshots and source pages — and will send them
                 to its own AI provider under that provider&apos;s terms. This
                 happens only because you set it up; Fovea&apos;s servers are not
-                involved in this transfer, and the connector is read-only and
-                exposes only memories you have marked visible.
+                involved in this transfer. The connector runs locally, exposes
+                only memories you have marked visible, can perform local actions
+                such as soft-deleting a memory when your AI client asks it to, and
+                keeps a local log of its own access on your device.
               </p>
             </LegalSection>
 
