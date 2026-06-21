@@ -148,7 +148,7 @@ export default function PrivacyPageContent() {
                 prompt content on its servers after processing.
               </p>
               <p className="mt-2">Fovea does not use your content to train its own models.</p>
-              <p className="mt-2">We do not track your browsing history.</p>
+              <p className="mt-2">We do not collect or retain your browsing history on our servers.</p>
               <p className="mt-2">We do not sell your data or share it with third parties for advertising.</p>
             </LegalSection>
 

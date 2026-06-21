@@ -35,7 +35,7 @@ Fovea 近几个月在客户端 + 后端上线了 **Memory 层** 和 **MCP 连接
 
 **关键事实(已核代码,见 §3):Fovea 服务端对 Memory 内容零接收、零留存;外泄只在用户主动装 MCP 后发生,且 Fovea 服务器全程不在链路里。** 因此 Memory 属于 (b),MCP 外泄属于 (c)——都**不是** (a)。一旦用 (a)/(b)/(c) 这把尺子复核,绝大多数"必须改"的结论都站不住,真正要动的收敛到很小。
 
-> 例:"We do not track your browsing history" 一开始被判"假"。但来源 URL 是 (b) 本机、事件驱动、Fovea 从不接收——所以这句**可辩护,予以保留**。这就是这把尺子的作用。
+> 例:"We do not track your browsing history" 一开始被判"假"。但来源 URL 是 (b) 本机、事件驱动、Fovea 从不接收——所以最终只把它收窄成 "We do not collect or retain your browsing history on our servers." 这就是这把尺子的作用。
 
 ---
 
@@ -91,7 +91,7 @@ Fovea 近几个月在客户端 + 后端上线了 **Memory 层** 和 **MCP 连接
 
 | 没动 | 为什么 |
 |---|---|
-| "We do not track your browsing history" | (b) 本机、事件驱动、Fovea 不接收 → 可辩护。新增的 On-Device Memory 段已讲清"本机/你掌控",二者不冲突。删它=无谓退让。 |
+| "We do not collect or retain your browsing history on our servers" | (b) 本机、事件驱动、Fovea 不接收 → 服务端限定后更准确。新增的 On-Device Memory 段已讲清"本机/你掌控",二者不冲突。 |
 | 服务端各项声明("immediately discarded / on our servers" 等) | 代码核实属实(后端零留存)。`on our servers` 限定词是 load-bearing 的,动它会削弱准确声明。 |
 | ToS §3(license "solely for providing the Services")、§7(第三方 AI) | 复核为不虚假:§3 是窄授权、未声称服务端存内容;§7 描述 Fovea 自己发的中转。连接器是 (c) 用户导出,§7 没否认它。 |
 | Retention 表新增"公司留存"行 | 全是 (b) 本机数据;加进"公司留存"反而误导成 Fovea 持有。顶多可微调现有本机行(本次未做,留待文案统一)。 |
