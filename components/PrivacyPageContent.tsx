@@ -23,7 +23,7 @@ export default function PrivacyPageContent() {
           <h1 className="text-3xl font-semibold tracking-tight text-[#111315] sm:text-4xl">
             Privacy Policy
           </h1>
-          <p className="mt-2 text-sm text-[#6A756E]">Last updated: April 2026</p>
+          <p className="mt-2 text-sm text-[#6A756E]">Last updated: June 2026</p>
 
           <div className="mt-10 space-y-8 text-[15px] leading-7">
             <LegalSection title="Introduction">
@@ -47,10 +47,22 @@ export default function PrivacyPageContent() {
                 data are stored on our servers after processing.
               </p>
               <p className="mt-2">
-                Your device may store a local session history — including audio,
-                screenshots, and generated prompts — until you choose to delete
-                it. This local data is not automatically uploaded to our servers
+                Your device may store a local session history and an on-device
+                Memory — including audio, screenshots, and generated prompts —
+                until you choose to delete it. Your audio, screenshots, and saved
+                prompts stay on your device and are never uploaded to our servers
                 unless you explicitly re-submit a previous request.
+              </p>
+              <p className="mt-2">
+                To organize and index your Memory so it can be searched, short
+                text excerpts derived from it (such as your question, the answer
+                summary, and tags — never your audio, screenshots, or files) may
+                be sent in real time to our processing relay and third-party AI
+                providers, then immediately discarded; the resulting search index
+                is written back to your device. This can happen automatically —
+                for example when a memory is created or when you open the Memory
+                view — not only when you re-submit a request. We do not retain
+                this content on our servers. See &quot;On-Device Memory&quot; below.
               </p>
 
               <h3 className="mt-4 font-semibold text-[#111315]">Account Information</h3>
@@ -76,6 +88,37 @@ export default function PrivacyPageContent() {
                 Services, including device type, app version, and performance
                 metrics. This data is used to improve the Services and is not
                 linked to your prompt content.
+              </p>
+            </LegalSection>
+
+            <LegalSection title="On-Device Memory">
+              <p className="mt-3">
+                To help your AI tools recall earlier context, Fovea can keep a
+                Memory of your past interactions. This Memory is stored only on
+                your device — it is never uploaded to or retained on Fovea&apos;s
+                servers. It may include your questions, answer summaries, the
+                source app, website URL, and title of the context you were
+                viewing, on-screen selections, gaze signals, screenshots,
+                automatically generated tags, and locally computed search
+                embeddings.
+              </p>
+              <p className="mt-2">
+                Memory is on by default, and the app explains it when you first
+                set up Fovea. Because this data lives on your device, you control
+                it directly: you can pause it, hide or delete individual items,
+                block specific apps or websites, or clear all of it at any time
+                from within the app.
+              </p>
+              <p className="mt-2">
+                Memory Connector — Fovea offers an optional connector that runs
+                locally on your Mac and lets an AI client you choose read the
+                memories you have not hidden. If you install this connector and
+                connect your own AI client, that client can read those memories —
+                including their screenshots and source pages — and will send them
+                to its own AI provider under that provider&apos;s terms. This
+                happens only because you set it up; Fovea&apos;s servers are not
+                involved in this transfer, and the connector is read-only and
+                exposes only memories you have marked visible.
               </p>
             </LegalSection>
 
@@ -139,6 +182,34 @@ export default function PrivacyPageContent() {
               <p className="mt-3">Microphone — Required for voice input.</p>
               <p className="mt-2">Accessibility — Required to read content from your active applications and deliver results to AI tools.</p>
               <p className="mt-2">Screen Recording — Required to capture screen context for your prompts.</p>
+            </LegalSection>
+
+            <LegalSection title="Your Rights and Choices">
+              <p className="mt-3">
+                Your Memory and controls — Your Memory is stored on your device,
+                so you control it directly: you can pause capture, hide individual
+                items, block specific apps or websites, and permanently delete all
+                of it from within the app. Fovea does not hold a server-side copy
+                of your Memory content to retrieve or delete on your behalf.
+              </p>
+              <p className="mt-2">
+                Your account information — For the limited information we do hold
+                on our servers — your email address and usage metrics — you may
+                request access to it, request its deletion, or ask us to stop
+                processing it, subject to legal and billing retention
+                requirements.
+              </p>
+              <p className="mt-2">
+                Depending on where you live, you may have additional rights under
+                laws such as the GDPR (EU, EEA, and UK) or the CCPA/CPRA
+                (California), including the right to access and delete your
+                personal information. Fovea does not sell your personal data. To
+                exercise any of these rights, contact us through our{" "}
+                <Link href="/feedback" className="font-semibold text-[#0D8F69] hover:underline">
+                  feedback page
+                </Link>
+                .
+              </p>
             </LegalSection>
 
             <LegalSection title="How We Secure Your Information">

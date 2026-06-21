@@ -23,7 +23,7 @@ export default function TermsPageContent() {
           <h1 className="text-3xl font-semibold tracking-tight text-[#111315] sm:text-4xl">
             Terms of Service
           </h1>
-          <p className="mt-2 text-sm text-[#6A756E]">Last updated: April 2026</p>
+          <p className="mt-2 text-sm text-[#6A756E]">Last updated: June 2026</p>
 
           <div className="mt-10 space-y-8 text-[15px] leading-7">
             <LegalSection title="1. Acceptance of Terms">
@@ -65,6 +65,13 @@ export default function TermsPageContent() {
                 active workspace and assembles it into prompts for AI tools. The
                 Software is currently in beta. Features may change, and the
                 service may be interrupted without prior notice.
+              </p>
+              <p className="mt-2">
+                Fovea can also keep an optional on-device Memory of your past
+                interactions and, if you choose, let external AI tools you connect
+                read it through an optional local connector. These features are
+                described in our Privacy Policy, and you can disable or delete your
+                Memory at any time.
               </p>
               <p className="mt-2">
                 We grant you a revocable, non-exclusive, non-transferable,
