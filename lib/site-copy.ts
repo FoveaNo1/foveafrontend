@@ -10,9 +10,9 @@ const siteCopy = {
     },
     metadata: {
       home: {
-        title: "Fovea - Speak. Capture. Deliver. All in one.",
+        title: "Fovea — Your on-device memory layer for AI | Speak, capture, deliver",
         description:
-          "Fovea is a cross-app multimodal interaction system for the AI era: speak, capture text and image materials, and deliver once to the AI tools you already use.",
+          "Fovea turns one hotkey into voice, text, and screenshots dropped into whatever AI tool you use — then remembers it all locally so Claude Code, Codex, and your other AI tools can recall your past work. Cross-AI memory that compounds, stored on your device, never on our servers.",
       },
       download: {
         title: "Fovea - Beta Downloads",
