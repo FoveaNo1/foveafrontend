@@ -122,9 +122,10 @@ export default function PrivacyPageContent() {
                 to its own AI provider under that provider&apos;s terms. This
                 happens only because you set it up; Fovea&apos;s servers are not
                 involved in this transfer. The connector runs locally, exposes
-                only memories you have marked visible, can perform local actions
-                such as soft-deleting a memory when your AI client asks it to, and
-                keeps a local log of its own access on your device.
+                the memories currently visible to it (those you have not hidden or
+                deleted), can perform local actions such as soft-deleting a memory
+                when your AI client asks it to, and keeps a local log of its own
+                access on your device.
               </p>
             </LegalSection>
 

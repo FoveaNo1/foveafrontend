@@ -21,7 +21,7 @@ Fovea 近几个月在客户端 + 后端上线了 **Memory 层** 和 **MCP 连接
 
 涉及的两个新功能:
 - **Memory(本机记忆)**:用户用 Fovea(Quick Answer / VoiceFlow)时,会把"这次问了什么 / 答案摘要 / 当时所在 App·网址·标题 / 截图 / gaze 注视点 / 衍生标签 / 本地向量"存进**本机** SQLite,供日后跨 AI 召回。默认开启(opt-out),onboarding 有披露。
-- **MCP 连接器**(公开仓 `hellofovea/fovea-memory-mcp`):一个**本机只读** stdio server,用户**主动**把它装进自己的 AI 客户端(Claude Code / Codex / Claude Desktop)后,该客户端可读到标记为可见的记忆,并发给它自己的模型厂商。
+- **MCP 连接器**(公开仓 `hellofovea/fovea-memory-mcp`):一个**本机** stdio server,用户**主动**把它装进自己的 AI 客户端(Claude Code / Codex / Claude Desktop)后,该客户端可读到**未隐藏(默认即对 MCP 可见)**的记忆,并发给它自己的模型厂商;连接器还能本地 soft-delete 记忆、写本机审计日志(故**非只读**,见 §3/§4)。
 
 ---
 
@@ -70,7 +70,7 @@ Fovea 近几个月在客户端 + 后端上线了 **Memory 层** 和 **MCP 连接
 
 3. **新增 `On-Device Memory` 段**(放在 "Information We Collect" 之后,独立成节,**不**放进"我们收集"里)
    为什么不是"零披露所以必须补":本机存储其实已被旧 para 2 + Retention 行以 "local session history" 覆盖过。但旧文案只列了"audio/screenshots/prompts",**漏了** source URL/gaze/选区/标签/embeddings,且没讲它是**默认开、持久、可控**。所以这是**完整性/清晰度**补充,框定为 (b) 本机+用户掌控,并把 **Memory Connector** 作为 (c) 用户自助导出在此中性说明。
-   *(rev2 已修)* 连接器**不写 "read-only"**(同事 P1#2:`forget_fovea_memory` 会本地 soft-delete、且写 `audit.sqlite`);改为"runs locally、只暴露你标记可见的、可执行本地动作(如被调用时 soft-delete 一条记忆)、在本机留访问日志、Fovea 服务器不在链路"。
+   *(rev2 已修)* 连接器**不写 "read-only"**(同事 P1#2:`forget_fovea_memory` 会本地 soft-delete、且写 `audit.sqlite`);改为"runs locally、只暴露**未隐藏/当前对 MCP 可见**的记忆(默认可见,非逐条手动标记)、可执行本地动作(如被调用时 soft-delete 一条记忆)、在本机留访问日志、Fovea 服务器不在链路"。
    **红线**:全段不得出现 "we collect Memory" / "we store your Memory",也不得进 "Sharing With Others"——否则反把准确文档改成不准确。
 
 4. **新增 `Your Rights and Choices` 段**(放在 "Permissions We Request" 之后)
