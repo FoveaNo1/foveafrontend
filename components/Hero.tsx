@@ -49,7 +49,7 @@ export default function Hero({ downloadHref }: HeroProps) {
               <span className="text-sm font-semibold tracking-tight">Fovea</span>
             </Link>
             <nav className="hidden items-center gap-6 text-sm font-medium text-[#5E6861] md:flex">
-              <a href="#guide" className="transition hover:text-[#111315]">How it works</a>
+              <a href="#memory" className="transition hover:text-[#111315]">Memory</a>
               <a href="#features" className="transition hover:text-[#111315]">Features</a>
               <Link href="/pricing" className="transition hover:text-[#111315]">Pricing</Link>
             </nav>
