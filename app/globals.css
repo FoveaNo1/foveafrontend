@@ -334,3 +334,14 @@ body {
 /* ── Marquee ── */
 @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 .marquee-track { animation: marquee 38s linear infinite; }
+
+/* ── Memory section ── */
+@keyframes memOrbit { to { transform: rotate(360deg); } }
+@keyframes memSpin  { to { transform: rotate(360deg); } }
+@keyframes memDash  { to { stroke-dashoffset: -48; } }
+.mem-orbit { transform-box: view-box; transform-origin: 180px 154px; animation: memOrbit 7s linear infinite; }
+.mem-spin  { transform-box: view-box; transform-origin: 180px 154px; animation: memSpin 6s linear infinite; }
+.mem-dash  { stroke-dasharray: 6 7; animation: memDash 1.4s linear infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .mem-orbit, .mem-spin, .mem-dash { animation: none; }
+}

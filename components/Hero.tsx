@@ -1,5 +1,3 @@
-'use client';
-
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -51,7 +49,7 @@ export default function Hero({ downloadHref }: HeroProps) {
               <span className="text-sm font-semibold tracking-tight">Fovea</span>
             </Link>
             <nav className="hidden items-center gap-6 text-sm font-medium text-[#5E6861] md:flex">
-              <a href="#guide" className="transition hover:text-[#111315]">How it works</a>
+              <a href="#memory" className="transition hover:text-[#111315]">Memory</a>
               <a href="#features" className="transition hover:text-[#111315]">Features</a>
               <Link href="/pricing" className="transition hover:text-[#111315]">Pricing</Link>
             </nav>
@@ -84,7 +82,7 @@ export default function Hero({ downloadHref }: HeroProps) {
             <span className="text-[#4F5B54]">All in one.</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-[#4F5B54] sm:text-xl">
-            Press a hotkey. Speak your intent, grab text, snap a screenshot — Fovea packages it all and drops it into wherever you&apos;re working.
+            Press a hotkey. Speak your intent, grab text, snap a screenshot — Fovea packages it all, drops it into wherever you&apos;re working, and remembers it so any AI tool can recall it later.
           </p>
 
           {/* Demo: same capture → structured deliver */}
