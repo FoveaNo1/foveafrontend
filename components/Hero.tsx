@@ -8,6 +8,7 @@ import {
   Sparkles,
   TextCursorInput,
 } from 'lucide-react';
+import ProductShowcase from './ProductShowcase';
 
 type HeroProps = {
   downloadHref: string;
@@ -69,6 +70,8 @@ export default function Hero({ downloadHref }: HeroProps) {
             Sign in
           </Link>
         </header>
+
+        <ProductShowcase />
 
         {/* Centered hero */}
         <div className="mx-auto max-w-5xl py-24 text-center md:py-32">

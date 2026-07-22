@@ -1,105 +1,245 @@
-import { NextResponse } from 'next/server';
-import { z } from 'zod';
-import { promises as dns } from 'dns';
-import { createClient } from '@supabase/supabase-js';
+import { promises as dns } from "node:dns";
 
-// 开发模式检测：如果没有配置数据库，启用开发模式
-const isDevelopmentMode = !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 
-// 初始化 Supabase 客户端（仅在生产模式）
-const supabase = isDevelopmentMode ? null : createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
-);
+import {
+  WAITLIST_AI_FREQUENCY_VALUES,
+  WAITLIST_ROLE_VALUES,
+  WAITLIST_TOOLS,
+} from "../../../lib/waitlist-options";
+import {
+  isWaitlistProfileTokenConfigured,
+  issueWaitlistProfileToken,
+  verifyWaitlistProfileToken,
+} from "../../../lib/waitlist-profile-token";
 
-const SubscribeSchema = z.object({
-  email: z.string()
-    .min(1, { message: "Email is required" })
-    .email({ message: "Please enter a complete email (e.g., .com, .net)" })
-    .trim(),
-  role: z.string()
-    .min(1, { message: "Please select your role" }),
-  tools: z.array(z.string()).optional(),
-  ai_frequency: z.string().optional(),
-});
+export const runtime = "nodejs";
 
-async function hasValidMxRecord(domain: string): Promise<boolean> {
+const EmailSchema = z
+  .string()
+  .min(1, { message: "Email is required" })
+  .trim()
+  .toLowerCase()
+  .email({ message: "Please enter a complete email (e.g., .com, .net)" })
+  .max(254);
+
+const ToolsSchema = z
+  .array(z.enum(WAITLIST_TOOLS))
+  .max(WAITLIST_TOOLS.length)
+  .transform((tools) => [...new Set(tools)]);
+
+const SubscribeSchema = z
+  .object({
+    email: EmailSchema,
+    role: z.enum(WAITLIST_ROLE_VALUES).optional(),
+    tools: ToolsSchema.optional(),
+    ai_frequency: z.enum(WAITLIST_AI_FREQUENCY_VALUES).optional(),
+  })
+  .strict();
+
+const ProfileSchema = z
+  .object({
+    profile_token: z.string().min(1).max(2048),
+    role: z.enum(WAITLIST_ROLE_VALUES),
+    tools: ToolsSchema.optional(),
+    ai_frequency: z.enum(WAITLIST_AI_FREQUENCY_VALUES).optional(),
+  })
+  .strict();
+
+let adminSupabaseClient: SupabaseClient | null = null;
+let hasLoggedMissingProfileConfig = false;
+
+function getAdminSupabaseClient() {
+  const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !serviceRoleKey) return null;
+
+  if (!adminSupabaseClient) {
+    adminSupabaseClient = createClient(url, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+  }
+  return adminSupabaseClient;
+}
+
+async function parseJson(request: Request) {
+  try {
+    return { body: (await request.json()) as unknown, error: null };
+  } catch {
+    return {
+      body: null,
+      error: NextResponse.json({ error: "Invalid JSON body." }, { status: 400 }),
+    };
+  }
+}
+
+async function hasValidMxRecord(domain: string) {
   try {
     const mxRecords = await dns.resolveMx(domain);
-    return mxRecords && mxRecords.length > 0;
+    return mxRecords.length > 0;
   } catch {
     return false;
   }
 }
 
 export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-    const result = SubscribeSchema.safeParse(body);
+  const parsed = await parseJson(request);
+  if (parsed.error) return parsed.error;
 
-    if (!result.success) {
-      return NextResponse.json({ error: result.error.issues?.[0]?.message || "Invalid input" }, { status: 400 });
-    }
+  const result = SubscribeSchema.safeParse(parsed.body);
+  if (!result.success) {
+    return NextResponse.json(
+      { error: result.error.issues[0]?.message || "Invalid input" },
+      { status: 400 },
+    );
+  }
 
-    const { email, role, tools, ai_frequency } = result.data;
-    const domain = email.split('@')[1].toLowerCase();
-
-    // 获取用户地理位置信息（仅收集国家和城市，用于了解用户分布）
-    // Vercel 提供的地理位置信息（自动注入到headers）
-    const country = request.headers.get('x-vercel-ip-country') || null;
-    const city = request.headers.get('x-vercel-ip-city') || null;
-    
-    // 注意：我们不存储IP地址，只保留国家/城市级别的位置信息
-    // 用途：了解用户主要来自哪些地区，优先支持这些市场
-
-    // 🚧 开发模式：模拟成功提交（不连接数据库）
-    if (isDevelopmentMode) {
-      console.log('🧪 [开发模式] 表单提交测试:');
-      console.log({
-        email,
-        role,
-        tools: tools || [],
-        ai_frequency: ai_frequency || 'not specified',
-        country: country || 'localhost',
-        city: city || 'localhost'
-      });
-      console.log('✅ 表单验证通过！（开发模式，未写入数据库）');
-      return NextResponse.json({ message: "Success (Development Mode)" }, { status: 200 });
-    }
-
-    // --- 1. MX 记录检查 ---
-    const isValidDomain = await hasValidMxRecord(domain);
-    if (!isValidDomain) {
+  const { email, role, tools, ai_frequency } = result.data;
+  const supabase = getAdminSupabaseClient();
+  if (!supabase) {
+    if (process.env.NODE_ENV === "development") {
+      console.info("Waitlist submission validated in development mode; no database is configured.");
       return NextResponse.json(
-        { error: "This domain has no valid mail server. Check for typos." },
-        { status: 400 }
+        {
+          message: "Success (Development Mode)",
+          profile_token: null,
+          profile_available: false,
+          development_mode: true,
+        },
+        { status: 200 },
       );
     }
+    return NextResponse.json(
+      { error: "Waitlist is temporarily unavailable. Please try again later." },
+      { status: 503 },
+    );
+  }
 
-    // --- 2. 写入数据（依赖 UNIQUE 约束去重，无需先查询） ---
-    const { error: insertError } = await supabase!
-      .from('leads')
-      .insert([{
-        email: email,
-        role: role,
-        tools: tools || null,
+  const domain = email.split("@")[1];
+  if (!(await hasValidMxRecord(domain))) {
+    return NextResponse.json(
+      { error: "This domain has no valid mail server. Check for typos." },
+      { status: 400 },
+    );
+  }
+
+  const country = request.headers.get("x-vercel-ip-country") || null;
+  const city = request.headers.get("x-vercel-ip-city") || null;
+
+  try {
+    const { error: insertError } = await supabase.from("leads").insert([
+      {
+        email,
+        role: role || null,
+        tools: tools?.length ? tools : null,
         ai_frequency: ai_frequency || null,
-        country: country,
-        city: city
-      }]);
+        country,
+        city,
+      },
+    ]);
 
     if (insertError) {
-      // PostgreSQL unique violation: email already exists
-      if (insertError.code === '23505') {
+      if (insertError.code === "23505") {
         return NextResponse.json({ error: "You are already on the waitlist!" }, { status: 409 });
       }
       throw insertError;
     }
 
-    return NextResponse.json({ message: "Success" }, { status: 200 });
+    let profileToken: string | null = null;
+    const profileConfigured = Boolean(
+      getAdminSupabaseClient() && isWaitlistProfileTokenConfigured(),
+    );
+    if (!profileConfigured && process.env.NODE_ENV === "production" && !hasLoggedMissingProfileConfig) {
+      console.error(
+        "Waitlist questionnaire is disabled: configure SUPABASE_SERVICE_ROLE_KEY and a 32-byte WAITLIST_PROFILE_SECRET.",
+      );
+      hasLoggedMissingProfileConfig = true;
+    }
 
+    if (profileConfigured) {
+      try {
+        profileToken = issueWaitlistProfileToken(email);
+      } catch (tokenError) {
+        console.error("Waitlist questionnaire token error:", tokenError);
+      }
+    }
+
+    return NextResponse.json(
+      {
+        message: "Success",
+        profile_token: profileToken,
+        profile_available: Boolean(profileToken),
+      },
+      { status: 200, headers: { "Cache-Control": "no-store" } },
+    );
   } catch (error) {
-    console.error('Database/API Error:', error);
+    console.error("Waitlist database error:", error);
     return NextResponse.json({ error: "System error, please try again." }, { status: 500 });
+  }
+}
+
+export async function PATCH(request: Request) {
+  const parsed = await parseJson(request);
+  if (parsed.error) return parsed.error;
+
+  const result = ProfileSchema.safeParse(parsed.body);
+  if (!result.success) {
+    return NextResponse.json(
+      { error: result.error.issues[0]?.message || "Invalid input" },
+      { status: 400 },
+    );
+  }
+
+  if (!isWaitlistProfileTokenConfigured()) {
+    return NextResponse.json(
+      { error: "Your signup is saved, but the questionnaire is temporarily unavailable." },
+      { status: 503 },
+    );
+  }
+
+  const email = verifyWaitlistProfileToken(result.data.profile_token);
+  if (!email) {
+    return NextResponse.json(
+      { error: "This questionnaire link has expired. Your waitlist signup is still saved." },
+      { status: 401 },
+    );
+  }
+
+  const supabase = getAdminSupabaseClient();
+  if (!supabase) {
+    return NextResponse.json(
+      { error: "Your signup is saved, but the questionnaire is temporarily unavailable." },
+      { status: 503 },
+    );
+  }
+
+  try {
+    const { data, error: updateError } = await supabase
+      .from("leads")
+      .update({
+        role: result.data.role,
+        tools: result.data.tools?.length ? result.data.tools : null,
+        ai_frequency: result.data.ai_frequency || null,
+      })
+      .eq("email", email)
+      .select("id");
+
+    if (updateError) throw updateError;
+    if (!data?.length) {
+      return NextResponse.json({ error: "Waitlist signup not found." }, { status: 404 });
+    }
+    if (data.length !== 1) {
+      throw new Error("Waitlist questionnaire update affected an unexpected number of rows.");
+    }
+
+    return NextResponse.json({ message: "Preferences saved." }, { status: 200 });
+  } catch (error) {
+    console.error("Waitlist questionnaire error:", error);
+    return NextResponse.json(
+      { error: "Your signup is saved, but we could not save these answers." },
+      { status: 500 },
+    );
   }
 }
