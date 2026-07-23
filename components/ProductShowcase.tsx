@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent, type MouseEvent } from "react";
 import Image from "next/image";
 import { ArrowRight, Check, CheckCircle2, Loader2, Play } from "lucide-react";
+
+import DemoModal from "./DemoModal";
 
 import {
   WAITLIST_AI_FREQUENCIES,
@@ -25,6 +27,7 @@ type RequestStatus = "idle" | "submitting" | "error";
 
 export default function ProductShowcase() {
   const [step, setStep] = useState<Step>("closed");
+  const [demoOpen, setDemoOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [joinStatus, setJoinStatus] = useState<RequestStatus>("idle");
   const [message, setMessage] = useState("");
@@ -40,6 +43,7 @@ export default function ProductShowcase() {
   const joinRequestRef = useRef<AbortController | null>(null);
   const joinButtonRef = useRef<HTMLButtonElement>(null);
   const emailInputRef = useRef<HTMLInputElement>(null);
+  const lastDemoTriggerRef = useRef<HTMLButtonElement | null>(null);
   const previousStepRef = useRef<Step>(step);
 
   useEffect(() => {
@@ -83,6 +87,25 @@ export default function ProductShowcase() {
     setMessage("");
     setDevelopmentOnly(false);
     resetQuestions();
+  }
+
+  function openDemo(event: MouseEvent<HTMLButtonElement>) {
+    lastDemoTriggerRef.current = event.currentTarget;
+    setDemoOpen(true);
+  }
+
+  function closeDemo() {
+    setDemoOpen(false);
+    window.requestAnimationFrame(() => lastDemoTriggerRef.current?.focus());
+  }
+
+  function continueFromDemo() {
+    setDemoOpen(false);
+    if (step === "email") {
+      window.requestAnimationFrame(() => emailInputRef.current?.focus());
+      return;
+    }
+    setStep("email");
   }
 
   async function handleJoin(event: FormEvent<HTMLFormElement>) {
@@ -189,10 +212,11 @@ export default function ProductShowcase() {
   }
 
   return (
-    <section
-      className="relative left-1/2 isolate mt-8 w-[calc(100vw-2.5rem)] -translate-x-1/2 overflow-hidden text-[#111315] sm:w-[calc(100vw-3rem)] lg:w-[calc(100vw-5rem)]"
-      id="waitlist"
-    >
+    <>
+      <section
+        className="relative left-1/2 isolate mt-8 w-[calc(100vw-2.5rem)] -translate-x-1/2 overflow-hidden text-[#111315] sm:w-[calc(100vw-3rem)] lg:w-[calc(100vw-5rem)]"
+        id="waitlist"
+      >
       <Image
         src="/product/fovea-hero-with-logo.png"
         alt="Fovea camera mounted on a monitor"
@@ -221,13 +245,14 @@ export default function ProductShowcase() {
               >
                 Join waitlist
               </button>
-              <a
-                href="#features"
+              <button
+                type="button"
+                onClick={openDemo}
                 className="inline-flex h-14 w-full items-center justify-center gap-3 rounded-full bg-[#0D7A5C] px-7 text-lg font-semibold text-white shadow-[0_12px_34px_rgba(18,167,125,0.18)] transition hover:bg-[#096F53]"
               >
-                Watch intro
+                Watch demo · 1:40
                 <Play className="h-5 w-5 fill-current" />
-              </a>
+              </button>
             </div>
           )}
 
@@ -281,19 +306,14 @@ export default function ProductShowcase() {
                   {message}
                 </p>
               )}
-              <a
-                href="#features"
-                aria-disabled={joinStatus === "submitting"}
-                tabIndex={joinStatus === "submitting" ? -1 : undefined}
-                onClick={(event) => {
-                  if (joinStatus === "submitting") {
-                    event.preventDefault();
-                  }
-                }}
+              <button
+                type="button"
+                disabled={joinStatus === "submitting"}
+                onClick={openDemo}
                 className={`mt-2 inline-flex min-h-11 items-center px-1 text-sm font-medium text-[#5E6861] transition hover:text-[#111315] ${joinStatus === "submitting" ? "pointer-events-none opacity-50" : ""}`}
               >
-                Watch intro
-              </a>
+                Watch demo · 1:40
+              </button>
             </>
           )}
 
@@ -460,9 +480,13 @@ export default function ProductShowcase() {
                 </div>
               </div>
               <div className="mt-2 flex flex-wrap items-center gap-2">
-                <a href="#features" className="inline-flex min-h-11 items-center px-1 text-sm font-semibold text-[#0D7A5C] hover:text-[#096F53]">
-                  Watch intro
-                </a>
+                <button
+                  type="button"
+                  onClick={openDemo}
+                  className="inline-flex min-h-11 items-center px-1 text-sm font-semibold text-[#0D7A5C] hover:text-[#096F53]"
+                >
+                  Watch demo · 1:40
+                </button>
                 <button type="button" onClick={closeForm} className="inline-flex min-h-11 items-center px-2 text-sm font-medium text-[#5E6861] hover:text-[#111315]">
                   Done
                 </button>
@@ -471,6 +495,13 @@ export default function ProductShowcase() {
           )}
         </div>
       </div>
-    </section>
+      </section>
+      <DemoModal
+        open={demoOpen}
+        onRequestClose={closeDemo}
+        ctaLabel={step === "closed" ? "Join waitlist" : step === "email" ? "Continue joining" : undefined}
+        onCtaClick={step === "closed" || step === "email" ? continueFromDemo : undefined}
+      />
+    </>
   );
 }
