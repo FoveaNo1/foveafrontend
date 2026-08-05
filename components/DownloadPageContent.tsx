@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import {
+  ArrowRight,
   ArrowLeft,
   Chrome,
   Cpu,
@@ -10,6 +11,7 @@ import {
   Monitor,
   RefreshCcw,
   ShieldCheck,
+  Sparkles,
   Smartphone,
 } from "lucide-react";
 import SiteFooter from "./SiteFooter";
@@ -110,6 +112,33 @@ export default function DownloadPageContent() {
               Add to Chrome
             </a>
           </div>
+        </section>
+
+        <section className="mt-4 flex flex-col gap-5 rounded-[24px] border border-[#CDE4D8] bg-[#EAF8F2] p-6 sm:flex-row sm:items-center sm:justify-between sm:p-7">
+          <div className="flex items-start gap-4">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-[#0D8F69] shadow-sm">
+              <Sparkles className="h-5 w-5" aria-hidden="true" />
+            </span>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#0D775B]">
+                Invite-only Beta
+              </p>
+              <h2 className="mt-2 text-xl font-semibold tracking-tight text-[#111315]">
+                Beta and eye-tracking downloads
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-[#52665C]">
+                Already invited? Download Fovea Beta, FoveaGaze, or FoveaGazeCollect.
+              </p>
+            </div>
+          </div>
+
+          <Link
+            href="/download/beta"
+            className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#0D775B] px-5 text-sm font-semibold text-white transition hover:bg-[#096348]"
+          >
+            View Beta downloads
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
         </section>
 
         {/* ── Roadmap ── */}

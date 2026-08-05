@@ -80,7 +80,7 @@ export default function Hero({ downloadHref }: HeroProps) {
             BETA FOR MACOS
           </span>
           <h1 className="mx-auto mt-6 max-w-5xl text-5xl font-semibold leading-[1.05] tracking-tight text-[#111315] sm:text-6xl lg:text-7xl">
-            <span className="whitespace-nowrap">Speak. Capture. <span className="text-[#12A77D]">Deliver.</span></span>
+            <span className="sm:whitespace-nowrap">Speak. Capture. <span className="text-[#12A77D]">Deliver.</span></span>
             <br />
             <span className="text-[#4F5B54]">All in one.</span>
           </h1>
@@ -89,8 +89,8 @@ export default function Hero({ downloadHref }: HeroProps) {
           </p>
 
           {/* Demo: same capture → structured deliver */}
-          <div className="mx-auto mt-12 grid max-w-6xl gap-5 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
-            <div className="rounded-[22px] border border-[#DDE4DC] bg-white p-5 text-left shadow-[0_16px_50px_rgba(37,48,41,0.06)] sm:p-6">
+          <div className="mx-auto mt-12 grid min-w-0 max-w-6xl gap-5 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
+            <div className="min-w-0 overflow-hidden rounded-[22px] border border-[#DDE4DC] bg-white p-5 text-left shadow-[0_16px_50px_rgba(37,48,41,0.06)] sm:p-6">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#0D8F69]">Parallel capture</p>
                 <span className="inline-flex items-center gap-2 rounded-full bg-[#E9F8F2] px-3 py-1 text-[11px] font-semibold text-[#0D8F69]">
@@ -195,7 +195,7 @@ export default function Hero({ downloadHref }: HeroProps) {
               </span>
             </div>
 
-            <div className="rounded-[22px] border border-[#1F2421] bg-[#101413] p-5 text-left text-white shadow-[0_18px_60px_rgba(16,20,19,0.18)] sm:p-6">
+            <div className="min-w-0 overflow-hidden rounded-[22px] border border-[#1F2421] bg-[#101413] p-5 text-left text-white shadow-[0_18px_60px_rgba(16,20,19,0.18)] sm:p-6">
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8CE8CB]">Deliver</p>
               <p className="mt-4 text-xl font-semibold leading-7 text-white">Structured result from the same capture.</p>
 

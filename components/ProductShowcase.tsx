@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type FormEvent, type MouseEvent } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowRight, Check, CheckCircle2, Loader2, Play } from "lucide-react";
 
 import DemoModal from "./DemoModal";
@@ -253,6 +254,13 @@ export default function ProductShowcase() {
                 Watch demo · 1:40
                 <Play className="h-5 w-5 fill-current" />
               </button>
+              <Link
+                href="/download/beta"
+                className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-[#C9D8CF] bg-white/90 px-5 text-sm font-semibold text-[#30443A] shadow-[0_10px_28px_rgba(37,48,41,0.06)] backdrop-blur transition hover:border-[#9FC4B1] hover:bg-white"
+              >
+                Already invited? Get Beta apps
+                <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden="true" />
+              </Link>
             </div>
           )}
 
