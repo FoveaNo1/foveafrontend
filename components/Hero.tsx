@@ -84,7 +84,10 @@ export default function Hero({ downloadHref }: HeroProps) {
             <br />
             <span className="text-[#4F5B54]">All in one.</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-[#4F5B54] sm:text-xl">
+          <p className="mx-auto mt-6 max-w-3xl text-xl font-semibold tracking-[-0.02em] text-[#26332C] sm:text-2xl">
+            Turn your intent into input for any AI.
+          </p>
+          <p className="mx-auto mt-3 max-w-2xl text-base leading-7 text-[#4F5B54] sm:text-lg">
             Press a hotkey. Speak your intent, grab text, snap a screenshot — Fovea packages it all, drops it into wherever you&apos;re working, and remembers it so any AI tool can recall it later.
           </p>
 
