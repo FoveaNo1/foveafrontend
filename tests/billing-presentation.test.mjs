@@ -11,6 +11,7 @@ const { outputText } = ts.transpileModule(source, { compilerOptions: { module: t
 const exports = {};
 vm.runInNewContext(outputText, { exports, Date, Intl });
 const present = exports.billingPresentation;
+const usage = exports.billingUsage;
 const free = { is_pro: false, plan: "free", status_kind: "free", manage_billing_available: false };
 
 test("free account can purchase", () => {
@@ -46,4 +47,27 @@ test("expired subscription can buy again and still see invoice history", () => {
 test("a failed status read does not masquerade as Free or invite another purchase", () => {
   const view = present(null);
   assert.equal(view.plan, "Unavailable"); assert.equal(view.buy, false); assert.equal(view.manage, false);
+});
+
+test("free allowance is a percentage and never rendered as seconds", () => {
+  const view = usage({ ...free, used: 750000, limit: 3000000, remaining: 2250000 });
+  assert.equal(view.summary, "25% used");
+  assert.equal(view.detail, "75% of weekly allowance remaining");
+  assert.equal(view.percent, 25);
+});
+test("paid and trial access remain unlimited despite legacy duration counters", () => {
+  for (const manual_entitlement of [false, true]) {
+    const view = usage({ ...free, is_pro: true, manual_entitlement, used: 1200, limit: 36000 });
+    assert.equal(view.summary, "Unlimited");
+    assert.equal(view.percent, null);
+  }
+});
+test("exhausted weekly allowance never shows negative remaining capacity", () => {
+  const view = usage({ ...free, used: 3100000, limit: 3000000 });
+  assert.equal(view.summary, "100% used");
+  assert.equal(view.detail, "0% of weekly allowance remaining");
+});
+test("missing quota does not claim unused capacity", () => {
+  assert.equal(usage(null).summary, "Unavailable");
+  assert.equal(usage({ ...free, used: 0, limit: 0 }).summary, "Unavailable");
 });
