@@ -16,12 +16,6 @@ type CheckoutResponse = {
 // models/request.go on the Go side). The shape is the contract the Web
 // account page consumes; mac uses the leaner /api/quota/check.
 //
-// Design notes (mirror Go-side comments):
-//   - No raw `subscription_status` / `trial_ends_at` / `pro_expires_at`:
-//     UI consumes only `status_kind`, raw values bypass the derivation
-//     layer and would fork business rules into two repos.
-//   - No `manual_entitlement*` fields: the feature isn't built yet, so
-//     the contract doesn't pretend it exists. Add when DB schema lands.
 export type BillingStatus = {
   is_pro: boolean;
   remaining: number;
@@ -29,11 +23,16 @@ export type BillingStatus = {
   limit: number;
 
   plan: "free" | "pro";
-  status_kind: "free" | "renews" | "pro_until" | "payment_failed";
+  status_kind: "free" | "renews" | "pro_until" | "payment_failed" | "manual_pro";
   status_at?: string;
   cancel_at_period_end: boolean;
   billing_period_end?: string;
   manage_billing_available: boolean;
+  checkout_available?: boolean;
+  payment_action_required?: boolean;
+  manual_entitlement?: boolean;
+  manual_entitlement_reason?: string;
+  manual_entitlement_end?: string;
 };
 
 export function getBackendBaseUrl() {
@@ -126,5 +125,24 @@ export async function getBillingStatus(accessToken: string): Promise<BillingStat
     throw new Error("Billing status was missing from the backend response.");
   }
 
+  return status;
+}
+
+export type CheckoutStatus = {
+  state: "open" | "expired" | "processing" | "syncing" | "active" | "inactive";
+  payment_confirmed: boolean;
+  entitlement_active: boolean;
+};
+
+export async function getCheckoutStatus(accessToken: string, sessionId: string, signal?: AbortSignal): Promise<CheckoutStatus> {
+  const response = await fetch(`${getBackendBaseUrl()}/api/billing/checkout/status?session_id=${encodeURIComponent(sessionId)}`, {
+    headers: { Authorization: `Bearer ${accessToken}` }, cache: "no-store", signal,
+  });
+  const json = await response.json().catch(() => null);
+  if (!response.ok) throw new Error(json?.message || "Unable to verify this checkout. Please try again.");
+  const status = json?.data as CheckoutStatus | undefined;
+  if (!status || !["open", "expired", "processing", "syncing", "active", "inactive"].includes(status.state)) {
+    throw new Error("Unable to verify this checkout. Please try again.");
+  }
   return status;
 }
