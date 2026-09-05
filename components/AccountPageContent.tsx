@@ -11,6 +11,7 @@ import {
   Loader2,
 } from "lucide-react";
 import SiteFooter from "./SiteFooter";
+import { billingPresentation } from "../lib/billing-presentation";
 import {
   createBillingPortal,
   getBillingStatus,
@@ -20,21 +21,6 @@ import {
   getSupabaseBrowserClient,
   isSupabaseBrowserConfigured,
 } from "../lib/supabase-browser";
-
-function formatDate(value?: string) {
-  if (!value) {
-    return null;
-  }
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return null;
-  }
-  return new Intl.DateTimeFormat("en", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(date);
-}
 
 function formatDuration(seconds: number) {
   if (!Number.isFinite(seconds) || seconds <= 0) {
@@ -49,29 +35,6 @@ function formatDuration(seconds: number) {
     return `${hours}h`;
   }
   return `${Math.max(1, minutes)}m`;
-}
-
-function subscriptionLine(quota: BillingStatus | null) {
-  if (!quota) {
-    return "Loading subscription...";
-  }
-
-  const date = formatDate(quota.status_at || quota.billing_period_end);
-  switch (quota.status_kind) {
-    case "renews":
-      return date ? `Renews on ${date}` : "Active subscription";
-    case "pro_until":
-      return date ? `Pro until ${date}` : "Pro remains active for this billing period";
-    case "payment_failed":
-      return "Payment failed - update your card";
-    case "free":
-    default:
-      return "Limited captures and basic features";
-  }
-}
-
-function planLabel(quota: BillingStatus | null) {
-  return quota?.plan === "pro" || quota?.is_pro ? "Pro" : "Free";
 }
 
 export default function AccountPageContent() {
@@ -146,7 +109,8 @@ export default function AccountPageContent() {
   }, []);
 
   const isPro = quota?.plan === "pro" || quota?.is_pro;
-  const isPaymentFailed = quota?.status_kind === "payment_failed";
+  const billing = billingPresentation(quota);
+  const isPaymentFailed = billing.paymentFailed;
   const usagePercent = useMemo(() => {
     if (!quota?.limit) {
       return 0;
@@ -233,7 +197,7 @@ export default function AccountPageContent() {
               <CircleCheck className="h-4 w-4 text-[#0D8F69]" />
             )}
             <span className="text-xs font-medium text-[#111315]">
-              {isQuotaLoading ? "Loading" : planLabel(quota)}
+              {isQuotaLoading ? "Loading" : billing.plan}
             </span>
           </div>
         </section>
@@ -251,39 +215,31 @@ export default function AccountPageContent() {
                 Subscription
               </p>
               <h2 className="mt-1 text-3xl font-semibold text-[#111315]">
-                {isQuotaLoading ? "Checking plan..." : planLabel(quota)}
+                {isQuotaLoading ? "Checking plan..." : billing.plan}
               </h2>
               <p
                 className={`mt-2 text-sm leading-6 ${
                   isPaymentFailed ? "text-[#A43B3B]" : "text-[#5A665F]"
                 }`}
               >
-                {subscriptionLine(quota)}
+                {isQuotaLoading ? "Loading subscription..." : billing.description}
               </p>
             </div>
 
-            {isPro ? (
-              <button
-                type="button"
-                onClick={handleBillingPortal}
-                disabled={
-                  isPortalLoading ||
-                  isQuotaLoading ||
-                  Boolean(quota && !quota.manage_billing_available)
-                }
-                className="inline-flex h-11 items-center rounded-xl border border-[#D8E1DA] bg-white px-5 text-sm font-semibold text-[#111315] transition hover:border-[#AFC2B5] disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {isPortalLoading ? "Opening..." : "Manage billing"}
-              </button>
-            ) : (
-              <Link
-                href="/pricing"
-                className="inline-flex h-11 items-center gap-2 rounded-xl bg-[#111315] px-5 text-sm font-semibold text-white transition hover:bg-[#222]"
-              >
-                Upgrade to Pro
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            )}
+            <div className="flex flex-wrap gap-3">
+              {billing.buy && (
+                <Link href="/checkout" className="inline-flex h-11 items-center gap-2 rounded-xl bg-[#111315] px-5 text-sm font-semibold text-white transition hover:bg-[#222]">
+                  {quota?.manual_entitlement ? "Subscribe to Pro" : "Upgrade to Pro"}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              )}
+              {billing.manage && (
+                <button type="button" onClick={handleBillingPortal} disabled={isPortalLoading || isQuotaLoading}
+                  className="inline-flex h-11 items-center rounded-xl border border-[#D8E1DA] bg-white px-5 text-sm font-semibold text-[#111315] transition hover:border-[#AFC2B5] disabled:cursor-not-allowed disabled:opacity-60">
+                  {isPortalLoading ? "Opening..." : isPaymentFailed ? "Update payment method" : "Manage billing"}
+                </button>
+              )}
+            </div>
           </div>
 
           {billingError && (
@@ -298,7 +254,7 @@ export default function AccountPageContent() {
                 Status
               </p>
               <p className="mt-1 font-semibold text-[#111315]">
-                {isQuotaLoading ? "Loading" : subscriptionLine(quota)}
+                {isQuotaLoading ? "Loading" : billing.description}
               </p>
             </div>
 

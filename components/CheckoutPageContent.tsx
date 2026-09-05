@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Check, Lock, Sparkles, Info } from "lucide-react";
 import SiteFooter from "./SiteFooter";
@@ -30,7 +30,7 @@ const cycleOptions: {
     badgeClass: "bg-[#E9F8F2] text-[#0D8F69]",
     regularPricePerMonth: "$15",
     pricePerMonth: "$9",
-    billedNote: "Billed as one payment of $108 USD",
+    billedNote: "Billed annually at $108 USD",
     regularTotal: "$180",
     total: "$108",
   },
@@ -69,6 +69,7 @@ export default function CheckoutPageContent({
   initialCycle,
   initialNotice,
 }: CheckoutPageContentProps) {
+  const checkoutInFlight = useRef(false);
   const [cycle, setCycle] = useState<BillingCycle>(initialCycle);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [noticeMessage, setNoticeMessage] = useState<string | null>(null);
@@ -81,14 +82,19 @@ export default function CheckoutPageContent({
   }, [initialNotice]);
 
   async function handleCheckout() {
+    if (checkoutInFlight.current) return;
+    checkoutInFlight.current = true;
+    setIsRedirecting(true);
     setNoticeMessage(null);
     setErrorMessage(null);
 
     const supabase = getSupabaseBrowserClient();
     if (!supabase) {
       setErrorMessage(
-        "Supabase auth is not configured yet. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.",
+        "Sign-in is temporarily unavailable. Please try again shortly.",
       );
+      checkoutInFlight.current = false;
+      setIsRedirecting(false);
       return;
     }
 
@@ -98,6 +104,8 @@ export default function CheckoutPageContent({
     } = await supabase.auth.getSession();
 
     if (error) {
+      checkoutInFlight.current = false;
+      setIsRedirecting(false);
       setErrorMessage(error.message);
       return;
     }
@@ -114,6 +122,7 @@ export default function CheckoutPageContent({
       });
       window.location.assign(url);
     } catch (err) {
+      checkoutInFlight.current = false;
       setIsRedirecting(false);
       setErrorMessage(err instanceof Error ? err.message : "Failed to create checkout.");
     }
@@ -207,6 +216,7 @@ export default function CheckoutPageContent({
                           name="billing-cycle"
                           value={option.id}
                           checked={isSelected}
+                          disabled={isRedirecting}
                           onChange={() => setCycle(option.id)}
                           className="h-4 w-4 accent-[#0D8F69]"
                         />
