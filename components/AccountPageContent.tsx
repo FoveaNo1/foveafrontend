@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   AlertCircle,
@@ -11,7 +11,7 @@ import {
   Loader2,
 } from "lucide-react";
 import SiteFooter from "./SiteFooter";
-import { billingPresentation } from "../lib/billing-presentation";
+import { billingPresentation, billingUsage } from "../lib/billing-presentation";
 import {
   createBillingPortal,
   getBillingStatus,
@@ -21,21 +21,6 @@ import {
   getSupabaseBrowserClient,
   isSupabaseBrowserConfigured,
 } from "../lib/supabase-browser";
-
-function formatDuration(seconds: number) {
-  if (!Number.isFinite(seconds) || seconds <= 0) {
-    return "0m";
-  }
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  if (hours > 0 && minutes > 0) {
-    return `${hours}h ${minutes}m`;
-  }
-  if (hours > 0) {
-    return `${hours}h`;
-  }
-  return `${Math.max(1, minutes)}m`;
-}
 
 export default function AccountPageContent() {
   const [email, setEmail] = useState(() =>
@@ -111,12 +96,7 @@ export default function AccountPageContent() {
   const isPro = quota?.plan === "pro" || quota?.is_pro;
   const billing = billingPresentation(quota);
   const isPaymentFailed = billing.paymentFailed;
-  const usagePercent = useMemo(() => {
-    if (!quota?.limit) {
-      return 0;
-    }
-    return Math.min(100, Math.max(0, (quota.used / quota.limit) * 100));
-  }, [quota]);
+  const usage = billingUsage(quota);
 
   async function handleSignOut() {
     const supabase = getSupabaseBrowserClient();
@@ -263,21 +243,17 @@ export default function AccountPageContent() {
                 Usage
               </p>
               <p className="mt-1 font-semibold text-[#111315]">
-                {quota
-                  ? `${formatDuration(quota.used)} used`
-                  : isQuotaLoading
-                    ? "Loading"
-                    : "Unavailable"}
+                {isQuotaLoading ? "Loading" : usage.summary}
               </p>
-              <div className="mt-3 h-2 overflow-hidden rounded-full bg-[#E2E9E3]">
+              {usage.percent !== null && <div className="mt-3 h-2 overflow-hidden rounded-full bg-[#E2E9E3]">
                 <div
                   className="h-full rounded-full bg-[#0D8F69]"
-                  style={{ width: `${usagePercent}%` }}
+                  style={{ width: `${usage.percent}%` }}
                 />
-              </div>
-              {quota && (
+              </div>}
+              {usage.detail && (
                 <p className="mt-2 text-xs text-[#6A756E]">
-                  {formatDuration(quota.remaining)} remaining
+                  {usage.detail}
                 </p>
               )}
             </div>

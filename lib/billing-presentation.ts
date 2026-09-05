@@ -1,5 +1,17 @@
 import type { BillingStatus } from "./billing-client";
 
+export function billingUsage(status: BillingStatus | null) {
+  if (!status) return { summary: "Unavailable", detail: "", percent: null };
+  if (status.is_pro) return { summary: "Unlimited", detail: "Included in your Pro access", percent: null };
+  if (!Number.isFinite(status.limit) || status.limit <= 0 || !Number.isFinite(status.used)) {
+    return { summary: "Unavailable", detail: "", percent: null };
+  }
+  // Free quota is a weekly allowance, not a duration. Pro access is unlimited.
+  const percent = Math.min(100, Math.max(0, (status.used / status.limit) * 100));
+  const rounded = Math.round(percent);
+  return { summary: `${rounded}% used`, detail: `${100 - rounded}% of weekly allowance remaining`, percent };
+}
+
 function dateLabel(value?: string) {
   if (!value) return null;
   const date = new Date(value);
