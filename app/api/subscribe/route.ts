@@ -36,6 +36,8 @@ const SubscribeSchema = z
     role: z.enum(WAITLIST_ROLE_VALUES).optional(),
     tools: ToolsSchema.optional(),
     ai_frequency: z.enum(WAITLIST_AI_FREQUENCY_VALUES).optional(),
+    // The landing page's one question: which agents, and how many at once. Free text.
+    agents: z.string().trim().max(2000).optional(),
   })
   .strict();
 
@@ -50,6 +52,16 @@ const ProfileSchema = z
 
 let adminSupabaseClient: SupabaseClient | null = null;
 let hasLoggedMissingProfileConfig = false;
+let hasLoggedMissingAgentsColumn = false;
+
+// PostgREST reports a column that is not in its schema cache as PGRST204 (naming the column);
+// Postgres itself as 42703. Either way the row can still be saved without that column.
+function isMissingColumnError(error: { code?: string; message?: string }, column: string) {
+  return (
+    error.code === "42703" ||
+    (error.code === "PGRST204" && (error.message || "").includes(`'${column}'`))
+  );
+}
 
 function getAdminSupabaseClient() {
   const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -96,7 +108,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const { email, role, tools, ai_frequency } = result.data;
+  const { email, role, tools, ai_frequency, agents } = result.data;
   const supabase = getAdminSupabaseClient();
   if (!supabase) {
     if (process.env.NODE_ENV === "development") {
@@ -129,16 +141,30 @@ export async function POST(request: Request) {
   const city = request.headers.get("x-vercel-ip-city") || null;
 
   try {
-    const { error: insertError } = await supabase.from("leads").insert([
-      {
-        email,
-        role: role || null,
-        tools: tools?.length ? tools : null,
-        ai_frequency: ai_frequency || null,
-        country,
-        city,
-      },
-    ]);
+    const lead = {
+      email,
+      role: role || null,
+      tools: tools?.length ? tools : null,
+      ai_frequency: ai_frequency || null,
+      country,
+      city,
+    };
+    // The landing page's answer lands in leads.agents. If that column does not exist yet, the
+    // signup is still saved without it, and the migration is logged once:
+    //   alter table public.leads add column if not exists agents text;
+    let { error: insertError } = await supabase
+      .from("leads")
+      .insert([agents ? { ...lead, agents } : lead]);
+
+    if (insertError && agents && isMissingColumnError(insertError, "agents")) {
+      if (!hasLoggedMissingAgentsColumn) {
+        console.error(
+          "leads.agents is missing, so the landing page's answer was dropped. Run: alter table public.leads add column if not exists agents text;",
+        );
+        hasLoggedMissingAgentsColumn = true;
+      }
+      ({ error: insertError } = await supabase.from("leads").insert([lead]));
+    }
 
     if (insertError) {
       if (insertError.code === "23505") {
