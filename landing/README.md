@@ -13,7 +13,7 @@ demos.js            the demo engine and the four scripts (initDemos)
 assets/             the photograph and the layers generated from it
 assets/plates/      the desktop plates the demos play over (src/ holds the PNG sources)
 assets/island/      provider marks for the Island's rows and pill
-assets/brand/       the wordmark (wordmark.svg), inlined once in index.html's footer
+assets/brand/       the wordmark (wordmark.svg), inlined once in index.html's footer; the tab icon (icon.svg, apple-touch-icon.png; favicon.ico at the site root) from the logo package
 assets/product/     the Fovea Bar render (fovea-bar-src.png), its cutout (fovea-bar.png) and matte (fovea-bar-mask.png)
 assets/history/     the history's pictures: three Vision cutouts with their mattes, and the map photograph (tools/make-history.sh)
 historical/         the history's source photographs, as supplied (not used by the page directly)
@@ -206,7 +206,7 @@ No web fonts, and no monospace anywhere on the site. `--font-display` is Georgia
 
 ## Meta, form and before publishing
 
-- The page ships inside `FoveaNo1/foveafrontend` (the Next.js app behind hellofovea.com) as static files in its `public/` folder, served at `/` by a rewrite in `next.config.ts`; the app's other pages (download, pricing, privacy, the API) are untouched. `landing/` in that repo holds this README and `tools/`; the photograph sources (`historical/`, `assets/plates/src`, `assets/product/fovea-bar-src.png`) stay here, outside the repo. The head's canonical and Open Graph URLs point at hellofovea.com; `og:image` is the app's logo until a 1200×630 card exists; the favicon is the app's.
+- The page ships inside `FoveaNo1/foveafrontend` (the Next.js app behind hellofovea.com) as static files in its `public/` folder, served at `/` by a rewrite in `next.config.ts`; the app's other pages (download, pricing, privacy, the API) are untouched. `landing/` in that repo holds this README and `tools/`; the photograph sources (`historical/`, `assets/plates/src`, `assets/product/fovea-bar-src.png`) stay here, outside the repo. The head's canonical and Open Graph URLs point at hellofovea.com; `og:image` is the app's logo until a 1200×630 card exists; the tab icon is the Fovea app icon (`favicon.ico` with 16/32/48, `assets/brand/icon.svg`, `assets/brand/apple-touch-icon.png`), the same `.ico` being `app/favicon.ico` in the app.
 - The form posts `{ email, agents }` to `/api/subscribe`, the app's waitlist endpoint, which writes to the Supabase table `leads` (the `agents` column is the landing page's addition; the endpoint keeps the signup even if the column is missing).
 - Verify the footer's privacy line word by word: transcription, referent resolution and routing, local or cloud (copy.md §7). Do not widen it.
 - Replace `Fovea` in the copyright with the registered entity once it exists.

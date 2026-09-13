@@ -30,7 +30,12 @@
   <!-- Typefaces are system fonts: Georgia for the headline, San Francisco for the rest (see style.css :root). No web fonts. -->
   <link rel="preload" as="image" href="assets/hero-source.png">
 
-  <link rel="icon" href="/favicon.ico">   <!-- the app's favicon (app/favicon.ico in foveafrontend) -->
+  <!-- The tab icon: the Fovea app icon (assets/brand, from the logo package). Browsers that take SVG use the
+       vector; the .ico carries 16, 32 and 48; iOS takes the opaque 180px. In foveafrontend the same .ico is
+       app/favicon.ico, and app/icon.svg and app/apple-icon.png serve the app's own pages. -->
+  <link rel="icon" href="/assets/brand/icon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="demos.css">
 </head>
