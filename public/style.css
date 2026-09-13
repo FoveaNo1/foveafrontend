@@ -49,7 +49,7 @@
   --index-bar-idle: transparent;               /* Dia's source meant rgb(0 0 0 / .15); the live site ships transparent */
   --screen-shadow: 0 0 0 0 rgb(0 0 0 / 0);     /* optional: 0 4.6px 27.6px rgb(0 0 0 / .08), 0 0 2.3px rgb(0 0 0 / .25) */
   --show-screen-scale: .9;                     /* the screens at 90% of the stage column, left-aligned next to the index (1 below 800px) */
-  --show-stage-gap: 25vh;                      /* between one screen and the next: a quarter of a viewport (60px below 800px) */
+  --show-stage-gap: 16.7vh;                    /* between one screen and the next: a sixth of a viewport (60px below 800px) */
 
   /* Page three — the gallery's ground and the inks that read on it */
   --ground-3: #1A1512;                         /* a warm near-black (L* ≈ 7, dark walnut): a painted wall, not the #0A0A0A ink */
@@ -469,7 +469,7 @@ img { max-width: 100%; }
 .showcase__stage {
   display: flex;
   flex-direction: column;
-  row-gap: var(--show-stage-gap);   /* a quarter of a viewport between screens */
+  row-gap: var(--show-stage-gap);   /* a sixth of a viewport between screens */
   min-width: 0;
   counter-reset: item;
 }
