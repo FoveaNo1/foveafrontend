@@ -73,7 +73,6 @@ test("unknown keys still 400 via .strict()", () => {
 
 test("route insert writes agents onto leads.agents only", () => {
   assert.match(routeSource, /insert\(\[agents \? \{ \.\.\.lead, agents \} : lead\]\)/);
-  assert.match(routeSource, /supabase\/migrations\/20260914000000_add_leads_agents\.sql/);
   assert.doesNotMatch(
     routeSource,
     /agents:\s*(role|tools|ai_frequency)|role:\s*agents|tools:\s*agents|ai_frequency:\s*agents/,
@@ -94,3 +93,54 @@ test("landing form stays email + agents and posts /api/subscribe", () => {
 test("repo SQL adds public.leads.agents", () => {
   assert.match(sqlSource, /alter table public\.leads add column if not exists agents text;/);
 });
+
+function loadPost(insertError = null) {
+  const writes = [];
+  const { outputText } = ts.transpileModule(routeSource, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, esModuleInterop: true },
+  });
+  const exports = {};
+  vm.runInNewContext(outputText, {
+    exports,
+    process: { env: { NODE_ENV: "production", SUPABASE_URL: "https://test.invalid", SUPABASE_SERVICE_ROLE_KEY: "test" } },
+    console: { error() {}, info() {} },
+    require(specifier) {
+      if (specifier === "node:dns") return { promises: { resolveMx: async () => [{ exchange: "mx.test.invalid" }] } };
+      if (specifier === "@supabase/supabase-js") return {
+        createClient: () => ({ from: (table) => ({ insert: async (rows) => {
+          writes.push({ table, rows });
+          return { error: insertError };
+        } }) }),
+      };
+      if (specifier === "next/server") return { NextResponse: { json: (body, init) => ({ body, status: init.status }) } };
+      if (specifier.endsWith("/subscribe-schema")) return loadTs("../lib/subscribe-schema.ts");
+      if (specifier.endsWith("/waitlist-options")) return loadTs("../lib/waitlist-options.ts");
+      if (specifier.endsWith("/waitlist-profile-token")) return { isWaitlistProfileTokenConfigured: () => false };
+      return require(specifier);
+    },
+  });
+  return { post: exports.POST, writes };
+}
+
+const submission = () => ({
+  json: async () => ({ email: "alex@example.com", agents: "Codex + Cursor, 3 sessions" }),
+  headers: { get: () => null },
+});
+
+test("POST saves email and agents together before returning success", async () => {
+  const { post, writes } = loadPost();
+  assert.equal((await post(submission())).status, 200);
+  assert.equal(writes.length, 1);
+  assert.equal(writes[0].table, "leads");
+  assert.equal(writes[0].rows[0].email, "alex@example.com");
+  assert.equal(writes[0].rows[0].agents, "Codex + Cursor, 3 sessions");
+});
+
+for (const code of ["PGRST204", "42703"]) {
+  test(`missing agents column (${code}) fails without retrying an email-only insert`, async () => {
+    const { post, writes } = loadPost({ code, message: "Could not find the 'agents' column" });
+    assert.equal((await post(submission())).status, 500);
+    assert.equal(writes.length, 1);
+    assert.equal(writes[0].rows[0].agents, "Codex + Cursor, 3 sessions");
+  });
+}

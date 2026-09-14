@@ -28,17 +28,6 @@ const ProfileSchema = z
 
 let adminSupabaseClient: SupabaseClient | null = null;
 let hasLoggedMissingProfileConfig = false;
-let hasLoggedMissingAgentsColumn = false;
-
-// PostgREST reports a column that is not in its schema cache as PGRST204 (naming the column);
-// Postgres itself as 42703. Either way the row can still be saved without that column.
-function isMissingColumnError(error: { code?: string; message?: string }, column: string) {
-  return (
-    error.code === "42703" ||
-    (error.code === "PGRST204" && (error.message || "").includes(`'${column}'`))
-  );
-}
-
 function getAdminSupabaseClient() {
   const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -125,21 +114,11 @@ export async function POST(request: Request) {
       country,
       city,
     };
-    // Landing textarea → leads.agents only (see supabase/migrations/20260914000000_add_leads_agents.sql).
-    // If that column does not exist yet, the signup is still saved without it.
-    let { error: insertError } = await supabase
+    // Save the submitted answer together with the email. Missing schema must
+    // fail the request so the form retains the answer for a retry.
+    const { error: insertError } = await supabase
       .from("leads")
       .insert([agents ? { ...lead, agents } : lead]);
-
-    if (insertError && agents && isMissingColumnError(insertError, "agents")) {
-      if (!hasLoggedMissingAgentsColumn) {
-        console.error(
-          "leads.agents is missing, so the landing page's answer was dropped. Run: alter table public.leads add column if not exists agents text;",
-        );
-        hasLoggedMissingAgentsColumn = true;
-      }
-      ({ error: insertError } = await supabase.from("leads").insert([lead]));
-    }
 
     if (insertError) {
       if (insertError.code === "23505") {
