@@ -7,8 +7,8 @@ import { z } from "zod";
 import {
   WAITLIST_AI_FREQUENCY_VALUES,
   WAITLIST_ROLE_VALUES,
-  WAITLIST_TOOLS,
 } from "../../../lib/waitlist-options";
+import { SubscribeSchema, ToolsSchema } from "../../../lib/subscribe-schema";
 import {
   isWaitlistProfileTokenConfigured,
   issueWaitlistProfileToken,
@@ -16,30 +16,6 @@ import {
 } from "../../../lib/waitlist-profile-token";
 
 export const runtime = "nodejs";
-
-const EmailSchema = z
-  .string()
-  .min(1, { message: "Email is required" })
-  .trim()
-  .toLowerCase()
-  .email({ message: "Please enter a complete email (e.g., .com, .net)" })
-  .max(254);
-
-const ToolsSchema = z
-  .array(z.enum(WAITLIST_TOOLS))
-  .max(WAITLIST_TOOLS.length)
-  .transform((tools) => [...new Set(tools)]);
-
-const SubscribeSchema = z
-  .object({
-    email: EmailSchema,
-    role: z.enum(WAITLIST_ROLE_VALUES).optional(),
-    tools: ToolsSchema.optional(),
-    ai_frequency: z.enum(WAITLIST_AI_FREQUENCY_VALUES).optional(),
-    // The landing page's one question: which agents, and how many at once. Free text.
-    agents: z.string().trim().max(2000).optional(),
-  })
-  .strict();
 
 const ProfileSchema = z
   .object({
@@ -149,9 +125,8 @@ export async function POST(request: Request) {
       country,
       city,
     };
-    // The landing page's answer lands in leads.agents. If that column does not exist yet, the
-    // signup is still saved without it, and the migration is logged once:
-    //   alter table public.leads add column if not exists agents text;
+    // Landing textarea → leads.agents only (see supabase/migrations/20260914000000_add_leads_agents.sql).
+    // If that column does not exist yet, the signup is still saved without it.
     let { error: insertError } = await supabase
       .from("leads")
       .insert([agents ? { ...lead, agents } : lead]);
