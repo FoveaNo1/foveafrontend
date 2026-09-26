@@ -958,6 +958,22 @@ img { max-width: 100%; }
   margin: clamp(72px, 11vh, 124px) auto 0;
 }
 .specimen__img { display: block; width: 100%; height: auto; }
+
+/* The collector: one line and the hero's origin button, centred under the specimen. On the black the
+   black fill would lose the pill's edge, so the hairline stays lit while it's hot. */
+.collect {
+  margin-top: clamp(56px, 8vh, 96px);
+  text-align: center;
+}
+.collect__line {
+  margin-bottom: 24px;
+  font-size: clamp(15px, 1.3vw, 17.5px);
+  line-height: 1.5;
+  color: var(--ink-l2);                            /* 64% */
+}
+.collect .btn--origin.is-hot,
+.collect .btn--origin:focus-visible { box-shadow: inset 0 0 0 1px var(--ink-l4); }
+.collect .btn--origin:focus-visible { outline-color: var(--ink-l1); }
 @media (max-width: 799px) {
   .bench__eyebrow { padding-bottom: 16px; margin-bottom: 32px; }
 }
