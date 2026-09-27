@@ -1,0 +1,613 @@
+/* ==========================================================================
+   Fovea — page-two demos (demos.js › initDemos)
+
+   Four code-rendered demos over static desktop plates, one per showcase
+   screen. Everything but the plate is drawn here: the hardware notch, the
+   Island and its panels, the gaze ring, the cursor, the key cap. All form
+   follows the Island in ../app-ui-v1 (Tokens.swift › Tokens.Island,
+   NotchGeometry.swift, Island/Views); every number below is that app's
+   points, and one point is one plate pixel: --px.
+   ========================================================================== */
+
+/* The root fills the slot, which has the plate's shape (--show-screen-ratio).
+   Behaviour tunables live here and are read once by demos.js. */
+.demo {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  container-type: size;
+  contain: layout paint style;
+  -webkit-user-select: none;
+  user-select: none;
+
+  --demo-zoom-max: 2.2;    /* scale when the notch's content is the subject, anchored on the notch; demos.js lowers --demo-zoom so the Island fits a narrow screen */
+  --demo-zoom: var(--demo-zoom-max);
+  --demo-zoom-ms: 600;
+  --word-ms: 210;          /* transcript pace, ms per word (SimulatedServices.speakingPace) */
+  --ring-size: 112;        /* the gaze ring's diameter, plate px */
+  --ring-color: #52B4F5;   /* the gaze ring's blue: a light sky blue, like the reference; the wordmark's O keeps --accent */
+  --ring-move-ms: 420;     /* the eye moving from one thing to the next */
+  --ring-jitter-px: 3;     /* fixation jitter, screen px */
+  --ring-jitter-hz: 10;
+  --fade-in-ms: 600;       /* every demo fades in from black at its start… */
+  --fade-out-ms: 500;      /* …and out to black at its end */
+  --fade-hold-ms: 200;     /* black between the two, where the opening state is restored */
+
+  /* Island tokens — Tokens.Island.Colors, Tokens.Motion */
+  --is-text: #FFFFFF;
+  --is-text-2: rgb(255 255 255 / .62);
+  --is-text-3: rgb(255 255 255 / .40);
+  --is-hairline: rgb(255 255 255 / .10);
+  --is-field: rgb(255 255 255 / .08);
+  --is-recent: rgb(255 255 255 / .10);
+  --is-dot: rgb(255 255 255 / .85);
+  --is-needs: #F5B84B;
+  --is-failed: #F06A6A;
+  --is-elevated: #111114;
+  --is-curve: cubic-bezier(.23, 1, .32, 1);   /* Tokens.Motion.curve, ease-out-quint */
+}
+
+/* One plate pixel, measured by the container. Set on the scene (an element
+   cannot query itself) and inherited by everything drawn over the plate. */
+.demo__scene {
+  position: absolute;
+  inset: 0;
+  --px: calc(100cqw / var(--plate-w));
+}
+
+/* The fade: a black scrim over everything, including the key cap. A demo that
+   has not started is black; the first beat lifts it, the last drops it. */
+.demo__dip {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity calc(var(--fade-out-ms) * 1ms) var(--ease-out);
+}
+.demo.is-lit .demo__dip { opacity: 0; transition-duration: calc(var(--fade-in-ms) * 1ms); }
+
+/* The camera: scales about the notch, so the top edge stays pinned and the
+   plate only ever grows outward — nothing empty is revealed. */
+.demo__zoom {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 0;
+  transition: transform calc(var(--demo-zoom-ms) * 1ms) var(--ease-out);
+}
+.demo__zoom.is-close { transform: scale(var(--demo-zoom)); }
+.demo.is-playing .demo__zoom { will-change: transform; }
+
+/* Plates: the sharp one, a second sharp one for demo 01's crossfade, and the
+   pre-blurred twin (tools/plates.swift) that fades in with the zoom: depth of
+   field, the notch stays sharp, the desktop goes soft. */
+.demo__plate {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: fill;
+}
+.demo__plate--b,
+.demo__plate--blur { opacity: 0; transition: opacity 500ms var(--ease-out); }
+.demo__plate--blur { transition-duration: calc(var(--demo-zoom-ms) * 1ms); }
+.demo__plate.is-on { opacity: 1; }
+
+/* The hardware notch: 200 × the menu bar, black, small bottom corners. The
+   plate's menu bar is empty here for exactly this. */
+.demo__notch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: calc(200 * var(--px));
+  height: calc(25 * var(--px));
+  transform: translateX(-50%);
+  background: #000;
+  border-radius: 0 0 calc(8 * var(--px)) calc(8 * var(--px));
+}
+
+/* --------------------------------------------------------------------------
+   The Island (IslandShape.swift, IslandRootView.swift › IslandSurface)
+   Body width = frame − 2 × ear radius; the ears are concave fillets that flare
+   into the menu bar; bottom corners convex. Black, no border, no shadow.
+   demos.js sets --is-w / --is-h (body size, points), --tr / --br (radii) and
+   --is-ms (the spring: open 340, close 300, convert 280, list in/out 180 —
+   all critically damped, so one curve and a duration reproduce them).
+   -------------------------------------------------------------------------- */
+.island {
+  --is-w: 200;
+  --is-h: 25;
+  --tr: 6;
+  --br: 14;
+  --is-ms: 340;
+  --t: calc(var(--is-ms) * 1ms);
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: calc(var(--is-w) * var(--px));
+  height: calc(var(--is-h) * var(--px));
+  transform: translateX(-50%);
+  color: var(--is-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  transition: width var(--t) var(--is-curve), height var(--t) var(--is-curve), opacity 100ms linear;
+}
+/* At rest the Island draws nothing (RestingView is Color.clear): it fades at the very end of a close */
+.island.is-resting {
+  opacity: 0;
+  transition: width var(--t) var(--is-curve), height var(--t) var(--is-curve), opacity 120ms linear calc(var(--t) - 120ms);
+}
+.island::before,
+.island::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: calc(var(--tr) * var(--px));
+  height: calc(var(--tr) * var(--px));
+  transition: width var(--t) var(--is-curve), height var(--t) var(--is-curve), left var(--t) var(--is-curve), right var(--t) var(--is-curve);
+}
+.island::before {
+  left: calc(var(--tr) * var(--px) * -1);
+  background: radial-gradient(circle farthest-side at 0 100%, transparent calc(100% - .5px), #000 100%);
+}
+.island::after {
+  right: calc(var(--tr) * var(--px) * -1);
+  background: radial-gradient(circle farthest-side at 100% 100%, transparent calc(100% - .5px), #000 100%);
+}
+.island__body {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #000;
+  border-radius: 0 0 calc(var(--br) * var(--px)) calc(var(--br) * var(--px));
+  transition: border-radius var(--t) var(--is-curve);
+}
+
+/* Content: one node per phase, laid out at that phase's width so nothing
+   reflows while the body animates. Swapped with the Island's crossfade:
+   opacity + 4pt blur + scale .97 from the top, 140ms, 50ms after the geometry
+   (IslandShape.swift › IslandContentTransition). */
+.island__content {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  box-sizing: border-box;
+  padding-top: calc(25 * var(--px));     /* the content starts below the notch */
+  transform: translateX(-50%);
+  transform-origin: 50% 0;
+  transition: opacity 140ms var(--is-curve) 50ms, filter 140ms var(--is-curve) 50ms, transform 140ms var(--is-curve) 50ms;
+}
+.island__content.is-entering,
+.island__content.is-leaving {
+  opacity: 0;
+  filter: blur(calc(4 * var(--px)));
+  transform: translateX(-50%) scale(.97);
+}
+.island__content.is-leaving { transition-delay: 0s; }
+
+/* Listening (ListeningView.swift): nine white capsules, 3 wide, 3 apart,
+   4–20 tall, centred in the 44 below the notch. No icon, no label. The same
+   bars, smaller, show inside a field while an answer is being spoken. */
+.island__content--voice {
+  width: calc(200 * var(--px));
+  height: calc(69 * var(--px));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.island__wave { display: flex; align-items: center; gap: calc(3 * var(--px)); height: calc(20 * var(--px)); }
+.island__bar {
+  display: block;
+  width: calc(3 * var(--px));
+  height: calc(20 * var(--px));
+  border-radius: 999px;
+  background: #fff;
+  transform: scaleY(.2);
+  transform-origin: 50% 50%;
+}
+
+/* Transcript review (ReviewView.swift): the transcript, then one row —
+   referent thumbs (44 × 32, radius 6, hairline) fanned out as in the expanded
+   stack | the Chat pill | Send. */
+.island__content--review {
+  width: calc(522 * var(--px));
+  padding: calc(37 * var(--px)) calc(18 * var(--px)) calc(14 * var(--px));   /* 25 notch + 12 top */
+}
+.island__transcript {
+  min-height: calc(60 * var(--px));
+  margin: 0;
+  font-size: calc(14 * var(--px));
+  line-height: calc(17 * var(--px));
+  font-weight: 400;
+  color: var(--is-text);
+  overflow-wrap: anywhere;
+}
+.island__row {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(12 * var(--px));
+  margin-top: calc(12 * var(--px));
+}
+.island__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(6 * var(--px));
+  width: calc(284 * var(--px));
+  min-height: calc(32 * var(--px));
+}
+.island__chip {
+  position: relative;
+  width: calc(44 * var(--px));
+  height: calc(32 * var(--px));
+  border-radius: calc(6 * var(--px));
+  box-shadow: inset 0 0 0 1px var(--is-hairline);
+  background-color: var(--is-field);
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 120ms var(--is-curve);
+}
+.island__chip.is-on { opacity: 1; }
+.island__chip--doc { display: flex; align-items: center; justify-content: center; color: var(--is-text-2); }
+.island__chip--doc svg { width: calc(13 * var(--px)); height: calc(15 * var(--px)); }
+.island__trail { display: flex; align-items: center; gap: calc(12 * var(--px)); margin-left: auto; }
+
+/* The Chat pill (ChatSelectorPill.swift): destination mark · Chat name ·
+   chevron. While routing it keeps its width and shows a spinner with
+   "Choosing Chat"; the answer crossfades in place. Open: fill .10, chevron up. */
+.island__pill {
+  display: flex;
+  align-items: center;
+  min-width: calc(132 * var(--px));
+  max-width: calc(150 * var(--px));
+  height: calc(28 * var(--px));
+  padding: 0 calc(12 * var(--px));
+  box-sizing: border-box;
+  border-radius: calc(9 * var(--px));
+  background: var(--is-field);
+  font-size: calc(12 * var(--px));
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 180ms var(--is-curve), background-color 120ms var(--is-curve), transform 140ms var(--is-curve);
+}
+.island__pill.is-on { opacity: 1; }
+.island__pill.is-open { background: rgb(255 255 255 / .10); }
+.island__pill.is-pressed { transform: scale(.98); transition-duration: 80ms; }
+.island__pill-in { display: flex; align-items: center; gap: calc(8 * var(--px)); min-width: 0; transition: opacity 90ms linear; }
+.island__pill-in.is-swapping { opacity: 0; }
+.island__pill .island__mark { width: calc(14 * var(--px)); height: calc(14 * var(--px)); }
+.island__pill-name { overflow: hidden; text-overflow: ellipsis; }
+.island__pill-name--dim { color: var(--is-text-2); }
+.island__spin {
+  flex: none;
+  box-sizing: border-box;
+  width: calc(14 * var(--px));
+  height: calc(14 * var(--px));
+  border-radius: 50%;
+  border: calc(1.5 * var(--px)) solid rgb(255 255 255 / .14);
+  border-top-color: rgb(255 255 255 / .85);
+  animation: island-spin .8s linear infinite;
+}
+@keyframes island-spin { to { transform: rotate(360deg); } }
+.island__chev { display: block; flex: none; width: calc(9 * var(--px)); height: calc(9 * var(--px)); color: var(--is-text-2); transition: transform 180ms var(--is-curve); }
+.island__chev svg { display: block; width: 100%; height: 100%; }
+.island__pill.is-open .island__chev { transform: rotate(180deg); }
+
+.island__send {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: calc(28 * var(--px));
+  height: calc(28 * var(--px));
+  border-radius: 50%;
+  background: var(--is-field);
+  color: var(--is-text-3);
+  transition: background-color 180ms var(--is-curve), color 180ms var(--is-curve), transform 140ms var(--is-curve);
+}
+.island__send svg { width: calc(13 * var(--px)); height: calc(13 * var(--px)); }
+.island__send.is-on { background: #fff; color: #000; }
+.island__send.is-pressed { transform: scale(.94); transition-duration: 80ms; }
+
+/* The recent-chats panel (ChatSelectorPanel.swift, island-selectorRecent.png):
+   under the review row, the content width, elevated fill and a hairline;
+   a header chip with New Chat / Search Chats, then two columns of rows. */
+.island__sel {
+  box-sizing: border-box;
+  margin-top: calc(12 * var(--px));
+  padding: calc(8 * var(--px));
+  border-radius: calc(12 * var(--px));
+  background: var(--is-elevated);
+  box-shadow: inset 0 0 0 1px var(--is-hairline);
+  opacity: 0;
+  transition: opacity 180ms var(--is-curve);
+}
+.island__sel.is-on { opacity: 1; }
+.island__sel-head { display: flex; align-items: center; height: calc(24 * var(--px)); padding: 0 calc(4 * var(--px)); }
+.island__sel-chip { font-size: calc(11 * var(--px)); font-weight: 600; color: var(--is-text-3); white-space: nowrap; }
+.island__sel-actions { display: flex; align-items: center; gap: calc(16 * var(--px)); margin-left: auto; }
+.island__sel-btn { display: inline-flex; align-items: center; gap: calc(6 * var(--px)); font-size: calc(12 * var(--px)); font-weight: 500; color: var(--is-text); white-space: nowrap; }
+.island__sel-btn svg { display: block; width: calc(10 * var(--px)); height: calc(10 * var(--px)); color: var(--is-text-2); }
+.island__sel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: calc(4 * var(--px)); margin-top: calc(4 * var(--px)); }
+.island__sel-row {
+  display: flex;
+  align-items: center;
+  gap: calc(8 * var(--px));
+  min-width: 0;
+  height: calc(30 * var(--px));
+  padding: 0 calc(12 * var(--px));
+  border-radius: calc(7 * var(--px));
+}
+.island__sel-row.is-selected { background: rgb(255 255 255 / .12); }
+.island__sel-row .island__mark { width: calc(14 * var(--px)); height: calc(14 * var(--px)); }
+.island__sel-name { flex: 1; min-width: 0; font-size: calc(13.5 * var(--px)); color: var(--is-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.island__sel-time { flex: none; font-size: calc(11.5 * var(--px)); color: var(--is-text-3); }
+
+/* Agent list (AgentListView.swift): rows of 46, padding 8 around, 12 inside;
+   destination mark, Chat name over one activity line, the state word at the
+   right with a dot only for Working. No dividers, no count, no ages. */
+.island__content--list {
+  width: calc(482 * var(--px));
+  padding: calc(33 * var(--px)) calc(8 * var(--px)) calc(8 * var(--px));   /* 25 notch + 8 */
+}
+.island__task {
+  display: flex;
+  align-items: center;
+  gap: calc(12 * var(--px));
+  height: calc(46 * var(--px));
+  padding: 0 calc(12 * var(--px));
+  border-radius: calc(7 * var(--px));
+  transition: background-color 240ms var(--is-curve);
+}
+.island__task + .island__task { margin-top: calc(1 * var(--px)); }
+.island__task.is-recent { background: var(--is-recent); }
+.island__mark { display: block; flex: none; width: calc(18 * var(--px)); height: calc(18 * var(--px)); object-fit: contain; }
+.island__mark--tint {
+  background: #fff;
+  -webkit-mask: var(--mark) center / contain no-repeat;
+  mask: var(--mark) center / contain no-repeat;
+}
+.island__task-text { display: flex; flex-direction: column; gap: calc(1 * var(--px)); min-width: 0; }
+.island__task-name {
+  font-size: calc(13.5 * var(--px));
+  line-height: calc(16 * var(--px));
+  font-weight: 400;
+  color: var(--is-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.island__task-act {
+  font-size: calc(11.5 * var(--px));
+  line-height: calc(14 * var(--px));
+  color: var(--is-text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.island__status {
+  display: flex;
+  align-items: center;
+  gap: calc(5 * var(--px));
+  margin-left: auto;
+  flex: none;
+  font-size: calc(11.5 * var(--px));
+  line-height: calc(14 * var(--px));
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--is-text-2);
+}
+.island__status--needs { color: var(--is-needs); }
+.island__status--complete { color: rgb(255 255 255 / .85); }
+.island__status--failed { color: var(--is-failed); }
+.island__status-dot { width: calc(5 * var(--px)); height: calc(5 * var(--px)); border-radius: 50%; background: var(--is-dot); }
+
+/* A working agent is never static: a light sweeps left to right across the
+   activity line and the state word about every two seconds, the text keeping
+   its colour — as ChatGPT's "Thinking" label and Claude Code's status line
+   render it. Working and Needs you only; Complete and Failed stay still. */
+.island__shimmer {
+  --shimmer-base: var(--is-text-2);
+  background: linear-gradient(90deg, rgb(255 255 255 / 0) 35%, rgb(255 255 255 / .8) 50%, rgb(255 255 255 / 0) 65%) 100% 0 / 300% 100% no-repeat, var(--shimmer-base);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: island-shimmer 2.2s linear infinite;
+}
+.island__status--needs .island__shimmer { --shimmer-base: var(--is-needs); }
+@keyframes island-shimmer {
+  from { background-position: 100% 0, 0 0; }
+  to { background-position: 0 0, 0 0; }
+}
+
+/* The slab (QuickAnswerView.swift silhouette: straight top and sides, 20
+   bottom corners, 30 side padding). Used by demo 04 for the task's question
+   and, later, the artefact. Both are answered by voice: hold the key, the
+   field shows the listening bars, the words arrive. */
+.island__content--slab {
+  width: calc(560 * var(--px));
+  padding: calc(41 * var(--px)) calc(30 * var(--px)) calc(20 * var(--px));   /* 25 notch + 16 */
+}
+.island__head { display: flex; align-items: center; gap: calc(12 * var(--px)); padding-bottom: calc(12 * var(--px)); }
+.island__rule { height: 1px; background: var(--is-hairline); }
+.island__q {
+  margin: calc(16 * var(--px)) 0;
+  font-size: calc(14 * var(--px));
+  line-height: calc(18 * var(--px));
+  font-weight: 600;
+  color: var(--is-text);
+}
+.island__field {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: calc(230 * var(--px));
+  height: calc(32 * var(--px));
+  padding: 0 calc(5 * var(--px)) 0 calc(12 * var(--px));
+  border-radius: calc(9 * var(--px));
+  background: var(--is-field);
+  box-shadow: inset 0 0 0 1px var(--is-hairline);
+}
+.island__field-text {
+  flex: 1;
+  min-width: 0;
+  font-size: calc(13.5 * var(--px));
+  line-height: calc(18 * var(--px));
+  color: var(--is-text);
+  white-space: nowrap;
+  overflow: hidden;
+}
+.island__field-text:empty::before { content: attr(data-placeholder); font-size: calc(13 * var(--px)); color: var(--is-text-3); }
+.island__field.is-listening .island__field-text { display: none; }
+.island__field-bars { display: flex; flex: 1; align-items: center; gap: calc(2 * var(--px)); height: calc(12 * var(--px)); }
+.island__field-bars .island__bar { width: calc(2 * var(--px)); height: calc(12 * var(--px)); }
+.island__field-send {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: calc(20 * var(--px));
+  height: calc(20 * var(--px));
+  border-radius: 50%;
+  background: var(--is-field);
+  color: var(--is-text-3);
+  transition: background-color 180ms var(--is-curve), color 180ms var(--is-curve), transform 140ms var(--is-curve);
+}
+.island__field-send svg { width: calc(9 * var(--px)); height: calc(9 * var(--px)); }
+.island__field-send.is-on { background: #fff; color: #000; }
+.island__field-send.is-pressed { transform: scale(.94); transition-duration: 80ms; }
+.island__diff {
+  margin: calc(16 * var(--px)) 0 0;
+  font-family: var(--font-sans); font-variant-numeric: tabular-nums;
+  font-size: calc(11.5 * var(--px));
+  line-height: calc(17 * var(--px));
+  color: var(--is-text-2);
+}
+.island__diff-file { margin-bottom: calc(6 * var(--px)); color: var(--is-text-2); }
+.island__diff-line {
+  display: flex;
+  gap: calc(10 * var(--px));
+  white-space: pre;
+  opacity: 0;
+  transition: opacity 200ms var(--is-curve);   /* delay per line, set inline: 30ms × index */
+}
+.island__content.is-shown .island__diff-line { opacity: 1; }
+.island__diff-gutter { width: calc(8 * var(--px)); flex: none; }
+.island__diff-line.is-add { color: var(--is-text); }
+.island__diff-line.is-del { color: var(--is-text-3); }
+/* Under the artefact: the way straight into it, and a place to follow up */
+.island__foot { display: flex; align-items: center; gap: calc(12 * var(--px)); margin-top: calc(16 * var(--px)); opacity: 0; transition: opacity 180ms var(--is-curve); }
+.island__foot.is-on { opacity: 1; }
+.island__button {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  gap: calc(8 * var(--px));
+  height: calc(28 * var(--px));
+  padding: 0 calc(12 * var(--px));
+  border-radius: calc(9 * var(--px));
+  background: var(--is-field);
+  font-size: calc(12 * var(--px));
+  font-weight: 500;
+  color: var(--is-text);
+  white-space: nowrap;
+}
+.island__button svg { width: calc(10 * var(--px)); height: calc(10 * var(--px)); color: var(--is-text-2); }
+
+/* --------------------------------------------------------------------------
+   The gaze ring — a light sky blue (--ring-color). A soft glowing band, no stroke,
+   a tenth of the screen wide. It rests on what the eye is on, with a little
+   fixation jitter, and travels when the eye moves (demos.js). Its lifetime is
+   the key's.
+   -------------------------------------------------------------------------- */
+.demo__ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(var(--ring-size) * var(--px));
+  height: calc(var(--ring-size) * var(--px));
+  margin: calc(var(--ring-size) * var(--px) / -2) 0 0 calc(var(--ring-size) * var(--px) / -2);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform calc(var(--ring-move-ms) * 1ms) cubic-bezier(.4, 0, .2, 1), opacity 160ms linear;
+}
+.demo__ring.is-on { opacity: 1; }
+.demo__ring-i {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    color-mix(in srgb, var(--ring-color) 8%, transparent) 0%,
+    color-mix(in srgb, var(--ring-color) 10%, transparent) 30%,
+    color-mix(in srgb, var(--ring-color) 88%, transparent) 46%,
+    color-mix(in srgb, var(--ring-color) 88%, transparent) 55%,
+    color-mix(in srgb, var(--ring-color) 28%, transparent) 66%,
+    transparent 78%);
+  filter: blur(calc(2 * var(--px)));
+}
+
+/* The cursor: consent in demo 02, drift in 03. Moved by transform only. */
+.demo__cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(14 * var(--px));
+  height: calc(21 * var(--px));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms var(--ease-out);
+}
+.demo__cursor.is-on { opacity: 1; }
+.demo__cursor svg { display: block; width: 100%; height: 100%; overflow: visible; }
+
+/* The key cap: shown for exactly as long as the key is held. A HUD, outside
+   the camera, in the app's Settings key-cap style. */
+.demo__key {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  height: 28px;
+  padding: 0 11px;
+  border-radius: 6px;
+  background: #F8F6EF;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / .12), 0 1px 2px rgb(0 0 0 / .08);
+  color: #0C0C0C;
+  font: 500 13px/28px var(--font-sans);
+  letter-spacing: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 100ms linear;
+}
+.demo__key.is-on { opacity: 1; }
+
+/* Snapping to a state (the loop's restart under black, reduced motion, the first frame): no transitions */
+.demo.is-static,
+.demo.is-static *,
+.demo.is-static *::before,
+.demo.is-static *::after { transition: none !important; }
+
+/* Below 800px the screen is 4:3 and the plate is sized from its height, cropped
+   symmetrically, so the notch stays centred and the coordinates still hold. */
+@media (max-width: 799px) {
+  .demo {
+    inset: auto;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: auto;
+    height: 100%;
+    aspect-ratio: var(--plate-w) / var(--plate-h);
+    transform: translateX(-50%);
+    --demo-zoom-max: 3;      /* the fit guard in demos.js › measure decides the real value */
+  }
+  .demo__key { left: 50%; transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo *,
+  .demo *::before,
+  .demo *::after { transition: none !important; animation: none !important; }
+  .island__shimmer { background: none; color: var(--shimmer-base); }
+}

@@ -7,7 +7,10 @@ const eslintConfig = defineConfig([
   ...nextTs,
   // Override default ignores of eslint-config-next.
   globalIgnores([
-    // Default ignores of eslint-config-next:
+        // The landing page in public/ (and its notes in landing/) is a static site with its own plain-JS scripts, not app code.
+    "public/**",
+    "landing/**",
+// Default ignores of eslint-config-next:
     ".next/**",
     "**/.next/**",
     "out/**",

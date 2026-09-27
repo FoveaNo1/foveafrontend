@@ -7,8 +7,8 @@ import { z } from "zod";
 import {
   WAITLIST_AI_FREQUENCY_VALUES,
   WAITLIST_ROLE_VALUES,
-  WAITLIST_TOOLS,
 } from "../../../lib/waitlist-options";
+import { SubscribeSchema, ToolsSchema } from "../../../lib/subscribe-schema";
 import {
   isWaitlistProfileTokenConfigured,
   issueWaitlistProfileToken,
@@ -16,28 +16,6 @@ import {
 } from "../../../lib/waitlist-profile-token";
 
 export const runtime = "nodejs";
-
-const EmailSchema = z
-  .string()
-  .min(1, { message: "Email is required" })
-  .trim()
-  .toLowerCase()
-  .email({ message: "Please enter a complete email (e.g., .com, .net)" })
-  .max(254);
-
-const ToolsSchema = z
-  .array(z.enum(WAITLIST_TOOLS))
-  .max(WAITLIST_TOOLS.length)
-  .transform((tools) => [...new Set(tools)]);
-
-const SubscribeSchema = z
-  .object({
-    email: EmailSchema,
-    role: z.enum(WAITLIST_ROLE_VALUES).optional(),
-    tools: ToolsSchema.optional(),
-    ai_frequency: z.enum(WAITLIST_AI_FREQUENCY_VALUES).optional(),
-  })
-  .strict();
 
 const ProfileSchema = z
   .object({
@@ -50,7 +28,6 @@ const ProfileSchema = z
 
 let adminSupabaseClient: SupabaseClient | null = null;
 let hasLoggedMissingProfileConfig = false;
-
 function getAdminSupabaseClient() {
   const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -96,7 +73,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const { email, role, tools, ai_frequency } = result.data;
+  const { email, role, tools, ai_frequency, agents } = result.data;
   const supabase = getAdminSupabaseClient();
   if (!supabase) {
     if (process.env.NODE_ENV === "development") {
@@ -129,16 +106,19 @@ export async function POST(request: Request) {
   const city = request.headers.get("x-vercel-ip-city") || null;
 
   try {
-    const { error: insertError } = await supabase.from("leads").insert([
-      {
-        email,
-        role: role || null,
-        tools: tools?.length ? tools : null,
-        ai_frequency: ai_frequency || null,
-        country,
-        city,
-      },
-    ]);
+    const lead = {
+      email,
+      role: role || null,
+      tools: tools?.length ? tools : null,
+      ai_frequency: ai_frequency || null,
+      country,
+      city,
+    };
+    // Save the submitted answer together with the email. Missing schema must
+    // fail the request so the form retains the answer for a retry.
+    const { error: insertError } = await supabase
+      .from("leads")
+      .insert([agents ? { ...lead, agents } : lead]);
 
     if (insertError) {
       if (insertError.code === "23505") {

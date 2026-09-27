@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:billing": "node --test tests/billing-presentation.test.mjs"
+    "test:billing": "node --test tests/billing-presentation.test.mjs",
+    "test:subscribe": "node --test tests/subscribe-schema.test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.95.3",

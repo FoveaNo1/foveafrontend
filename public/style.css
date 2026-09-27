@@ -1,0 +1,1147 @@
+/* ==========================================================================
+   Fovea — landing page (v2: one screen)
+   Tokens live in :root. Swap typefaces and colours there and nowhere else.
+   ========================================================================== */
+
+:root {
+  /* Colours */
+  --black: #0A0A0A;
+  --white: #FCFCFC;                 /* the photograph's wall white; the page ground */
+  --off-white: #F7F6F3;
+  --warm: #ECECE8;
+  --accent: #2B6BFF;                /* reserved; the demos' gaze ring is --ring-color (demos.css), the history's ring is --gal-ring */
+
+  /* Typography — system fonts only: Georgia for the headline, San Francisco (via -apple-system) for the rest */
+  --font-display: Georgia, "Times New Roman", Times, serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Layout */
+  --pad-x: clamp(20px, 5vw, 64px);
+  --photo-w: 1672;                  /* intrinsic size of assets/hero-source.png; every hero layer shares this canvas */
+  --photo-h: 941;
+
+  /* Ink — the four grey levels of page two (Dia's primary … quaternary) */
+  --ink-1: rgb(0 0 0 / .85);
+  --ink-2: rgb(0 0 0 / .60);
+  --ink-3: rgb(0 0 0 / .45);
+  --ink-4: rgb(0 0 0 / .20);
+
+  /* Page two — its ground, and the seam from the hero into it */
+  --ground-2: var(--warm);                     /* the showcase and everything after it */
+  --table: #F1F0F0;                            /* the photograph's bottom row (measured: average #F1F0F0, range #ECECEC–#F5F5F5). The seam starts here, not at --white */
+  --seam-fade: 48px;                           /* in-hero fade that settles the photo's last rows into --table; 0 removes it */
+  --seam-h: clamp(160px, 28vh, 320px);         /* length of the --table → --ground-2 run at the top of page two */
+
+  /* Showcase layout — Dia's values in the comments */
+  --show-max: 1760px;                          /* 1400px */
+  --show-pad: clamp(16px, 2vw, 32px);          /* 10px, on a 1400px box */
+  --show-index-w: clamp(280px, 22vw, 340px);   /* 4/12 of the box = 447px at 1440 */
+  --show-gap: 24px;                            /* 20px */
+  --show-nav-top: 20vh;                        /* sticky top: 20vh */
+  --plate-w: 1672;                             /* intrinsic size of the demo plates (assets/plates); the screens take their shape */
+  --plate-h: 941;
+  --show-screen-ratio: var(--plate-w) / var(--plate-h);   /* the backbone shipped 16:10; Dia's images are about 3:2 */
+  --show-radius: 24px;                         /* 24px (20px below 800px) */
+  --index-active-bg: transparent;              /* Dia's source meant rgb(0 0 0 / .06); the live site ships transparent */
+  --index-bar-idle: transparent;               /* Dia's source meant rgb(0 0 0 / .15); the live site ships transparent */
+  --screen-shadow: 0 0 0 0 rgb(0 0 0 / 0);     /* optional: 0 4.6px 27.6px rgb(0 0 0 / .08), 0 0 2.3px rgb(0 0 0 / .25) */
+  --show-screen-scale: .9;                     /* the screens at 90% of the stage column, left-aligned next to the index (1 below 800px) */
+  --show-stage-gap: 16.7vh;                    /* between one screen and the next: a sixth of a viewport (60px below 800px) */
+
+  /* Page three — the gallery's ground and the inks that read on it */
+  --ground-3: #1A1512;                         /* a warm near-black (L* ≈ 7, dark walnut): a painted wall, not the #0A0A0A ink */
+  --ink-l1: rgb(252 250 247 / .92);            /* the four light inks: warm white, each a step stronger than the black alphas (light on dark reads dimmer) */
+  --ink-l2: rgb(252 250 247 / .64);
+  --ink-l3: rgb(252 250 247 / .46);
+  --ink-l4: rgb(252 250 247 / .22);
+
+  /* Gallery layout — seven 4:5 frames in a row; how far they travel is measured by script.js */
+  --gal-slot-h: min(calc(clamp(260px, 30vw, 520px) * 1.25), 64vh);   /* a frame: 30vw wide, 4:5, never taller than 64vh (432 × 540 at 1440 × 900) */
+  --gal-slot-w: calc(var(--gal-slot-h) * .8);
+  --gal-gap: 24px;                             /* --show-gap */
+  --gal-pad: var(--pad-x);                     /* black before the first frame and after the last */
+  --gal-seam: var(--seam-h);                   /* the run from --ground-2 into --ground-3, at both ends */
+  --gal-rail-w: 3px;                           /* the rail's thickness (.index__bar's) */
+  --gal-head: clamp(22px, 2.8vw, 34px);        /* the history heading's size */
+  --gal-head-w: 18.5em;                        /* its measure: one line from 800px up, two on a phone (where the padding wins) */
+  --gal-head-gap: clamp(28px, 4vh, 44px);      /* heading → columns */
+  --gal-light: rgb(255 236 210 / .28);         /* the spotlight cone, warm white */
+  --gal-lamp: rgb(255 246 232 / .62);          /* the small bright ellipse on the top edge */
+  --gal-marker: rgb(252 250 247 / .85);        /* the year under the lamp */
+  --gal-ring: #2AC5FC;                         /* the ring in the next column, sampled from the reference */
+
+  /* The tail — the chart's closing line and the bench on the black, then the proof, the form and
+     the footer on --ground-2. Column widths are after-chart-layout.html's; the gutter is --pad-x. */
+  --tail-max: 1080px;                          /* the reading column (the layout's .w) */
+  --tail-narrow: 760px;                        /* the proof's column (the layout's .narrow) */
+  --rule: rgb(0 0 0 / .14);                    /* hairlines and the fields' underline on the light ground (the layout's --ink-14) */
+  --rule-l: rgb(252 250 247 / .12);            /* the eyebrow's rule on the black (the layout's --pap-12) */
+  --ink-legal: rgb(0 0 0 / .26);               /* the footer's legal strip (the layout's --ink-26) */
+  --ghost: rgb(20 20 20 / .04);                /* the footer's wordmark: legible only if you look for it. The layout's .055 read as a logo at a glance on --ground-2, so .04 */
+  --ghost-h: clamp(48px, 7.5vw, 104px);        /* the wordmark's box height: 434px wide at 1440, about 40% of the 1080 column; the glyphs are 78% of it */
+}
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  overflow-x: hidden;
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+  background: var(--white);
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  color: var(--black);
+  background: var(--white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, p { margin: 0; }
+a { color: inherit; }
+img { max-width: 100%; }
+
+:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.ground-light { background: var(--off-white); color: var(--black); }
+.ground-2 { background: var(--ground-2); color: var(--black); }
+.ground-3 { background: var(--ground-3); color: var(--ink-l1); }
+
+/* --------------------------------------------------------------------------
+   Buttons
+   -------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  padding: 0 34px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--black);
+  color: #FFFFFF;
+  font: 500 15px/1 var(--font-sans);
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:not(.btn--origin):hover { filter: brightness(1.18); }
+
+/* Origin button — white at rest; on hover a black circle grows from where
+   the cursor entered and collapses toward where it left (script.js sets its
+   position and cover diameter). Keyboard focus fills from the centre. Timing
+   and curve follow the reference: 500ms, cubic-bezier(.16, 1, .3, 1). */
+.btn--origin {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: #FFFFFF;
+  color: var(--black);
+  box-shadow: inset 0 0 0 0.5px rgb(0 0 0 / .14), 0 1px 2px rgb(0 0 0 / .05);   /* hairline so the white pill reads on white */
+  transition: transform 160ms var(--ease-out), box-shadow 400ms var(--ease-out);
+}
+.btn--origin:active { transform: scale(.985); }
+.btn__fill {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 250%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--btn-fill, var(--black));
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 500ms var(--ease-out);
+  pointer-events: none;
+}
+.btn__label {
+  position: relative;
+  z-index: 1;
+  transition: color 300ms var(--ease-out);
+}
+.btn--origin.is-hot .btn__fill,
+.btn--origin:focus-visible .btn__fill { transform: translate(-50%, -50%) scale(1); }
+.btn--origin.is-hot .btn__label,
+.btn--origin:focus-visible .btn__label { color: #FFFFFF; }
+.btn--origin.is-hot,
+.btn--origin:focus-visible { box-shadow: inset 0 0 0 0.5px rgb(0 0 0 / 0), 0 1px 2px rgb(0 0 0 / 0); }
+.btn--origin:focus-visible { outline-color: var(--black); }
+
+/* --------------------------------------------------------------------------
+   Hero — one viewport. The stage covers the section like a bottom-anchored
+   background (width = whichever of the viewport's width or height needs it),
+   the copy sits over the empty wall above the hardware.
+   -------------------------------------------------------------------------- */
+.hero {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 560px;
+  overflow: hidden;
+  container-type: size;
+  background: var(--white);
+  color: var(--black);
+}
+/* Seam, part one: the photograph's last rows settle into one flat tone
+   (--table), which page two starts from and eases into --ground-2.
+   pointer-events: none so the light rig still receives the cursor. */
+.hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  height: var(--seam-fade);
+  background: linear-gradient(to bottom, transparent, var(--table));
+  pointer-events: none;
+}
+
+.hero__copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 22cqh var(--pad-x) 0;
+  text-align: center;
+}
+.hero__headline {
+  max-width: none;
+  font-family: var(--font-display);
+  font-size: min(clamp(2.25rem, 3.6vw, 4rem), 8cqh);   /* the mockup: 64px at 1775 wide */
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: 0;
+  white-space: nowrap;              /* one line; wraps again in the stacked layout */
+}
+.hero__subhead {
+  max-width: 34em;
+  margin-top: clamp(14px, 2.2cqh, 24px);
+  font-size: clamp(1.0625rem, 1.46vw, 1.625rem);
+  font-weight: 400;
+  line-height: 1.4;
+  color: rgb(0 0 0 / .55);
+  text-wrap: balance;
+}
+.hero .btn { margin-top: clamp(24px, 4cqh, 40px); }
+
+/* The stage and its layers */
+.stage {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  z-index: 1;
+  width: max(100cqw, calc(100cqh * (var(--photo-w) / var(--photo-h))));
+  aspect-ratio: var(--photo-w) / var(--photo-h);
+  transform: translateX(-50%);
+  pointer-events: none;
+
+  /* Light rig tunables — read once by script.js › initLighting */
+  --k-shift: 50;        /* px of sideways shadow travel per unit of light offset */
+  --k-skew: 28;         /* degrees of shadow lean per unit of light offset */
+  --k-len: .28;         /* shadow length ÷ light height above the table */
+  --shadow-a: .28;      /* max opacity of the cast shadow */
+  --light-a: .34;       /* max opacity of the lit ends of the objects */
+  --shade-a: .24;       /* max opacity of the shaded ends of the objects */
+  --glow-a: .07;        /* max opacity of the light pool on the table */
+  --lerp: .15;          /* follow speed, per 60fps frame */
+
+  /* Hardware box in image space (tools/probe.swift): x 288–1349, y 555–871 of 1672×941 */
+  --hw-cx: 48.9%;
+  --hw-by: 92.6%;
+}
+.stage > img,
+.stage__lit {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.stage__shadow {
+  opacity: 0;
+  transform-origin: var(--hw-cx) var(--hw-by);   /* the contact line: shadows pivot on the table */
+  will-change: transform, opacity;
+}
+.stage__glow {
+  position: absolute;               /* sized and placed by script.js around the hardware */
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.stage__glow { background: radial-gradient(closest-side, rgb(255 255 255 / .85), rgb(255 255 255 / 0)); }
+.stage__lit {
+  overflow: hidden;
+  -webkit-mask-image: url("assets/hardware-cutout.png");
+  mask-image: url("assets/hardware-cutout.png");
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+/* Side shading: each group holds one strip per object at that object's left or
+   right end (geometry inline in index.html, image-space percentages). Only the
+   group's opacity changes per frame. */
+.lit__group { position: absolute; inset: 0; opacity: 0; will-change: opacity; }
+.lit__strip {
+  position: absolute;
+  left: var(--x); top: var(--y); width: var(--w); height: var(--h);
+  /* feather the top and bottom so a strip never draws a hard edge where objects overlap */
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+}
+.lit__light--left  .lit__strip { background: linear-gradient(to right, rgb(255 255 255 / .95), rgb(255 255 255 / 0)); }
+.lit__light--right .lit__strip { background: linear-gradient(to left,  rgb(255 255 255 / .95), rgb(255 255 255 / 0)); }
+.lit__shade--left  .lit__strip { background: linear-gradient(to right, rgb(0 0 0 / .9), rgb(0 0 0 / 0)); }
+.lit__shade--right .lit__strip { background: linear-gradient(to left,  rgb(0 0 0 / .9), rgb(0 0 0 / 0)); }
+
+/* Narrow or short viewports: stack the copy over the photo, no sideways crop games */
+@media (max-width: 719px), (max-height: 559px) {
+  .hero {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    min-height: 100svh;
+    container-type: normal;
+  }
+  .hero__copy { order: 0; padding-top: clamp(64px, 14vh, 120px); }
+  .hero__headline { font-size: clamp(2.25rem, 9vw, 3rem); white-space: normal; text-wrap: balance; }
+  .hero__subhead { margin-top: 14px; }
+  .hero .btn { margin-top: 28px; }
+  .stage {
+    order: 1;                      /* the DOM puts the stage first for stacking; stacked layout reads copy, then photo */
+    position: relative;
+    left: auto;
+    bottom: auto;
+    width: 140%;
+    margin: 40px -20% 0;
+    margin-top: auto;
+    transform: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Showcase — page two (after diabrowser.com's "Dia reads between the tabs").
+   A sticky index on the left, one display screen per item on the right; the
+   item whose screen is nearest 40% of the viewport height is active
+   (script.js › initShowcase). Each screen holds one demo (demos.css, demos.js).
+   Sizes and timings are Dia's; the knobs are the --show-* tokens in :root.
+   -------------------------------------------------------------------------- */
+.showcase {
+  padding: 80px 0 100px;
+  /* Seam, part two: from the photograph's table tone to the page-two ground; solid --ground-2 after --seam-h */
+  background: linear-gradient(to bottom, var(--table) 0, var(--ground-2) var(--seam-h));
+
+  /* Behaviour tunables — read once by script.js › initShowcase */
+  --show-anchor: .4;    /* the screen nearest this fraction of the viewport height is the active one */
+  --show-land: 160;     /* px from the top a clicked screen lands at */
+  --show-hold: 700;     /* ms the tracker ignores scrolling after a click */
+}
+.showcase__inner { max-width: var(--show-max); margin: 0 auto; padding: 0 var(--show-pad); }
+
+/* The status line — before the four: one sentence and the way to the form, centred on the warm ground */
+.showcase__status {
+  margin: 0 auto clamp(48px, 8vh, 96px);
+  text-align: center;
+  font-size: clamp(15px, 1.3vw, 17.5px);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.showcase__status-link {
+  color: var(--black);
+  text-decoration: none;
+  text-underline-offset: .18em;
+  text-decoration-thickness: 1px;
+}
+.showcase__status-link:hover,
+.showcase__status-link:focus-visible { text-decoration: underline; }
+
+/* The grid: index | stage. The index cell stretches to the stage's height,
+   which is the run the sticky nav has. */
+.showcase__grid {
+  display: grid;
+  grid-template-columns: var(--show-index-w) minmax(0, 1fr);
+  column-gap: var(--show-gap);
+}
+
+/* Index */
+.index {
+  position: sticky;
+  top: var(--show-nav-top);
+  display: flex;
+  flex-direction: column;
+  counter-reset: item;
+}
+.index__item {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 20px 24px;
+  border: 0;
+  border-radius: 16px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  counter-increment: item;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 300ms cubic-bezier(.4, 0, .2, 1);
+}
+.index__item.is-active { background: var(--index-active-bg); }
+.index__bar {
+  position: absolute;
+  left: 0;
+  top: 16%;
+  bottom: 16%;
+  width: 3px;
+  border-radius: 999px;
+  background: var(--index-bar-idle);
+  transition: background-color 300ms cubic-bezier(.4, 0, .2, 1);
+}
+.index__item.is-active .index__bar { background: var(--ink-1); }
+.index__num {
+  display: block;
+  margin-bottom: 8px;
+  font: 500 11px/14px var(--font-sans);
+  letter-spacing: .16em;
+  color: var(--ink-4);
+  transition: color 300ms cubic-bezier(.4, 0, .2, 1);
+}
+.index__num::before { content: counter(item, decimal-leading-zero); }
+.index__item.is-active .index__num { color: var(--ink-3); }
+.index__title {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 30px;
+  letter-spacing: -0.02em;
+  color: var(--ink-3);
+  transition: color 300ms cubic-bezier(.4, 0, .2, 1);
+}
+.index__item.is-active .index__title { color: var(--ink-1); }
+/* The description folds open with the grid-row trick: 0fr → 1fr */
+.index__desc {
+  display: grid;
+  grid-template-rows: 0fr;
+  overflow: hidden;
+  opacity: 0;
+  transition: grid-template-rows 300ms cubic-bezier(.25, .46, .45, .94), opacity 300ms cubic-bezier(.25, .46, .45, .94);
+}
+.index__item.is-active .index__desc { grid-template-rows: 1fr; opacity: 1; }
+.index__desc-clip { display: block; min-height: 0; }
+.index__desc-body {
+  display: block;
+  max-width: 32ch;
+  padding-top: 10px;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--ink-2);
+}
+@media (max-width: 999px) {
+  .index__title { font-size: 22px; line-height: 28px; }
+}
+
+/* Stage: one panel per item. The panel box is what the tracker measures. */
+.showcase__stage {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--show-stage-gap);   /* a sixth of a viewport between screens */
+  min-width: 0;
+  counter-reset: item;
+}
+.panel {
+  display: flex;
+  flex-direction: column;           /* the panel is its screen, which is what the tracker measures */
+  counter-increment: item;
+}
+.js .panel__reveal {
+  opacity: 0;
+  transform: scale(.97);
+  transition: opacity 700ms cubic-bezier(.87, 0, .13, 1), transform 700ms cubic-bezier(.87, 0, .13, 1);
+}
+.panel.is-in .panel__reveal { opacity: 1; transform: none; }
+
+/* The screen — a white frame with a hairline, so an empty slot still reads on the ground */
+.screen {
+  position: relative;
+  width: calc(100% * var(--show-screen-scale));   /* 90% of the stage column, on its left edge */
+  overflow: hidden;
+  border-radius: var(--show-radius);
+  background: #FFFFFF;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / .06), var(--screen-shadow);
+  isolation: isolate;
+  transition: box-shadow 300ms cubic-bezier(.4, 0, .2, 1);
+}
+.screen__slot { position: relative; aspect-ratio: var(--show-screen-ratio); overflow: hidden; }
+.screen__slot > img,
+.screen__slot > video,
+.screen__slot > iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 0;
+}
+.screen__caption {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  width: fit-content;
+  height: 35px;
+  padding: 0 16px;
+  border: 1px solid rgb(0 0 0 / .05);
+  border-radius: 20px;
+  background: #FFFFFF;
+  font-size: 16px;
+  line-height: 33px;
+  color: rgb(0 0 0 / .65);
+}
+/* Video slots: script.js adds screen--video and the play/pause overlay */
+.screen--video { cursor: pointer; }
+.screen__play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: opacity 200ms cubic-bezier(.4, 0, .2, 1);
+}
+.screen__play-btn {
+  display: block;
+  padding: 16px;
+  border-radius: 999px;
+  background: rgb(0 0 0 / .5);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  color: #FFFFFF;
+}
+.screen__play-btn svg { display: block; width: 20px; height: 20px; }
+.screen.is-playing .screen__play { opacity: 0; }
+.screen.is-playing:hover .screen__play { opacity: 1; }
+.screen.is-playing .screen__ico--play,
+.screen:not(.is-playing) .screen__ico--pause { display: none; }
+
+/* Mobile meta — hidden on desktop, where the index carries the text */
+.panel__meta { display: none; }
+.panel__num::before { content: counter(item, decimal-leading-zero); }
+
+/* Closing line, under the grid. Reveals once like the screens (script.js adds is-in). */
+.showcase__closing {
+  max-width: 24ch;
+  margin: clamp(64px, 10vh, 120px) auto 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 1.1rem + 1.2vw, 1.875rem);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-align: center;
+  color: var(--ink-1);
+  text-wrap: balance;
+}
+.js .showcase__closing {
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity 400ms cubic-bezier(.77, 0, .175, 1), transform 400ms cubic-bezier(.77, 0, .175, 1);
+}
+.showcase__closing.is-in { opacity: 1; transform: none; }
+
+/* Below 800px: no index; each panel carries its own text and reveals as a whole */
+@media (max-width: 799px) {
+  .showcase { padding: 60px 0 80px; --show-screen-ratio: 4 / 3; --show-screen-scale: 1; }   /* a 16:9 screen is 211px tall on a phone; demos.css crops the plate's sides */
+  .showcase__status { margin-bottom: 40px; }
+  .showcase__grid { display: block; }
+  .showcase__index { display: none; }
+  .showcase__stage { row-gap: 60px; }
+  .panel { min-height: 0; padding-bottom: 0; }
+  .js .panel {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 500ms cubic-bezier(.25, .46, .45, .94), transform 500ms cubic-bezier(.25, .46, .45, .94);
+  }
+  .panel.is-in { opacity: 1; transform: none; }
+  .js .panel__reveal { opacity: 1; transform: none; transition: none; }
+  .screen { border-radius: 20px; }
+  .panel__meta { display: block; margin-top: 20px; padding: 0 4px; }
+  .panel__num {
+    display: block;
+    margin-bottom: 6px;
+    font: 500 12px/16px var(--font-sans);
+    letter-spacing: .16em;
+    color: var(--ink-3);
+  }
+  .panel__title {
+    margin: 0 0 10px;
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 30px;
+    letter-spacing: -0.02em;
+    color: var(--ink-1);
+  }
+  .panel__desc { max-width: 38ch; font-size: 16px; line-height: 1.5; color: var(--ink-1); }
+}
+
+/* --------------------------------------------------------------------------
+   The history — page three (after en.ruien.be's horizontal room). Seven
+   spotlit columns on a museum black, one composition each, a year in serif
+   caps under the lamp: the map photograph, the Teletype, the NLS console,
+   the first iPhone with an Apple keyboard, two voice pills drawn in code,
+   and one line. On desktop the camera sticks to the viewport for the length
+   of the run and the strip slides sideways as the page scrolls (script.js ›
+   initGallery sets the run's height, adds is-pinned and eases the strip
+   toward the scroll position); the rail on the right tracks it like a
+   scrollbar. Without is-pinned — below 800px, under prefers-reduced-motion,
+   without JavaScript — the strip is a native sideways scroller, and below
+   800px the rail lies under it. Every size is a fraction of the column
+   (--gal-slot-w), so the phone's 260px column scales the whole composition.
+   The seams into and out of the black are the section's padding, outside
+   the sticky run: the camera pins on solid black. After the run, still on
+   the black, the chart's tail (.tail).
+   -------------------------------------------------------------------------- */
+.gallery {
+  padding: var(--gal-seam) 0;
+  /* Seams: --ground-2 into --ground-3 over --gal-seam, and back out. The second
+     declaration eases the run through three mixed stops so neither end draws a
+     line; a browser without color-mix() keeps the plain one. */
+  background: linear-gradient(to bottom,
+    var(--ground-2) 0, var(--ground-3) var(--gal-seam),
+    var(--ground-3) calc(100% - var(--gal-seam)), var(--ground-2) 100%);
+  background: linear-gradient(to bottom,
+    var(--ground-2) 0,
+    color-mix(in oklab, var(--ground-3) 12%, var(--ground-2)) calc(var(--gal-seam) * .25),
+    color-mix(in oklab, var(--ground-3) 50%, var(--ground-2)) calc(var(--gal-seam) * .5),
+    color-mix(in oklab, var(--ground-3) 88%, var(--ground-2)) calc(var(--gal-seam) * .75),
+    var(--ground-3) var(--gal-seam),
+    var(--ground-3) calc(100% - var(--gal-seam)),
+    color-mix(in oklab, var(--ground-3) 88%, var(--ground-2)) calc(100% - var(--gal-seam) * .75),
+    color-mix(in oklab, var(--ground-3) 50%, var(--ground-2)) calc(100% - var(--gal-seam) * .5),
+    color-mix(in oklab, var(--ground-3) 12%, var(--ground-2)) calc(100% - var(--gal-seam) * .25),
+    var(--ground-2) 100%);
+
+  /* Behaviour tunables — read once by script.js › initGallery */
+  --gal-ratio: 1.2;     /* px of page scroll per px of strip travel (the reference measures about .9) */
+  --gal-hold: .2;       /* end dwell, as a fraction of the viewport height; covers the strip's lag at a fast scroll */
+  --gal-lerp: .12;      /* follow speed per 60fps frame (the reference's smoothing 75) */
+  --gal-stagger: 110;   /* ms between columns whose subjects reveal in the same frame, left to right */
+  --gal-gaze-px: 3;     /* the eye on Send: fixation jitter, as the demos' ring (demos.js › jitter): its reach in px… */
+  --gal-gaze-hz: 8;     /* …and how many times a second it lands somewhere new */
+}
+.gallery__run { position: relative; }            /* the camera's containing block; script.js sets its height when pinned */
+
+/* Strip mode, the base: the strip is the scroll container; the row is its one, max-content item */
+.gallery__camera { position: relative; padding: clamp(40px, 8vh, 80px) 0; }
+.gallery__heading {
+  max-width: calc(var(--gal-head-w) + var(--gal-pad) + var(--pad-x));   /* border-box: the measure plus both paddings; one line at 1440 */
+  margin: 0 0 var(--gal-head-gap);
+  padding: 0 var(--pad-x) 0 var(--gal-pad);      /* the left edge is the first column's, in both modes */
+  font-family: var(--font-display);
+  font-size: var(--gal-head);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--ink-l1);
+  text-wrap: balance;
+}
+.gallery__body { position: relative; }             /* the strip's box: the rail is positioned against it, so the heading's line count never enters the rail's maths */
+.gallery__strip {
+  display: flex;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+}
+.gallery__row {
+  flex: none;
+  display: flex;
+  gap: var(--gal-gap);
+  margin: 0;
+  padding: 0 var(--gal-pad);
+  list-style: none;
+}
+
+/* A column: the year under the lamp, then the composition centred in what is left. One <li>, one light. */
+.gallery__col {
+  position: relative;
+  isolation: isolate;                              /* its own stacking context: the light sits at z -1 without falling behind the section's ground */
+  flex: none;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  justify-items: center;
+  width: var(--gal-slot-w);
+  height: var(--gal-slot-h);
+  scroll-snap-align: center;
+}
+/* The spotlight: a small bright ellipse on the top edge and a 56° cone under it (soft 20° edges, straight down,
+   apex just above the column), faded out by 58% of the column's height. Two gradients on one pseudo-element. */
+.gallery__col::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 16% 5% at 50% 0%, var(--gal-lamp), rgb(255 246 232 / 0) 100%),
+    conic-gradient(from 152deg at 50% -6%,
+      rgb(255 236 210 / 0) 0deg,
+      var(--gal-light) 20deg,
+      var(--gal-light) 36deg,
+      rgb(255 236 210 / 0) 56deg);
+  -webkit-mask-image: linear-gradient(to bottom, #000 12%, rgb(0 0 0 / .55) 35%, rgb(0 0 0 / 0) 58%);
+  mask-image: linear-gradient(to bottom, #000 12%, rgb(0 0 0 / .55) 35%, rgb(0 0 0 / 0) 58%);
+}
+.gallery__marker {
+  grid-row: 1;
+  padding: calc(var(--gal-slot-w) * .15) 0 calc(var(--gal-slot-w) * .032);   /* 65px under the lamp, 14px above the picture, at 1440 */
+  font: 400 clamp(15px, calc(var(--gal-slot-w) * .051), 22px)/1.2 var(--font-display);   /* 22px at 1440 */
+  letter-spacing: .06em;
+  text-transform: uppercase;                       /* the DOM says now, next, later */
+  text-align: center;
+  color: var(--gal-marker);
+}
+.gallery__subject { grid-row: 2; align-self: center; margin: 0; max-width: 100%; }
+
+/* The compositions: every width a fraction of the column (--fig), so the phone's 260px column scales them all */
+.gallery__img { display: block; width: calc(var(--gal-slot-w) * var(--fig)); height: auto; }
+.gallery__col--map      { --fig: .62; }            /* 268 × 202 at 1440 */
+.gallery__col--teletype { --fig: .40; }            /* 173 × 333 */
+.gallery__col--nls      { --fig: .70; }            /* 302 × 176 */
+.gallery__col--iphone   { --fig: .55; }            /* the hand and the phone, 238 × 301 */
+.gallery__col--now,
+.gallery__col--next     { --fig: .54; }            /* the pill: 233 × 60 */
+/* The map photograph is a rectangle: its bottom, and lightly its sides, dissolve into the black. Two mask
+   layers, intersected (WebKit's keyword for intersect is source-in). */
+.gallery__img--map {
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, rgb(0 0 0 / 0) 100%),
+                      linear-gradient(to right, rgb(0 0 0 / 0), #000 12%, #000 88%, rgb(0 0 0 / 0));
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to bottom, #000 55%, rgb(0 0 0 / 0) 100%),
+              linear-gradient(to right, rgb(0 0 0 / 0), #000 12%, #000 88%, rgb(0 0 0 / 0));
+  mask-composite: intersect;
+}
+.gallery__later {                                  /* the last column: no picture, the line */
+  max-width: 12em;
+  font: 400 clamp(17px, calc(var(--gal-slot-w) * .0555), 24px)/1.3 var(--font-display);   /* 24px at 1440 */
+  letter-spacing: -0.01em;
+  text-align: center;
+  color: var(--ink-l1);
+  text-wrap: balance;
+}
+
+/* The voice pill (now, next), drawn on a 240 × 62 grid: one unit (--u) is .97px at 1440 and .58px on a phone.
+   A near-black capsule with a 1px lighter edge; inside, left to right, the cancel circle, thirteen white bars,
+   the confirm circle. The cursor and the ring are absolute in the pill's box. */
+.pill {
+  --pill-w: calc(var(--gal-slot-w) * var(--fig));
+  --u: calc(var(--pill-w) / 240);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: var(--pill-w);
+  height: calc(var(--u) * 62);
+  padding: 0 calc(var(--u) * 8);
+  border-radius: 999px;
+  background: #111111;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / .14);
+}
+.pill__btn {
+  display: block;
+  flex: none;
+  width: calc(var(--u) * 46);
+  height: calc(var(--u) * 46);
+  border-radius: 50%;
+  fill: none;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.pill__btn--x  { background: #3A3A3A; stroke: #FFFFFF; }
+.pill__btn--ok { background: #FFFFFF; stroke: #111111; }
+.pill__wave { display: flex; align-items: center; gap: calc(var(--u) * 3); }
+.pill__wave i {
+  display: block;
+  width: calc(var(--u) * 3);
+  height: calc(var(--u) * var(--h, 12));
+  border-radius: 999px;
+  background: #FFFFFF;
+}
+.pill__wave i:nth-child(1)  { --h: 6; }
+.pill__wave i:nth-child(2)  { --h: 12; }
+.pill__wave i:nth-child(3)  { --h: 18; }
+.pill__wave i:nth-child(4)  { --h: 10; }
+.pill__wave i:nth-child(5)  { --h: 24; }
+.pill__wave i:nth-child(6)  { --h: 16; }
+.pill__wave i:nth-child(7)  { --h: 30; }
+.pill__wave i:nth-child(8)  { --h: 20; }
+.pill__wave i:nth-child(9)  { --h: 26; }
+.pill__wave i:nth-child(10) { --h: 12; }
+.pill__wave i:nth-child(11) { --h: 20; }
+.pill__wave i:nth-child(12) { --h: 14; }
+.pill__wave i:nth-child(13) { --h: 8; }
+.pill__cursor {                                    /* the site's cursor (demos.js): its tip just right of and below the confirm circle's centre */
+  position: absolute;
+  left: calc(var(--u) * 213);
+  top: calc(var(--u) * 35);
+  width: calc(var(--u) * 18);
+  height: calc(var(--u) * 27);
+  overflow: visible;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / .45));
+}
+.pill__ring {                                      /* 1.35 × the pill's height, centred on the confirm button (209, 31): the eye is on Send */
+  position: absolute;
+  left: calc(var(--u) * 167);
+  top: calc(var(--u) * -11);
+  width: calc(var(--u) * 84);
+  height: calc(var(--u) * 84);
+  border-radius: 50%;
+  border: max(2px, calc(var(--u) * 3)) solid var(--gal-ring);
+  box-shadow:
+    0 0 calc(var(--u) * 18) rgb(42 197 252 / .42),
+    0 0 calc(var(--u) * 5) rgb(42 197 252 / .30),
+    inset 0 0 calc(var(--u) * 9) rgb(42 197 252 / .20);
+  pointer-events: none;
+  transition: transform 90ms cubic-bezier(.4, 0, .2, 1);   /* each landing of the fixation jitter (script.js) settles rather than teleports */
+  will-change: transform;
+}
+
+/* Reveal, once, left to right (script.js adds is-in and --reveal per column): the subject fades up; the light and the year are always there */
+.js .gallery__subject {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out);
+  transition-delay: var(--reveal, 0ms);
+}
+.gallery__col.is-in .gallery__subject { opacity: 1; transform: none; }
+
+/* The rail: a track and a thumb. script.js gives the thumb its length (the viewport's share of the strip, as a scrollbar's) and moves it. */
+.gallery__rail {
+  display: none;
+  position: relative;
+  border-radius: 999px;
+  background: rgb(252 250 247 / .10);
+}
+.gallery__thumb {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--ink-l2);
+  will-change: transform;
+}
+
+/* Pinned (script.js adds is-pinned at 800px and up when motion is allowed): the camera sticks, the strip slides */
+.gallery.is-pinned .gallery__camera {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;                         /* the heading and the columns sit mid-screen, black above and below */
+  align-items: flex-start;
+  overflow: hidden;
+  overflow: clip;                                  /* clip, not hidden: nothing (focus, find-in-page) can scroll the camera by accident */
+}
+.gallery.is-pinned .gallery__body { width: 100%; }   /* explicit: as a flex item under align-items: flex-start it would size to the row */
+.gallery.is-pinned .gallery__strip {
+  width: max-content;
+  min-width: 100%;
+  justify-content: flex-start;                     /* when all seven fit (no travel) the row stays under the heading */
+  overflow: visible;
+  scroll-snap-type: none;
+  will-change: transform;
+}
+.gallery.is-pinned .gallery__rail {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: clamp(10px, calc((var(--gal-pad) - var(--gal-rail-w)) / 2), 32px);   /* centred in the right-hand gutter */
+  width: var(--gal-rail-w);
+  height: 100%;                                    /* the strip's box: as tall as the columns, level with them */
+}
+
+/* Below 800px: the first and last columns centre at rest, the native scrollbar goes, the rail lies under the strip */
+@media (max-width: 799px) {
+  .gallery { --gal-pad: calc(50vw - var(--gal-slot-w) / 2); }
+  .js .gallery__strip { scrollbar-width: none; }
+  .js .gallery__strip::-webkit-scrollbar { display: none; }
+  .js .gallery__rail { display: block; width: min(120px, 32vw); height: var(--gal-rail-w); margin: 24px auto 0; }
+}
+
+/* --------------------------------------------------------------------------
+   The chart's tail — still page three. After the run, on the same black: the
+   closing line, then the bench (eyebrow, heading, three lines, the product
+   specimen and its caption). No divider and no new ground: the seam out of
+   the black is the section's bottom padding, so the bench ends on solid
+   --ground-3 and the light returns through the gradient. Sizes and spacing
+   are after-chart-layout.html's; where ours differ, its value is in the
+   comment.
+   -------------------------------------------------------------------------- */
+.tail {
+  max-width: var(--tail-max);
+  margin: 0 auto;
+  padding: clamp(64px, 9vh, 110px) var(--pad-x) 0;
+}
+.tail__close {
+  max-width: 20em;                                 /* the layout says 20ch, but Georgia's ch is ~.6em: 20ch would fold each sentence. 20em holds the longer one (~17.4em) */
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.8vw, 34px);
+  font-weight: 400;
+  line-height: 1.32;
+  letter-spacing: -0.015em;
+  color: var(--ink-l1);
+}
+.tail__close em {
+  display: block;                                  /* two sentences on two lines: one breath, not two statements */
+  font-style: normal;
+  color: var(--ink-l2);                            /* 62% */
+}
+
+.bench { padding: clamp(96px, 14vh, 170px) 0 clamp(64px, 9vh, 110px); }   /* below: the layout's 90–150px, less the seam's dark half (~80px at 900 tall) */
+.bench__eyebrow {
+  padding-bottom: 22px;
+  margin-bottom: 44px;
+  border-bottom: 1px solid var(--rule-l);
+  font: 500 11px/1.4 var(--font-sans);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink-l3);                            /* 38% */
+}
+.bench__heading {
+  margin-bottom: clamp(40px, 5vw, 60px);
+  font-family: var(--font-display);
+  font-size: clamp(30px, 4.4vw, 54px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: var(--ink-l1);
+}
+.bench__list { max-width: 46ch; }
+.bench__list p {
+  font-size: clamp(16px, 1.35vw, 18.5px);
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+  color: var(--ink-l1);
+}
+.bench__list p + p { margin-top: 22px; }
+.bench__name { font-weight: 600; }
+
+/* The specimen floats on the black: no frame, no shadow, no plinth, no gradient, no caption. */
+.specimen {
+  width: min(680px, 100%);
+  margin: clamp(72px, 11vh, 124px) auto 0;
+}
+.specimen__img { display: block; width: 100%; height: auto; }
+
+/* The collector: one line and the hero's origin button, centred under the specimen. On the black the
+   black fill would lose the pill's edge, so the hairline stays lit while it's hot. */
+.collect {
+  margin-top: clamp(56px, 8vh, 96px);
+  text-align: center;
+}
+.collect__line {
+  margin-bottom: 24px;
+  font-size: clamp(15px, 1.3vw, 17.5px);
+  line-height: 1.5;
+  color: var(--ink-l2);                            /* 64% */
+}
+.collect .btn--origin.is-hot,
+.collect .btn--origin:focus-visible { box-shadow: inset 0 0 0 1px var(--ink-l4); }
+.collect .btn--origin:focus-visible { outline-color: var(--ink-l1); }
+@media (max-width: 799px) {
+  .bench__eyebrow { padding-bottom: 16px; margin-bottom: 32px; }
+}
+
+/* --------------------------------------------------------------------------
+   The proof — one paragraph on the light ground in the narrow column, no
+   heading. 62% ink; the last sentence is the block's only full ink.
+   -------------------------------------------------------------------------- */
+.proof { padding: clamp(72px, 11vh, 124px) 0 clamp(90px, 13vh, 150px); }   /* above: the layout's 96–170px, less the seam's light half */
+.proof__inner { max-width: var(--tail-narrow); margin: 0 auto; padding: 0 var(--pad-x); }
+.proof__text {
+  max-width: 46ch;
+  font-size: clamp(17px, 1.55vw, 21px);
+  line-height: 1.55;
+  letter-spacing: -0.012em;
+  color: var(--ink-2);                             /* 62% */
+}
+.proof__key { font-weight: inherit; color: var(--black); }   /* 100% ink, same weight */
+
+/* --------------------------------------------------------------------------
+   Early access — a centred block with no rule above or below it: the
+   heading, one line, then the form (440px, left-aligned inside). The fields
+   are underline only; focus takes the underline to full ink and changes
+   nothing else. The button is the only solid black shape below the fold.
+   -------------------------------------------------------------------------- */
+.access {
+  padding: clamp(90px, 13vh, 150px) var(--pad-x) clamp(96px, 14vh, 160px);
+  text-align: center;
+}
+.access__inner { max-width: var(--tail-max); margin: 0 auto; }
+.access__heading {
+  margin-bottom: 16px;
+  font-family: var(--font-display);
+  font-size: clamp(30px, 4.4vw, 54px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.025em;
+}
+.access__line {
+  max-width: 60ch;
+  margin: 0 auto clamp(38px, 5vh, 52px);
+  font-size: clamp(15px, 1.3vw, 17.5px);
+  line-height: 1.5;
+  color: var(--ink-2);                             /* 62% */
+}
+
+.access__form {
+  display: grid;
+  row-gap: 10px;
+  max-width: 440px;
+  margin: 0 auto;
+  text-align: left;
+}
+.field__input {
+  width: 100%;
+  padding: 15px 2px;
+  border: 0;
+  border-bottom: 1px solid var(--rule);            /* underline only: no box, no fill, no radius */
+  border-radius: 0;
+  background: transparent;
+  color: var(--black);
+  font: 400 15.5px/1.5 var(--font-sans);
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color 180ms var(--ease-out);
+}
+.field__input::placeholder { color: var(--ink-3); opacity: 1; }
+.field__input:focus { outline: none; border-bottom-color: var(--black); }   /* the underline is the focus state; nothing else moves */
+textarea.field__input { min-height: 76px; line-height: 1.45; resize: none; field-sizing: content; }
+.access__form .btn { width: 100%; margin-top: 16px; }              /* 10px gap + 16 = the layout's 26px above the button */
+.access__form .btn:focus-visible { outline-color: var(--black); }  /* .btn's currentColor is white: invisible on this ground */
+.access__form.is-done { display: none; }
+
+.access__status { margin-top: 2rem; }
+.access__status:empty { display: none; }
+.access__status:focus { outline: none; }
+
+/* --------------------------------------------------------------------------
+   Footer — light, like everything but the black, with no rule above it.
+   The note and, under it, the contact on the left; on the right the ghost:
+   the wordmark (assets/brand/wordmark.svg, inlined once in index.html, fill
+   currentColor) tinted --ghost, texture, not a link, top-aligned with the
+   note. Below 640px everything stacks and the ghost comes last. Then the
+   legal strip under its hairline: one link, because one page exists.
+   -------------------------------------------------------------------------- */
+.footer { padding: clamp(72px, 10vh, 110px) var(--pad-x) clamp(40px, 5vh, 56px); }
+.footer__inner { max-width: var(--tail-max); margin: 0 auto; }
+.footer__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;      /* the note and the contact | the ghost */
+  grid-template-rows: auto auto;
+  column-gap: clamp(32px, 6vw, 88px);
+  padding-bottom: clamp(44px, 6vh, 64px);
+}
+.footer__note,
+.footer__contact {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ink-2);                             /* 62% */
+}
+.footer__note { grid-column: 1; grid-row: 1; max-width: 46ch; }
+.footer__contact { grid-column: 1; grid-row: 2; margin-top: 28px; }
+.footer__ghost {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  justify-self: end;
+  align-self: start;
+  display: block;
+  height: var(--ghost-h);
+  width: auto;
+  max-width: 100%;
+  /* The file's viewBox carries air around the glyphs: 35 units right and above of 284, .12 of the height (26
+     below, .09). The negative margins take it out, so the A's right edge sits on the column's edge and the
+     glyph tops on the note's first line; +6px drops them from the line box's top to its cap line. */
+  margin: calc(var(--ghost-h) * -.12 + 6px) calc(var(--ghost-h) * -.12) 0 0;
+  color: var(--ghost);
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+.footer__mail {
+  color: inherit;
+  text-decoration: none;                           /* underlined on hover only */
+  text-underline-offset: .18em;
+  text-decoration-thickness: 1px;
+  overflow-wrap: anywhere;
+  transition: color 180ms var(--ease-out);
+}
+.footer__mail:hover,
+.footer__mail:focus-visible { color: var(--black); text-decoration: underline; }
+
+.footer__legal { padding-top: clamp(24px, 3.5vh, 34px); border-top: 1px solid var(--rule); }
+.footer__copyright,
+.footer__link { font-size: 12.5px; line-height: 1.5; color: var(--ink-legal); }   /* 26% */
+.footer__copyright { margin: 0 0 9px; }
+.footer__nav { display: flex; flex-wrap: wrap; gap: 26px; }
+.footer__link { text-decoration: none; transition: color 180ms var(--ease-out); }
+.footer__link:hover,
+.footer__link:focus-visible { color: var(--ink-2); }
+
+@media (max-width: 640px) {
+  .footer__body { grid-template-columns: minmax(0, 1fr); }
+  .footer__contact { margin-top: 24px; }
+  .footer__ghost {
+    grid-column: 1;
+    grid-row: 3;
+    justify-self: start;
+    height: 64px;
+    margin: calc(40px - 64px * .12) 0 calc(64px * -.09) calc(64px * -.12);   /* 40px under the contact; the F on the column's left edge; the bottom air out */
+  }
+  .footer__nav { gap: 16px 20px; }
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion — the button fills instantly; the light rig stays at rest
+   (script.js does not start it); the showcase shows everything at once and
+   its index switches without animating. The demos show their final frame
+   (demos.css, demos.js). The history is not pinned: its strip scrolls
+   sideways on its own and its pictures are simply visible (script.js). The
+   tail's fields and links change colour without easing.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .btn--origin, .btn__fill, .btn__label { transition-duration: 0s; }
+  .js .gallery__subject { opacity: 1; transform: none; transition: none; }
+  .pill__ring { transition: none; }
+  .field__input, .footer__mail, .footer__link { transition-duration: 0s; }
+  .showcase__closing,
+  .panel, .panel__reveal, .screen, .screen__play,
+  .index__item, .index__bar, .index__num, .index__title, .index__desc { transition-duration: 0s; transition-delay: 0s; }
+}

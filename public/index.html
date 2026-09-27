@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fovea — after the keyboard and mouse</title>
+  <meta name="description" content="The last layer between you and every agent you run. Nothing to attach, nothing to choose, nothing to open, nothing to chase.">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#FCFCFC">
+
+  <link rel="canonical" href="https://hellofovea.com/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hellofovea.com/">
+  <meta property="og:title" content="Fovea — after the keyboard and mouse">
+  <meta property="og:description" content="The last layer between you and every agent you run. Nothing to attach, nothing to choose, nothing to open, nothing to chase.">
+  <!-- TODO(asset #og-card): a 1200x630 card would replace the logo here. og:image must be an absolute URL. -->
+  <meta property="og:image" content="https://hellofovea.com/fovea-logo.png">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="1024">
+  <meta property="og:image:alt" content="A beige floppy disk drive, keyboard and mouse on a white table, under the words: Fovea knows your next step.">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Fovea — after the keyboard and mouse">
+  <meta name="twitter:description" content="The last layer between you and every agent you run. Nothing to attach, nothing to choose, nothing to open, nothing to chase.">
+  <meta name="twitter:image" content="https://hellofovea.com/fovea-logo.png">
+
+  <!-- Typefaces are system fonts: Georgia for the headline, San Francisco for the rest (see style.css :root). No web fonts. -->
+  <link rel="preload" as="image" href="assets/hero-source.png">
+
+  <!-- The tab icon: the Fovea app icon (assets/brand, from the logo package). Browsers that take SVG use the
+       vector; the .ico carries 16, 32 and 48; iOS takes the opaque 180px. In foveafrontend the same .ico is
+       app/favicon.ico, and app/icon.svg and app/apple-icon.png serve the app's own pages. -->
+  <link rel="icon" href="/assets/brand/icon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css?v=cb1edd3">
+  <link rel="stylesheet" href="demos.css">
+</head>
+<body>
+
+  <main>
+
+    <!-- ================================================================
+         HERO — the whole first screen.
+         The photograph is the ground. The layers above it are the light
+         rig (script.js › initLighting): two pre-blurred shadow sprites, the
+         cut-out objects, and a masked container for the light and shade
+         blobs. All layers share the photo's 1672×941 canvas, so they stay
+         pixel-aligned. At rest every dynamic layer is invisible and the
+         screen is the photograph, untouched.
+         ================================================================ -->
+    <section class="hero" id="hero" aria-labelledby="hero-headline">
+
+      <div class="stage" id="stage">
+        <img class="stage__photo" src="assets/hero-source.png" width="1672" height="941" alt="A beige floppy disk drive, keyboard with a coiled cable, and one-button mouse from the 1980s, sitting on a white table." fetchpriority="high" decoding="async">
+        <div class="stage__glow" aria-hidden="true"></div>
+        <img class="stage__shadow stage__shadow--soft" src="assets/hardware-shadow-16.png" width="1672" height="941" alt="" aria-hidden="true" decoding="async">
+        <img class="stage__shadow stage__shadow--tight" src="assets/hardware-shadow-6.png" width="1672" height="941" alt="" aria-hidden="true" decoding="async">
+        <img class="stage__objects" src="assets/hardware-cutout.png" width="1672" height="941" alt="" aria-hidden="true" decoding="async">
+        <div class="stage__lit" aria-hidden="true">
+          <!-- Side shading. One strip per object and side (drive, keyboard, mouse), positioned in
+               image-space percentages from the matte measurements; the cutout mask clips them to
+               the objects. The drive's strips stop above the keyboard's top edge and the keyboard's
+               start below it, so neither lights the other where they overlap. script.js fades the
+               four groups by the light's horizontal position. -->
+          <div class="lit__group lit__light--left">
+            <div class="lit__strip" style="--x: 16.6%; --y: 60.0%; --w: 5.8%; --h: 13.6%"></div>
+            <div class="lit__strip" style="--x: 28.7%; --y: 75.0%; --w: 13.1%; --h: 16.8%"></div>
+            <div class="lit__strip" style="--x: 70.7%; --y: 77.5%; --w: 3.7%; --h: 15.1%"></div>
+          </div>
+          <div class="lit__group lit__light--right">
+            <div class="lit__strip" style="--x: 27.3%; --y: 60.0%; --w: 5.8%; --h: 13.6%"></div>
+            <div class="lit__strip" style="--x: 53.8%; --y: 75.0%; --w: 13.1%; --h: 16.8%"></div>
+            <div class="lit__strip" style="--x: 77.5%; --y: 77.5%; --w: 3.7%; --h: 15.1%"></div>
+          </div>
+          <div class="lit__group lit__shade--left">
+            <div class="lit__strip" style="--x: 16.6%; --y: 60.0%; --w: 5.8%; --h: 13.6%"></div>
+            <div class="lit__strip" style="--x: 28.7%; --y: 75.0%; --w: 13.1%; --h: 16.8%"></div>
+            <div class="lit__strip" style="--x: 70.7%; --y: 77.5%; --w: 3.7%; --h: 15.1%"></div>
+          </div>
+          <div class="lit__group lit__shade--right">
+            <div class="lit__strip" style="--x: 27.3%; --y: 60.0%; --w: 5.8%; --h: 13.6%"></div>
+            <div class="lit__strip" style="--x: 53.8%; --y: 75.0%; --w: 13.1%; --h: 16.8%"></div>
+            <div class="lit__strip" style="--x: 77.5%; --y: 77.5%; --w: 3.7%; --h: 15.1%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero__copy">
+        <h1 class="hero__headline" id="hero-headline">Fovea knows your next step.</h1>
+        <p class="hero__subhead">The last layer between you and every agent you run.</p>
+        <!-- Origin button: the fill grows from where the cursor enters (script.js › initOriginButtons). -->
+        <a class="btn btn--origin" id="hero-cta" href="#early-access"><span class="btn__fill" aria-hidden="true"></span><span class="btn__label">Get Early Access</span></a>
+      </div>
+
+    </section>
+
+    <!-- ================================================================
+         SHOWCASE — page two. After diabrowser.com's "Dia reads between
+         the tabs": a sticky index on the left, one display screen per
+         item on the right. The item whose screen is nearest 40% of the
+         viewport height is active; clicking an index item scrolls its
+         screen into place (script.js › initShowcase).
+         Each screen holds one of the four demos (demos.js › initDemos).
+         The <img> is the desktop plate, the only thing that shows without
+         JavaScript; the notch, its panels, the gaze ring, the cursor and
+         the key cap are drawn over it in code. Index item k pairs with
+         panel k by document order and the numbers are CSS counters, so
+         adding an item is one .index__item, one .panel and one script in
+         demos.js.
+         ================================================================ -->
+    <section class="showcase ground-2" id="showcase" aria-label="The four">
+      <div class="showcase__inner">
+
+        <!-- Before the four: where Fovea for Mac stands, and the way to the form -->
+        <p class="showcase__status">Fovea for Mac is currently in Alpha. <a class="showcase__status-link" href="#early-access">Request Access</a>.</p>
+
+        <div class="showcase__grid">
+
+          <div class="showcase__index">
+            <nav class="index" aria-label="The four">
+              <button class="index__item is-active" type="button" aria-current="true">
+                <span class="index__bar" aria-hidden="true"></span>
+                <span class="index__num"></span>
+                <span class="index__title">Nothing to attach.</span>
+                <span class="index__desc"><span class="index__desc-clip"><span class="index__desc-body">With gaze tracking and dictation: look at anything on screen, and it comes along with your words — a chart, an error, a paragraph, a file. When it isn’t on screen, a short description like “those papers from yesterday” is enough.</span></span></span>
+              </button>
+              <button class="index__item" type="button">
+                <span class="index__bar" aria-hidden="true"></span>
+                <span class="index__num"></span>
+                <span class="index__title">Nothing to choose.</span>
+                <span class="index__desc"><span class="index__desc-clip"><span class="index__desc-body">Say your goal, and that’s it. Fovea works out which model, which agent, which session — and shows you before it sends.</span></span></span>
+              </button>
+              <button class="index__item" type="button">
+                <span class="index__bar" aria-hidden="true"></span>
+                <span class="index__num"></span>
+                <span class="index__title">Nothing to open.</span>
+                <span class="index__desc"><span class="index__desc-clip"><span class="index__desc-body">Every session is monitored on the notch. It runs in the background while you focus on your current work.</span></span></span>
+              </button>
+              <button class="index__item" type="button">
+                <span class="index__bar" aria-hidden="true"></span>
+                <span class="index__num"></span>
+                <span class="index__title">Nothing to chase.</span>
+                <span class="index__desc"><span class="index__desc-clip"><span class="index__desc-body">A notification when it’s done. Then a changelog, some artifacts, and a way straight into it.</span></span></span>
+              </button>
+            </nav>
+          </div>
+
+          <div class="showcase__stage">
+            <article class="panel">
+              <div class="panel__reveal">
+                <div class="screen">
+                  <div class="screen__slot">
+                    <div class="demo" data-demo="attach">
+                      <img class="demo__plate" src="assets/plates/desk-moodboard.jpg" width="1672" height="941" alt="A Mac desktop with a moodboard of posters open." loading="lazy" decoding="async">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel__meta">
+                <span class="panel__num"></span>
+                <h3 class="panel__title">Nothing to attach.</h3>
+                <p class="panel__desc">With gaze tracking and dictation: look at anything on screen, and it comes along with your words — a chart, an error, a paragraph, a file. When it isn’t on screen, a short description like “those papers from yesterday” is enough.</p>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel__reveal">
+                <div class="screen">
+                  <div class="screen__slot">
+                    <div class="demo" data-demo="choose">
+                      <img class="demo__plate" src="assets/plates/desk-code.jpg" width="1672" height="941" alt="A Mac desktop with a code editor open." loading="lazy" decoding="async">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel__meta">
+                <span class="panel__num"></span>
+                <h3 class="panel__title">Nothing to choose.</h3>
+                <p class="panel__desc">Say your goal, and that’s it. Fovea works out which model, which agent, which session — and shows you before it sends.</p>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel__reveal">
+                <div class="screen">
+                  <div class="screen__slot">
+                    <div class="demo" data-demo="open">
+                      <img class="demo__plate" src="assets/plates/desk-video.jpg" width="1672" height="941" alt="A Mac desktop with a video playing." loading="lazy" decoding="async">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel__meta">
+                <span class="panel__num"></span>
+                <h3 class="panel__title">Nothing to open.</h3>
+                <p class="panel__desc">Every session is monitored on the notch. It runs in the background while you focus on your current work.</p>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel__reveal">
+                <div class="screen">
+                  <div class="screen__slot">
+                    <div class="demo" data-demo="chase">
+                      <img class="demo__plate" src="assets/plates/desk-video.jpg" width="1672" height="941" alt="A Mac desktop with a video playing." loading="lazy" decoding="async">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel__meta">
+                <span class="panel__num"></span>
+                <h3 class="panel__title">Nothing to chase.</h3>
+                <p class="panel__desc">A notification when it’s done. Then a changelog, some artifacts, and a way straight into it.</p>
+              </div>
+            </article>
+          </div>
+
+        </div>
+
+        <p class="showcase__closing">You stay in the window you’re in.</p>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         THE HISTORY — page three. After en.ruien.be's horizontal room:
+         seven spotlit columns on a museum black, one composition each, a
+         year in serif caps under the lamp. The pictures are Vision cutouts
+         on transparent (tools/make-history.sh, from historical/), the map
+         photograph a rectangle whose bottom dissolves through a CSS mask,
+         the two voice pills and the last line are code. On desktop the
+         camera sticks to the viewport for the length of the run and the
+         strip slides sideways as the page scrolls down (script.js ›
+         initGallery); the rail on the right tracks it like a scrollbar and
+         each column's subject reveals once as it arrives. Below 800px,
+         under prefers-reduced-motion and without JavaScript the strip is a
+         native sideways scroller with the rail under it. A column is one
+         <li>: its light is a pseudo-element, its sizes fractions of the
+         column, so neither the count nor the widths enter the script. The
+         seams into and out of the black are the section's padding. After
+         the run, still on the black, the chart's tail: the closing line,
+         the bench and the product specimen. Copy is copy.md's, verbatim.
+         ================================================================ -->
+    <section class="gallery ground-3" id="gallery" aria-labelledby="gallery-heading">
+      <div class="gallery__run">
+        <div class="gallery__camera">
+          <h2 class="gallery__heading" id="gallery-heading">The History of Pointing and Telling</h2>
+          <div class="gallery__body">
+            <div class="gallery__strip">
+              <ol class="gallery__row" role="list">
+              <li class="gallery__col gallery__col--map"><!-- before · a finger and a voice -->
+                <span class="gallery__marker">Before</span>
+                <figure class="gallery__subject">
+                  <img class="gallery__img gallery__img--map" src="assets/history/map.png" width="600" height="453" alt="President Roosevelt at a desk with microphones in front of him, pointing at a wall map." loading="lazy" decoding="async">
+                </figure>
+              </li>
+              <li class="gallery__col gallery__col--teletype">
+                <span class="gallery__marker">1963</span>
+                <figure class="gallery__subject">
+                  <img class="gallery__img" src="assets/history/teletype.png" width="700" height="1349" alt="A Teletype Model 33 on its stand, printout in the roll." loading="lazy" decoding="async">
+                </figure>
+              </li>
+              <li class="gallery__col gallery__col--nls">
+                <span class="gallery__marker">1968</span>
+                <figure class="gallery__subject">
+                  <img class="gallery__img" src="assets/history/nls.png" width="750" height="438" alt="The NLS console: a keyboard between a chord keyset and a three-button mouse, one hand on each." loading="lazy" decoding="async">
+                </figure>
+              </li>
+              <li class="gallery__col gallery__col--iphone"><!-- 2007 · the finger on glass -->
+                <span class="gallery__marker">2007</span>
+                <figure class="gallery__subject">
+                  <img class="gallery__img gallery__img--iphone" src="assets/history/iphone.png" width="520" height="659" alt="A hand holding the first iPhone, its home screen lit." loading="lazy" decoding="async">
+                </figure>
+              </li>
+              <li class="gallery__col gallery__col--now"><!-- now · the pill, and a click to agree -->
+                <span class="gallery__marker">now</span>
+                <figure class="gallery__subject" role="img" aria-label="A voice pill: cancel, a waveform, confirm, and the cursor about to click confirm.">
+                  <div class="pill"><svg class="pill__btn pill__btn--x" viewBox="0 0 46 46" aria-hidden="true"><path d="M17.5 17.5l11 11M28.5 17.5l-11 11"/></svg><span class="pill__wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><svg class="pill__btn pill__btn--ok" viewBox="0 0 46 46" aria-hidden="true"><path d="M15.5 23.5l5.5 5.5 10-11"/></svg><svg class="pill__cursor" viewBox="0 0 14 21" aria-hidden="true"><path d="M1 1v15.4l3.9-3.5 2.6 6.1 2.6-1.1-2.6-6h5.1z" fill="#000" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
+                </figure>
+              </li>
+              <li class="gallery__col gallery__col--next"><!-- next · the pill, and the ring on Send: no click -->
+                <span class="gallery__marker">next</span>
+                <figure class="gallery__subject" role="img" aria-label="The same voice pill, with a ring fixating on confirm: the eye is on the send button.">
+                  <div class="pill"><svg class="pill__btn pill__btn--x" viewBox="0 0 46 46" aria-hidden="true"><path d="M17.5 17.5l11 11M28.5 17.5l-11 11"/></svg><span class="pill__wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><svg class="pill__btn pill__btn--ok" viewBox="0 0 46 46" aria-hidden="true"><path d="M15.5 23.5l5.5 5.5 10-11"/></svg><span class="pill__ring"></span></div>
+                </figure>
+              </li>
+              <li class="gallery__col gallery__col--later"><!-- later · no picture: the line -->
+                <span class="gallery__marker">later</span>
+                <p class="gallery__subject gallery__later">Work leaves the desk.</p>
+              </li>
+              </ol>
+            </div>
+            <div class="gallery__rail" aria-hidden="true"><span class="gallery__thumb"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- The chart's tail: the closing line and the bench, still on the black. The seam out of
+           the black is the section's bottom padding, so this sits on solid --ground-3 and there is
+           no divider between the chart and the bench: one dark event. -->
+      <div class="tail">
+        <p class="tail__close">We started with a finger and a voice. <em>It took us sixty years to bring them back.</em></p>
+
+        <div class="bench" id="bench">
+          <p class="bench__eyebrow">On the bench</p>
+          <h2 class="bench__heading" id="bench-heading">What we’re building<br>to get there.</h2>
+          <div class="bench__list">
+            <p><b class="bench__name">Fovea Bar</b> — a camera that knows which line you’re looking at, not just which window.</p>
+            <p>A microphone built for talking to machines, not to people.</p>
+            <p>And more.</p>
+          </div>
+          <!-- The specimen: the render cut out of its ground (tools/make-specimen.sh), floating on the
+               black. No frame, no shadow, no plinth. width/height are the file's pixels (the tool prints
+               them); the CSS sets the display width. -->
+          <figure class="specimen">
+            <img class="specimen__img" src="assets/product/fovea-bar.png" width="1490" height="765" alt="The Fovea Bar, a small camera bar with two lenses, resting on the top edge of a monitor." loading="lazy" decoding="async">
+          </figure>
+          <!-- The collector: FoveaGazeCollect, the same build foveafrontend's /download/beta links to. -->
+          <div class="collect">
+            <p class="collect__line">Help us improve our gaze-tracking model</p>
+            <a class="btn btn--origin" href="https://updates.hellofovea.com/beta/fovea-gaze-collect/releases/latest.dmg"><span class="btn__fill" aria-hidden="true"></span><span class="btn__label">Download Data Collector</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         THE PROOF — one paragraph on the light ground, no heading: the
+         chart's footnote. Its last sentence is the block's only full ink.
+         ================================================================ -->
+    <section class="proof ground-2" id="proof">
+      <div class="proof__inner">
+        <p class="proof__text">Two self-driving researchers, a growth hacker from X, and me — a college sophomore. The two researchers spent years teaching machines where to look and what to do next. <b class="proof__key">That’s why the bottom of that chart isn’t a wish.</b></p>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         EARLY ACCESS — centred: the heading, one line, two underline-only
+         fields (the second a textarea: it wants a long answer) and the only
+         solid black shape below the fold. No rule above or below it.
+         ================================================================ -->
+    <section class="access ground-2" id="early-access" aria-labelledby="access-heading">
+      <div class="access__inner">
+        <h2 class="access__heading" id="access-heading">Get Early Access</h2>
+        <p class="access__line">Help us work out what comes after the keyboard and mouse.</p>
+
+        <form class="access__form" id="access-form" method="post" action="#early-access">
+          <div class="field">
+            <label class="visually-hidden" for="access-email">Email</label>
+            <input class="field__input" id="access-email" name="email" type="email" autocomplete="email" required placeholder="Email">
+          </div>
+          <div class="field">
+            <label class="visually-hidden" for="access-agents">Which agents do you use — and how many do you usually have running at once?</label>
+            <textarea class="field__input" id="access-agents" name="agents" rows="2" placeholder="Which agents do you use — and how many do you usually have running at once?"></textarea>
+          </div>
+          <button class="btn" type="submit">Request Access</button>
+        </form>
+        <!-- Present from load so screen readers pick up the change; filled by script.js › initForm. -->
+        <p class="access__status" id="access-status" role="status" tabindex="-1"></p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================================================================
+       FOOTER — light, like everything but the black, with no rule above
+       it. The privacy note and, under it, the contact on the left; on the
+       right the wordmark's only appearance on the site: assets/brand/
+       wordmark.svg inlined once, its fill forced to currentColor and tinted
+       from CSS as one flat ghost (texture: not a link, not read out, not
+       selectable). Below 640px it all stacks, the ghost last. Then the
+       legal strip under its rule: one link, because one page exists.
+       ================================================================ -->
+  <footer class="footer ground-2">
+    <div class="footer__inner">
+      <div class="footer__body">
+        <!-- TODO(copy): verify word by word before publishing — transcription, referent resolution, routing: local or cloud (copy.md §7). Do not widen it. -->
+        <p class="footer__note">Your agents run on your machine. Their memory stays there. So does anything a camera ever sees. We’re the layer on top — we don’t keep your work.</p>
+        <p class="footer__contact">Reach me at<br><a class="footer__mail" href="mailto:yulunwu47@g.ucla.edu">yulunwu47@g.ucla.edu</a></p>
+        <svg class="footer__ghost" viewBox="176 341 1186 284" preserveAspectRatio="xMinYMid meet" fill="currentColor" aria-hidden="true">
+          <path d="M 1185.994 377.934 C 1181.289 379.365, 1177.160 381.967, 1175.199 384.735 C 1174.122 386.256, 1171.420 391.775, 1169.195 397 C 1165.117 406.575, 1150.835 437.660, 1125.548 492 C 1093.141 561.639, 1091.657 564.492, 1084.597 570.706 C 1082.224 572.794, 1077.959 575.339, 1075.118 576.360 C 1068.424 578.768, 1066.331 582.188, 1069.571 585.429 C 1070.931 586.788, 1075.248 587, 1101.637 587 C 1120.745 587, 1132.854 586.613, 1134.066 585.965 C 1136.241 584.801, 1136.657 580.744, 1134.750 579.295 C 1134.063 578.772, 1131.418 577.576, 1128.872 576.636 C 1121.552 573.934, 1120.493 572.155, 1120.541 562.642 C 1120.581 554.777, 1120.825 553.945, 1127.726 538.151 C 1131.655 529.159, 1135.644 520.946, 1136.590 519.901 C 1138.232 518.086, 1140.368 518, 1183.544 518 C 1225.175 518, 1228.942 518.139, 1230.832 519.750 C 1231.962 520.712, 1236.363 529.150, 1240.612 538.500 C 1247.185 552.964, 1248.395 556.470, 1248.722 562 C 1249.236 570.688, 1247.176 574.117, 1240.011 576.496 C 1234.149 578.443, 1232.044 581.345, 1233.932 584.874 C 1235.065 586.991, 1235.253 587, 1277.470 587 C 1300.971 587, 1320.952 586.588, 1322.299 586.077 C 1327.366 584.150, 1326.385 578.667, 1320.758 577.468 C 1314.341 576.100, 1307.207 571.912, 1302.108 566.521 C 1297.720 561.881, 1294.452 555.985, 1280.470 527.483 C 1271.411 509.019, 1264 493.706, 1264 493.456 C 1264 493.206, 1261.031 486.814, 1257.401 479.251 C 1253.772 471.688, 1249.217 461.900, 1247.279 457.500 C 1245.341 453.100, 1243.417 449.050, 1243.004 448.500 C 1242.321 447.591, 1233.510 428.835, 1227.972 416.500 C 1226.737 413.750, 1222.901 405.552, 1219.448 398.282 C 1213.658 386.092, 1212.796 384.827, 1208.369 382.019 C 1200.935 377.304, 1192.892 375.836, 1185.994 377.934 M 509.594 380.542 C 497.643 382.799, 491.400 384.797, 481.357 389.578 C 454.857 402.195, 435.753 424.869, 427.499 453.500 C 424.243 464.791, 423.093 484.374, 424.943 497.022 C 430.292 533.604, 453.929 564.895, 486.905 579.048 C 533.101 598.876, 586.957 582.259, 615.681 539.316 C 622.837 528.618, 629.171 513.069, 631.567 500.320 C 633.622 489.383, 633.098 465.733, 630.595 456.500 C 620.978 421.010, 591.515 391.957, 555.500 382.446 C 542.800 379.093, 521.865 378.224, 509.594 380.542 M 898.354 379.695 C 895.149 380.318, 892.804 383.435, 893.175 386.583 C 893.453 388.940, 894.429 389.718, 899.871 391.921 C 904.812 393.921, 906.944 395.476, 909.371 398.848 L 912.500 403.196 912.768 480.285 C 913.067 565.978, 913.225 563.708, 906.458 570.476 C 904.624 572.310, 900.513 574.787, 897.324 575.980 C 894.134 577.173, 890.956 578.621, 890.262 579.197 C 888.351 580.783, 888.750 584.796, 890.934 585.965 C 892.219 586.652, 918.332 586.999, 968.684 586.998 C 1054.742 586.997, 1049.518 587.489, 1053.749 578.973 C 1056.796 572.838, 1063.182 550.378, 1062.804 547.123 C 1062.568 545.086, 1061.875 544.428, 1059.703 544.179 C 1057.352 543.909, 1055.640 545.133, 1048.963 551.855 C 1033.951 566.968, 1025.372 569.355, 987.978 568.821 C 962.195 568.453, 960.812 568.103, 957.250 561.038 C 955.058 556.691, 955 555.760, 955 524.923 C 955 494.207, 955.063 493.190, 957.116 490.580 L 959.231 487.890 988.366 488.195 C 1016.738 488.492, 1017.596 488.560, 1021.188 490.793 C 1023.647 492.322, 1025.627 494.749, 1027.129 498.072 C 1029.723 503.811, 1032.849 505.352, 1036.040 502.464 C 1037.864 500.813, 1038 499.281, 1038 480.416 C 1038 463.319, 1037.754 459.897, 1036.429 458.571 C 1034.335 456.478, 1032.343 456.589, 1030.408 458.908 C 1023.931 466.670, 1020.135 469.887, 1016.203 470.945 C 1013.355 471.712, 1003.128 471.995, 985.381 471.796 C 958.837 471.500, 958.819 471.498, 956.910 469.139 C 955.125 466.932, 955.004 464.879, 955.056 437.639 C 955.118 406.053, 955.518 403.158, 960.321 399.594 C 962.979 397.621, 964.593 397.482, 988.321 397.190 C 1032.492 396.647, 1045.622 400.454, 1053.553 416.105 C 1056.411 421.744, 1059.859 423.343, 1063.011 420.490 C 1064.615 419.038, 1064.861 417.789, 1064.463 413.121 C 1062.633 391.677, 1061.890 385.797, 1060.789 384.034 C 1057.693 379.076, 1057.614 379.071, 976.328 379.178 C 934.623 379.233, 899.534 379.466, 898.354 379.695 M 220 381.279 C 218.256 382.162, 217.405 383.520, 217.187 385.766 C 216.856 389.174, 216.641 388.997, 224.883 392.085 C 229.623 393.861, 233.711 397.548, 236.294 402.376 L 238.500 406.500 238.817 478 C 239.146 552.322, 238.975 556.138, 234.954 564.068 C 232.202 569.496, 225.894 574.616, 219.460 576.644 C 213.069 578.659, 211.001 581.265, 212.932 584.874 C 214.067 586.994, 214.191 587, 259.601 587 C 289.074 587, 305.814 586.635, 307.066 585.965 C 309.244 584.799, 309.652 580.779, 307.750 579.220 C 307.063 578.657, 304.475 577.660, 302 577.006 C 295.028 575.164, 288.341 571.100, 285.473 566.961 C 280.439 559.698, 280 556.192, 280 523.296 L 280 492.909 282.455 490.455 L 284.909 488 313.805 488 C 332.993 488, 343.844 488.387, 346.101 489.153 C 351.427 490.960, 354.866 493.815, 357.157 498.334 C 360.308 504.551, 362.528 505.472, 366 502 C 367.863 500.137, 368 498.667, 368 480.500 C 368 462.333, 367.863 460.863, 366 459 C 363.357 456.357, 362.274 456.474, 359.674 459.686 C 358.478 461.164, 355.831 464.053, 353.791 466.107 C 348.355 471.581, 344.185 472.145, 311.724 471.796 C 286.304 471.523, 284.046 471.355, 282.103 469.595 C 280.053 467.738, 280 466.922, 280 436.993 C 280 406.671, 280.028 406.254, 282.287 402.898 C 286.219 397.055, 288.403 396.774, 325.500 397.334 C 358.865 397.838, 365.240 398.460, 373.540 402.017 C 378.466 404.129, 388.543 413.675, 391.203 418.750 C 392.551 421.320, 393.537 422, 395.918 422 C 400.772 422, 401.169 420.080, 400.082 401.852 C 399.160 386.396, 398.999 385.545, 396.536 383.081 L 393.955 380.500 308.228 380.256 C 240.620 380.063, 221.972 380.279, 220 381.279 M 644.338 380.999 C 643.149 381.478, 641.881 382.800, 641.521 383.935 C 640.335 387.670, 641.868 389.795, 646.970 391.490 C 656.358 394.608, 660.101 400.587, 681.875 447.245 C 696.907 479.454, 715.432 520.253, 728.987 551 C 735.170 565.025, 741.130 578.134, 742.232 580.132 C 744.954 585.066, 750.437 588, 756.936 588 C 762.744 588, 766.262 586.495, 770.169 582.339 C 771.637 580.778, 783.488 556.775, 796.505 529 C 846.692 421.909, 853.731 407.620, 859.357 401.400 C 863.631 396.677, 868.317 393.672, 876.250 390.569 C 879.422 389.328, 880 388.640, 880 386.108 C 880 380.256, 878.652 380, 847.777 380 C 821.333 380, 819.904 380.096, 818 382 C 814.189 385.811, 815.749 388.886, 823.201 392.250 C 830.166 395.395, 832.203 401.737, 829.567 412.076 C 827.770 419.127, 820.735 435.352, 800.867 478.265 C 793.677 493.794, 784.414 513.925, 780.281 523 C 776.149 532.075, 772.258 539.831, 771.634 540.235 C 768.565 542.223, 769.798 544.562, 736.710 474 C 708.127 413.047, 708.599 414.164, 708.197 406.500 C 707.720 397.419, 710.011 393.654, 717.750 390.798 C 722.357 389.098, 723 388.520, 723 386.085 C 723 384.559, 722.177 382.565, 721.171 381.655 C 719.537 380.176, 715.465 380.007, 682.921 380.063 C 662.890 380.098, 645.527 380.519, 644.338 380.999 M 511.500 407.566 C 507.650 408.409, 499.793 411.381, 494.040 414.170 C 484.826 418.637, 482.503 420.328, 474.540 428.370 C 467.421 435.559, 464.511 439.413, 460.846 446.500 C 449.976 467.517, 448.386 488.275, 456.038 509.261 C 464.224 531.709, 481.944 549.063, 504.582 556.802 C 539.812 568.845, 579.968 551.426, 596.949 516.735 C 603.797 502.744, 606.051 489.485, 604.087 474.731 C 599.866 443.012, 577.050 416.277, 547.500 408.426 C 538.815 406.118, 520.150 405.673, 511.500 407.566 M 1177.791 424.750 C 1174.417 432.136, 1166.393 450.148, 1154.737 476.500 C 1145.530 497.315, 1145.512 497.370, 1147.550 499.407 C 1148.990 500.847, 1153.076 500.996, 1184.725 500.763 C 1216.220 500.530, 1220.399 500.315, 1221.303 498.881 C 1222.097 497.623, 1218.386 488.954, 1204.609 459.881 C 1194.865 439.322, 1186.232 421.488, 1185.424 420.250 C 1182.942 416.451, 1181.080 417.549, 1177.791 424.750 M 519.500 443.409 C 508.105 446.233, 498.364 453.931, 493.123 464.257 C 481.179 487.789, 492.702 515.434, 517.415 522.538 C 524.931 524.698, 536.329 524.099, 544.045 521.138 C 559.539 515.192, 570.312 496.953, 568.677 479.439 C 567.039 461.908, 555.251 447.867, 538.540 443.542 C 531.554 441.735, 526.403 441.699, 519.500 443.409 M 523.123 459.965 C 517.975 461.237, 511.879 466.025, 508.549 471.412 C 504.926 477.271, 503.856 487.332, 506.247 493.040 C 510.200 502.474, 517.863 507.425, 528.578 507.470 C 534.743 507.496, 536.292 507.108, 540.578 504.464 C 543.895 502.418, 546.560 499.660, 548.750 496.008 C 551.544 491.348, 551.997 489.671, 551.978 484.044 C 551.944 473.817, 547.676 466.426, 539.353 462.180 C 534.641 459.776, 527.713 458.831, 523.123 459.965" fill-rule="evenodd"/>
+        </svg>
+      </div>
+
+      <div class="footer__legal">
+        <!-- TODO(legal): replace Fovea with the registered entity once it exists. -->
+        <p class="footer__copyright">Copyright © 2026 Fovea. All rights reserved.</p>
+        <!-- /privacy is the app's page (foveafrontend › app/privacy). Terms and an AUP stay absent until there is a product to govern. -->
+        <nav class="footer__nav" aria-label="Legal"><a class="footer__link" href="/privacy">Privacy Policy</a></nav>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="demos.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!doctype html>
+<!-- Edge check for the product cutout: the specimen at 400%, nearest-neighbour, on the museum black,
+     so a light rim, a leftover corner of the ground or a staircase on a curve shows. Serve the site
+     (python3 -m http.server 8080) and open http://localhost:8080/tools/specimen-check.html, then scroll
+     along the silhouette. ?mask shows the matte instead; ?zoom=8 changes the magnification. -->
+<meta charset="utf-8">
+<title>specimen check</title>
+<style>
+  html { background: #1A1512; }
+  body { margin: 0; }
+  img { display: block; image-rendering: pixelated; }
+</style>
+<img id="specimen" src="../assets/product/fovea-bar.png" alt="">
+<script>
+  var q = new URLSearchParams(location.search), img = document.getElementById('specimen');
+  if (q.has('mask')) img.src = '../assets/product/fovea-bar-mask.png';
+  img.style.zoom = q.get('zoom') || 4;
+</script>
