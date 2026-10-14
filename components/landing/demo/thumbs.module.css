@@ -1,0 +1,47 @@
+/* A referent's picture: the captured region drawn small (the card's foot and its button). */
+
+.card {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 3px;
+  padding: 6px 7px 7px;
+  background: #f6f5f2;
+}
+
+.line,
+.lineShort {
+  display: block;
+  height: 3px;
+  border-radius: 2px;
+  background: rgb(0 0 0 / 0.55);
+}
+
+.line {
+  width: 70%;
+}
+
+.lineShort {
+  width: 48%;
+  background: rgb(0 0 0 / 0.25);
+  margin-bottom: 3px;
+}
+
+.button {
+  align-self: flex-start;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: #1c1c1e;
+  color: #fff;
+  font-size: 6px;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.off {
+  transform: translateY(2px);
+  padding: 2px 7px;
+}

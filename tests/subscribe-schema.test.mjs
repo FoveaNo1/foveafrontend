@@ -24,8 +24,6 @@ function loadTs(relativePath) {
 
 const { SubscribeSchema } = loadTs("../lib/subscribe-schema.ts");
 const routeSource = readFileSync(new URL("../app/api/subscribe/route.ts", import.meta.url), "utf8");
-const formSource = readFileSync(new URL("../public/script.js", import.meta.url), "utf8");
-const htmlSource = readFileSync(new URL("../public/index.html", import.meta.url), "utf8");
 const sqlSource = readFileSync(
   new URL("../supabase/migrations/20260914000000_add_leads_agents.sql", import.meta.url),
   "utf8",
@@ -77,17 +75,6 @@ test("route insert writes agents onto leads.agents only", () => {
     routeSource,
     /agents:\s*(role|tools|ai_frequency)|role:\s*agents|tools:\s*agents|ai_frequency:\s*agents/,
   );
-});
-
-test("landing form stays email + agents and posts /api/subscribe", () => {
-  assert.match(htmlSource, /id="access-heading">Get Early Access/);
-  assert.match(htmlSource, /name="email"/);
-  assert.match(htmlSource, /name="agents"/);
-  assert.doesNotMatch(htmlSource, /founding|use-case|use_case/i);
-  assert.match(formSource, /fetch\('\/api\/subscribe'/);
-  assert.match(formSource, /payload\.agents = agents/);
-  assert.doesNotMatch(formSource, /createClient|supabase\.from\(['"]leads['"]\)/);
-  assert.match(formSource, /Thanks\. We’ll be in touch\./);
 });
 
 test("repo SQL adds public.leads.agents", () => {

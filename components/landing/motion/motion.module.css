@@ -1,0 +1,16 @@
+/* Words lit as you read down to them (ScrollWords.tsx): grey until then, a soft front about six
+   words long. */
+.scrollWords span {
+  opacity: clamp(0.24, calc((var(--p, 0) * (var(--n) + 6) - var(--i)) / 6), 1);
+  transition: opacity 0.12s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrollWords span {
+    opacity: 1;
+  }
+}
+
+:global(html[data-motion="reduce"]) .scrollWords span {
+  opacity: 1;
+}

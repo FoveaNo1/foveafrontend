@@ -1,0 +1,296 @@
+/* The mock MacBook (WorkbenchTokens.Layout): a 12 pt black bezel, 22 pt outer corners, a 1470 × 956 pt
+   screen with 12 pt corners. Drawn at 1:1 and scaled as one picture by --s (MacStage.tsx). */
+
+.stage {
+  --stage-w: 1494px;
+  --stage-h: 980px;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1494 / 980;
+  /* Before the fit script runs (or without scripts): a close guess per width. */
+  --s: 0.8;
+  container-type: inline-size;
+}
+
+@media (max-width: 1100px) {
+  .stage {
+    --s: 0.65;
+  }
+}
+
+@media (max-width: 800px) {
+  .stage {
+    --s: 0.45;
+  }
+}
+
+@media (max-width: 500px) {
+  .stage {
+    --s: 0.23;
+  }
+}
+
+/* Until its scale is known (a moment, set before the first paint where it can be) the picture
+   isn't drawn, so it never shows at a guessed size. Without scripts it shows at the guess. */
+.stage:not([data-fit]) .clip {
+  visibility: hidden;
+}
+
+.clip {
+  position: absolute;
+  inset: 0;
+  border-radius: calc(22px * var(--s));
+}
+
+.scaler {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--stage-w);
+  height: var(--stage-h);
+  transform: scale(var(--s));
+  transform-origin: 0 0;
+}
+
+/* Only on a phone does the picture move (in on the island and back); elsewhere a change of scale
+   (the first fit, a resize) is immediate. */
+.stage[data-phone="true"] .scaler {
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* A phone: while the island is open, the picture moves in on it (top centre, 2.2 times). */
+.stage[data-zoom="true"] .clip {
+  overflow: hidden;
+}
+
+.stage[data-zoom="true"] .scaler {
+  transform: translateX(calc((100cqw - var(--stage-w) * var(--s) * 2.2) / 2)) scale(calc(var(--s) * 2.2));
+}
+
+@media (max-width: 767px) {
+  .stage[data-live="true"] {
+    margin-bottom: 64px;
+  }
+}
+
+.lid {
+  width: 100%;
+  height: 100%;
+  padding: 12px;
+  border-radius: 22px;
+  background: #0b0b0c;
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.06) inset,
+    0 30px 80px -20px rgb(12 12 12 / 0.35),
+    0 12px 28px -12px rgb(12 12 12 / 0.25);
+}
+
+.screen {
+  position: relative;
+  width: 1470px;
+  height: 956px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #5b6472;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.wallpaper {
+  object-fit: cover;
+}
+
+/* The menu bar: material over the wallpaper, the notch's height, the notch cut from its middle. */
+.menuBar {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: rgb(255 255 255 / 0.32);
+  -webkit-backdrop-filter: blur(30px) saturate(1.6);
+  backdrop-filter: blur(30px) saturate(1.6);
+  font-size: 13px;
+  font-weight: 500;
+  color: rgb(0 0 0 / 0.86);
+  z-index: 5;
+}
+
+.menuLeft,
+.menuRight {
+  display: flex;
+  align-items: center;
+}
+
+.menuLeft {
+  gap: 20px;
+}
+
+.menuApp {
+  font-weight: 700;
+}
+
+.menuRight {
+  gap: 14px;
+}
+
+.clock {
+  margin-left: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The island hangs from the top centre, over everything. */
+.islandSlot {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+}
+
+.dock {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 16px;
+  background: rgb(255 255 255 / 0.28);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  backdrop-filter: blur(24px) saturate(1.6);
+  box-shadow: inset 0 0 0 0.75px rgb(255 255 255 / 0.35);
+  z-index: 4;
+}
+
+.dockIcon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+}
+
+/* A browser window. */
+.window {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow:
+    0 0 0 0.5px rgb(0 0 0 / 0.18),
+    0 22px 60px rgb(0 0 0 / 0.28),
+    0 6px 16px rgb(0 0 0 / 0.12);
+  z-index: 3;
+}
+
+.toolbar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 52px;
+  padding: 0 16px;
+  background: #f4f4f5;
+  border-bottom: 1px solid rgb(0 0 0 / 0.08);
+  color: rgb(0 0 0 / 0.6);
+}
+
+.lights {
+  display: flex;
+  gap: 8px;
+}
+
+.lights i {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 0.5px rgb(0 0 0 / 0.12);
+}
+
+.navGlyphs {
+  display: flex;
+  gap: 10px;
+  margin-left: 8px;
+}
+
+.address {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 0 1 420px;
+  height: 30px;
+  margin: 0 auto;
+  border-radius: 8px;
+  background: rgb(0 0 0 / 0.06);
+  font-size: 13px;
+  color: rgb(0 0 0 / 0.7);
+}
+
+.tabs {
+  flex: none;
+  display: flex;
+  gap: 1px;
+  height: 34px;
+  padding: 0 8px;
+  background: #e6e6e8;
+  border-bottom: 1px solid rgb(0 0 0 / 0.08);
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 4px 0;
+  border-radius: 7px;
+  font-size: 12.5px;
+  color: rgb(0 0 0 / 0.6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tabActive {
+  background: #fff;
+  color: rgb(0 0 0 / 0.85);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+}
+
+.screen[data-mode="try"] .tab {
+  cursor: pointer;
+}
+
+.page {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* A referent's picture: the screen drawn again, small, cropped to what was taken. */
+.thumb {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: inherit;
+  background: #fff;
+}
+
+.thumbScreen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  pointer-events: none;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+}

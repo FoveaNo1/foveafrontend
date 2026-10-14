@@ -1,0 +1,401 @@
+/* The island's live contents, Native light, Spacious. Ink at opacities on the glass; the accent on
+   primary actions and chosen things; the system's state colours only beside their words. */
+
+/* The Dispatch bar: 212 × 76, the aura rising from its foot, what was taken at its left. */
+.bar {
+  position: relative;
+  height: 76px;
+}
+
+/* The aura (libraries.dev/voice, fitted to the notch): seven lobes of colour rising from the foot.
+   On light glass its colours are laid over white rather than lit on black, so they are drawn
+   stronger there (VoiceGlow.lightGlassBoost). The one gradient the Island allows. */
+.aura {
+  --level: 0.4;
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 44px;
+  overflow: hidden;
+  filter: blur(3px) saturate(1.6);
+  pointer-events: none;
+}
+
+.aura i {
+  position: absolute;
+  bottom: -16px;
+  width: 50%;
+  height: 120%;
+  border-radius: 50%;
+  /* Drawn 1.7 times as strong on light glass as on black (VoiceGlow.lightGlassBoost). */
+  background: radial-gradient(ellipse at 50% 100%, rgb(var(--c) / 1) 0%, rgb(var(--c) / 0.6) 38%, rgb(var(--c) / 0) 70%);
+  transform: translateX(-50%) scaleY(calc(0.45 + 0.55 * var(--level)));
+  transform-origin: 50% 100%;
+  animation: breathe var(--dur) ease-in-out var(--delay) infinite alternate;
+  transition: transform 0.33s var(--ease-out-quint);
+}
+
+@keyframes breathe {
+  from {
+    translate: 0 6px;
+    opacity: 0.75;
+  }
+  to {
+    translate: 0 -2px;
+    opacity: 1;
+  }
+}
+
+/* Transcribing: the aura fills the bar's edge from left to right, as a progress bar. */
+.auraProgress {
+  animation: fill 1.4s linear both;
+}
+
+@keyframes fill {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.barStack {
+  position: absolute;
+  left: 8px;
+  top: 40px;
+}
+
+.barLabel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 44px;
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: rgb(12 12 12 / 0.82);
+}
+
+.stack {
+  position: relative;
+  display: block;
+}
+
+.card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 0.75px rgb(12 12 12 / 0.2),
+    0 2px 6px rgb(0 0 0 / 0.08);
+  transform-origin: 50% 100%;
+}
+
+.cardNumber {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  display: grid;
+  place-items: center;
+  min-width: 13px;
+  height: 13px;
+  padding: 0 3px;
+  border-radius: 4px;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.card:not(:first-child) .cardNumber {
+  display: none;
+}
+
+/* The board, Badges: one list, each row's state on a badge at its icon's corner. 460 wide. */
+.board {
+  padding: calc(32px + 10px) 10px 16px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 30px 1fr 48px;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 54px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+button.row {
+  cursor: pointer;
+}
+
+.rowCurrent,
+button.row:hover {
+  background: rgb(12 12 12 / 0.06);
+}
+
+.badged {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+}
+
+.badge {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  display: grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  /* Cut out of the icon by a ring of the glass. */
+  box-shadow: 0 0 0 2px rgb(248 248 248);
+}
+
+.badgeWorking {
+  background: rgb(248 248 248);
+  border: 1.75px solid rgb(12 12 12 / 0.18);
+  border-top-color: var(--color-accent);
+  animation: turn 0.9s linear infinite;
+}
+
+.badgeDone {
+  background: var(--color-done);
+}
+
+.badgeNeeds {
+  background: var(--color-needs);
+}
+
+@keyframes turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rowText {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.rowTitle {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(12 12 12 / 0.92);
+}
+
+.rowLine {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 12.5px;
+  color: rgb(12 12 12 / 0.6);
+}
+
+.rowLineDone {
+  color: rgb(12 12 12 / 0.72);
+}
+
+.diff {
+  font-weight: 600;
+  color: rgb(12 12 12 / 0.82);
+}
+
+.rowTime {
+  justify-self: end;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgb(12 12 12 / 0.4);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The answer: the session in the notch, 660 wide, the words in a column. */
+.chat {
+  position: relative;
+  padding: calc(32px + 14px) 22px 26px;
+}
+
+.chatHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 44px;
+}
+
+.chatTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgb(12 12 12 / 0.94);
+}
+
+.project {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 6px;
+  background: rgb(12 12 12 / 0.07);
+  font-size: 12px;
+  font-weight: 500;
+  color: rgb(12 12 12 / 0.55);
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(12 12 12 / 0.08);
+  color: rgb(12 12 12 / 0.6);
+  cursor: pointer;
+}
+
+.prompt {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: rgb(12 12 12 / 0.06);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: rgb(12 12 12 / 0.94);
+}
+
+.promptGlyph {
+  font-weight: 700;
+  color: rgb(12 12 12 / 0.4);
+}
+
+.worked {
+  margin: 14px 0 0;
+  font-size: 12.5px;
+  color: rgb(12 12 12 / 0.5);
+}
+
+.outcome {
+  margin: 10px 0 0;
+  font-size: 16px;
+  line-height: 1.45;
+  color: rgb(12 12 12 / 0.96);
+}
+
+.points {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgb(12 12 12 / 0.78);
+}
+
+.points b {
+  font-weight: 600;
+  color: rgb(12 12 12 / 0.92);
+}
+
+.openFile {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  margin-top: 14px;
+  padding: 0 12px;
+  border-radius: 9px;
+  background: rgb(12 12 12 / 0.07);
+  font-size: 13px;
+  font-weight: 500;
+  color: rgb(12 12 12 / 0.85);
+}
+
+.chatBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 0.5px solid rgb(12 12 12 / 0.12);
+  font-size: 13px;
+}
+
+.openIn {
+  color: var(--color-accent);
+  font-weight: 500;
+}
+
+.again {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 11px;
+  border-radius: 14px;
+  background: rgb(12 12 12 / 0.07);
+  font-weight: 500;
+  color: rgb(12 12 12 / 0.8);
+}
+
+.followUp {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  margin-top: 12px;
+  padding: 0 6px 0 16px;
+  border-radius: 20px;
+  background: rgb(12 12 12 / 0.06);
+  font-size: 14px;
+  color: rgb(12 12 12 / 0.42);
+}
+
+.followSend {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgb(12 12 12 / 0.2);
+}
+
+.grab {
+  position: absolute;
+  left: 50%;
+  bottom: 9px;
+  width: 40px;
+  height: 5px;
+  border-radius: 3px;
+  background: rgb(12 12 12 / 0.22);
+  transform: translateX(-50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aura i,
+  .badgeWorking {
+    animation: none;
+  }
+  .auraProgress {
+    animation: none;
+  }
+}

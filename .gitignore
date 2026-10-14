@@ -49,3 +49,4 @@ emails.json
 
 # claude code (worktrees, session data)
 .claude/
+.gstack/

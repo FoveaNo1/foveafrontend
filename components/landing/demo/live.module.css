@@ -1,0 +1,340 @@
+/* The live demo's layers: what's drawn on the screen (selection, flash, flights, the hand) and the
+   glass bar under it, after the onboarding's (white words on dark glass over the desktop). */
+
+.focusable:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 6px;
+  border-radius: 24px;
+}
+
+.screen[data-mode="try"] {
+  cursor: default;
+}
+
+.screen[data-armed="true"] {
+  cursor: crosshair;
+}
+
+.screen[data-mode="watch"] {
+  cursor: pointer;
+}
+
+/* The selection, shaded as ⌘⇧4 shades it: a translucent gray, a thin outline, no size readout. */
+.selection {
+  position: absolute;
+  z-index: 30;
+  background: rgb(128 128 128 / 0.32);
+  box-shadow: inset 0 0 0 1px rgb(102 102 102 / 0.75);
+  pointer-events: none;
+}
+
+/* ⌘ twice: the whole screen, a quick flash. */
+.flash {
+  position: absolute;
+  inset: 0;
+  z-index: 35;
+  background: #fff;
+  pointer-events: none;
+  animation: flash 0.12s linear both;
+}
+
+@keyframes flash {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.flight {
+  position: absolute;
+  z-index: 40;
+  overflow: hidden;
+  border-radius: 4px;
+  transform-origin: 0 0;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.6), 0 6px 18px rgb(0 0 0 / 0.25);
+  pointer-events: none;
+}
+
+/* The page reloads with the agent's change. */
+.reload {
+  position: absolute;
+  left: 210px;
+  top: 144px;
+  width: 1050px;
+  height: 668px;
+  z-index: 4;
+  background: #fff;
+  border-radius: 0 0 12px 12px;
+  pointer-events: none;
+  animation: reload 0.5s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+@keyframes reload {
+  from {
+    opacity: 0.85;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* The hand, in Watch mode. */
+.pointer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 60;
+  pointer-events: none;
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.45, 0, 0.25, 1);
+  filter: drop-shadow(0 1px 1.5px rgb(0 0 0 / 0.35));
+}
+
+.pointer svg {
+  display: block;
+}
+
+/* The bar sits over the foot of the screen at the page's own size. */
+.overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.bar {
+  position: absolute;
+  left: 50%;
+  bottom: 5.5%;
+  translate: -50% 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px 14px;
+  width: max-content;
+  max-width: min(760px, calc(100% - 32px));
+  padding: 10px 10px 10px 16px;
+  border-radius: 18px;
+  background: rgb(22 22 24 / 0.72);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  backdrop-filter: blur(24px) saturate(1.5);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.1),
+    0 10px 30px rgb(0 0 0 / 0.25);
+  color: #fff;
+  font-size: 14.5px;
+  pointer-events: auto;
+}
+
+.hud,
+.keycaps {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hud {
+  gap: 10px;
+}
+
+.key {
+  display: inline-grid;
+  place-items: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 7px;
+  border-radius: 7px;
+  background: rgb(255 255 255 / 0.12);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.16), 0 1px 0 rgb(0 0 0 / 0.3);
+  font: 500 13px/1 var(--font-sans);
+  color: rgb(255 255 255 / 0.9);
+  transition:
+    background-color 0.12s var(--ease-out-quint),
+    transform 0.08s var(--ease-out-quint);
+}
+
+.keyWide {
+  min-width: 36px;
+}
+
+.keycaps[data-lit="true"] .key {
+  background: var(--color-accent);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.25);
+  color: #fff;
+  transform: translateY(1px) scale(0.97);
+}
+
+.said {
+  max-width: 340px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: var(--font-serif);
+  font-size: 17px;
+  color: rgb(255 255 255 / 0.92);
+}
+
+.said:empty {
+  display: none;
+}
+
+.actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.primary {
+  height: 32px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  background: #fff;
+  color: #0c0c0c;
+  font: 600 13.5px/1 var(--font-sans);
+  cursor: pointer;
+  transition: transform 0.14s var(--ease-out-quint);
+}
+
+.primary:active {
+  transform: scale(0.97);
+}
+
+.iconButton {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: rgb(255 255 255 / 0.12);
+  color: #fff;
+  cursor: pointer;
+}
+
+.tip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tipText {
+  font-weight: 500;
+}
+
+.keyButton {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.keyButton:hover .key {
+  background: rgb(255 255 255 / 0.22);
+}
+
+.keyButton:active .key {
+  background: var(--color-accent);
+  transform: translateY(1px) scale(0.97);
+}
+
+.lines {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  flex-basis: 100%;
+  justify-content: center;
+}
+
+.line {
+  height: 30px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 15px;
+  background: rgb(255 255 255 / 0.14);
+  color: #fff;
+  font: 400 15px/1 var(--font-serif);
+  cursor: pointer;
+}
+
+.line:hover {
+  background: rgb(255 255 255 / 0.22);
+}
+
+.link {
+  padding: 4px 6px;
+  border: 0;
+  background: none;
+  color: rgb(255 255 255 / 0.7);
+  font: 500 13px/1 var(--font-sans);
+  cursor: pointer;
+}
+
+.link:hover {
+  color: #fff;
+}
+
+.typeForm {
+  display: inline-flex;
+  gap: 8px;
+  flex-basis: 100%;
+  justify-content: center;
+}
+
+.typeInput {
+  width: min(360px, 60vw);
+  height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background: rgb(255 255 255 / 0.14);
+  color: #fff;
+  font: 400 15px/1 var(--font-sans);
+}
+
+.typeInput::placeholder {
+  color: rgb(255 255 255 / 0.5);
+}
+
+.typeInput:focus {
+  outline: 2px solid var(--color-accent);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flash,
+  .reload {
+    animation: none;
+    display: none;
+  }
+  .pointer {
+    transition: none;
+  }
+}
+
+/* A phone: the bar sits under the Mac, and the Mac moves in on the island while it's open. */
+@media (max-width: 767px) {
+  .bar {
+    top: calc(100% + 12px);
+    bottom: auto;
+    padding: 8px 8px 8px 14px;
+    max-width: 100%;
+    background: var(--color-ink);
+  }
+  .said {
+    max-width: 200px;
+    font-size: 15px;
+  }
+}

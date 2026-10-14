@@ -1,0 +1,75 @@
+.paper {
+  height: 100%;
+  padding: 48px 120px;
+  background: #fff;
+  color: #1c1c1e;
+}
+
+.kicker {
+  margin: 0;
+  font: 600 12px/1 var(--font-sans);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgb(0 0 0 / 0.45);
+}
+
+.title {
+  margin: 12px 0 18px;
+  font-family: var(--font-serif);
+  font-size: 40px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.body {
+  margin: 0 0 18px;
+  font-family: var(--font-serif);
+  font-size: 19px;
+  line-height: 1.6;
+  color: rgb(0 0 0 / 0.78);
+}
+
+.formula {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: fit-content;
+  margin: 30px auto 34px;
+  padding: 18px 26px;
+  font-family: var(--font-serif);
+  font-size: 30px;
+  color: #111;
+}
+
+.formula i {
+  font-style: italic;
+}
+
+.paren {
+  font-size: 60px;
+  font-weight: 200;
+  line-height: 1;
+  transform: translateY(-3px);
+}
+
+.frac {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 2px;
+}
+
+.frac > span:first-child {
+  padding: 0 6px 4px;
+  border-bottom: 1.5px solid #111;
+}
+
+.den {
+  padding-top: 4px;
+}
+
+.formula sup,
+.formula sub {
+  font-size: 0.6em;
+}

@@ -1,0 +1,136 @@
+/* The page's few controls. */
+
+/* Download for Mac: the one button, an ink pill with ivory words (Macula's pill), SF Pro, the
+   window's control radius. In the dark it turns over: ivory with ink words. */
+.downloadBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.download {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 46px;
+  padding: 0 22px 0 18px;
+  border-radius: 12px;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  text-decoration: none;
+  transition:
+    transform 0.14s var(--ease-out-quint),
+    background-color 0.12s var(--ease-out-quint);
+}
+
+.download:hover {
+  background: #2a2926;
+}
+
+.downloadBlock[data-tone="dark"] .download {
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+.downloadBlock[data-tone="dark"] .download:hover {
+  background: #fff;
+}
+
+.download:active {
+  transform: scale(0.97);
+  transition-duration: 0.08s;
+}
+
+.download svg {
+  flex: none;
+}
+
+.requirements {
+  margin: 12px 0 0;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  color: var(--color-text-3);
+}
+
+.downloadBlock[data-tone="dark"] .requirements {
+  color: var(--color-dark-text-3);
+}
+
+/* A phrase the hand loop draws round. The loop is stretched over the words and revealed the way a
+   hand draws it: a sweep round its centre from where it starts (up and to the left), clockwise. */
+.lasso {
+  --sweep: 0deg;
+  position: relative;
+  display: inline-block;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: --sweep 0.45s var(--ease-out-quint);
+}
+
+.lasso:hover,
+.lasso:focus-visible,
+.lasso[data-active="true"] {
+  --sweep: 360deg;
+}
+
+.lassoText {
+  position: relative;
+  z-index: 1;
+}
+
+.lassoLoop {
+  position: absolute;
+  left: -7%;
+  top: 4%;
+  width: 114%;
+  height: 96%;
+  overflow: visible;
+  pointer-events: none;
+  -webkit-mask: conic-gradient(from -29deg at 50% 50%, #000 var(--sweep), transparent 0);
+  mask: conic-gradient(from -29deg at 50% 50%, #000 var(--sweep), transparent 0);
+}
+
+.lassoLoop path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.75;
+}
+
+.lasso:focus-visible {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lasso {
+    transition: none;
+  }
+}
+
+/* A dotted underline shows the phrase can be chosen before the loop is drawn. */
+.lasso:not([data-active="true"]) .lassoText {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: rgb(12 12 12 / 0.35);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.22em;
+}
+
+.lasso:hover .lassoText,
+.lasso:focus-visible .lassoText {
+  text-decoration-color: transparent;
+}

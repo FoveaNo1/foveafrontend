@@ -1,0 +1,551 @@
+/* The page, after the reference Yulun picked (Oct 10): one white card with rounded corners on a
+   light grey; a pill nav; words in Inter set large and tight, near-black, with what's said second
+   in grey; pictures of moving light with rounded corners, nearly the card's width. */
+
+.frame {
+  padding: var(--frame);
+}
+
+.card {
+  min-height: calc(100svh - 2 * var(--frame));
+  border-radius: 20px;
+  background: var(--color-card);
+  overflow: clip;
+}
+
+/* ---- Type ---- */
+
+.display {
+  margin: 0;
+  max-width: 13em;
+  font-size: clamp(2.4rem, 1.35rem + 3vw, 4rem);
+  font-weight: 450;
+  line-height: 1.03;
+  letter-spacing: -0.038em;
+  text-wrap: balance;
+}
+
+.quiet {
+  color: var(--color-text-3);
+}
+
+.statement {
+  margin: 0;
+  max-width: 21em;
+  font-size: clamp(1.7rem, 1.05rem + 1.9vw, 2.75rem);
+  font-weight: 480;
+  line-height: 1.12;
+  letter-spacing: -0.032em;
+  text-wrap: pretty;
+}
+
+.small {
+  margin: 0;
+  max-width: 30em;
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+  color: var(--color-text-2);
+}
+
+.smallCenter {
+  margin: 14px 0 0;
+  font-size: 13px;
+  color: rgb(14 14 14 / 0.55);
+}
+
+/* ---- The nav: a grey pill at the top of the card, staying there ---- */
+
+.navWrap {
+  position: sticky;
+  z-index: 20;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  padding-top: 18px;
+  pointer-events: none;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  height: 46px;
+  padding: 5px 5px 5px 16px;
+  border-radius: 999px;
+  background: rgb(243 243 242 / 0.82);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  backdrop-filter: blur(16px) saturate(1.5);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.03);
+  pointer-events: auto;
+}
+
+.navMark {
+  display: block;
+  width: 22px;
+  height: 21px;
+  margin-right: 30px;
+}
+
+.navMark svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.navLinks {
+  display: flex;
+  gap: 28px;
+  margin: 0 34px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13.5px;
+  letter-spacing: -0.005em;
+}
+
+.navLinks a {
+  color: var(--color-text-2);
+  text-decoration: none;
+  transition: color 0.15s var(--ease-out-quint);
+}
+
+.navLinks a:hover {
+  color: var(--color-text);
+}
+
+.navDownload,
+.buttonDark,
+.buttonLight {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    transform 0.14s var(--ease-out-quint),
+    background-color 0.15s var(--ease-out-quint);
+}
+
+.navDownload,
+.buttonDark {
+  background: var(--color-ink);
+  color: #fff;
+}
+
+.navDownload:hover,
+.buttonDark:hover {
+  background: #2b2b2b;
+}
+
+.buttonLight {
+  background: var(--color-fill);
+  color: var(--color-text);
+}
+
+.buttonLight:hover {
+  background: #eaeae8;
+}
+
+.navDownload:active,
+.buttonDark:active,
+.buttonLight:active {
+  transform: scale(0.97);
+}
+
+.buttonDark,
+.buttonLight {
+  height: 40px;
+  padding: 0 20px;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: inherit;
+  gap: 8px;
+}
+
+/* ---- Page 1: the hero ---- */
+
+.hero {
+  padding-top: clamp(96px, 14vh, 150px);
+}
+
+.heroHead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 48px;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.heroSide {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 6px;
+}
+
+.heroMedia {
+  position: relative;
+  margin: 52px 10px 0;
+  aspect-ratio: 2.1 / 1;
+  border-radius: 16px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* The notch at the top of the hero's picture: black, hanging from the edge with an ear each side,
+   growing sideways when it listens and when it says "Sent". */
+.notch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  translate: -50% 0;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.notchBody {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  height: 28px;
+  border-radius: 0 0 12px 12px;
+  background: #000;
+  transition: width 0.34s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.notch[data-phase="listening"] .notchBody {
+  width: 178px;
+}
+
+.notch[data-phase="sent"] .notchBody {
+  width: 168px;
+}
+
+.notchBody::before,
+.notchBody::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 6px;
+  height: 6px;
+}
+
+.notchBody::before {
+  left: -6px;
+  background: radial-gradient(circle at 0 100%, transparent 5.5px, #000 6px);
+}
+
+.notchBody::after {
+  right: -6px;
+  background: radial-gradient(circle at 100% 100%, transparent 5.5px, #000 6px);
+}
+
+.bars,
+.sent {
+  display: inline-flex;
+  align-items: center;
+  animation: follow 0.22s var(--ease-out-quint) both;
+}
+
+.bars {
+  gap: 3px;
+  height: 14px;
+}
+
+.bars i {
+  display: block;
+  width: 3px;
+  height: 13px;
+  border-radius: 2px;
+  background: #fff;
+  transform: scaleY(0.3);
+  animation: level 0.6s ease-in-out calc(var(--b) * -0.17s) infinite alternate;
+}
+
+.bars i:nth-child(3n) {
+  animation-duration: 0.46s;
+}
+
+.bars i:nth-child(4n + 1) {
+  animation-duration: 0.72s;
+}
+
+.sent {
+  gap: 6px;
+}
+
+.sent svg {
+  color: var(--color-done);
+}
+
+@keyframes level {
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes follow {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    transform: scale(0.96);
+  }
+}
+
+/* ---- Pages 2 to 4 ---- */
+
+.section {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: clamp(110px, 16vh, 170px) var(--gutter) 0;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.1fr;
+  gap: 48px;
+  align-items: start;
+  margin-top: 88px;
+}
+
+.agents {
+  display: flex;
+  margin-top: 18px;
+}
+
+.agents img {
+  border-radius: 8px;
+  box-shadow: 0 0 0 2px var(--color-card);
+}
+
+.agents img + img {
+  margin-left: -6px;
+}
+
+.cardMedia {
+  position: relative;
+  aspect-ratio: 1.6 / 1;
+  border-radius: 12px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.cardMark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 54px;
+  translate: -50% -50%;
+  fill: #fff;
+}
+
+.items {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 40px;
+  margin: 72px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.items li {
+  padding-top: 18px;
+  border-top: 1px solid var(--color-line);
+}
+
+.index {
+  display: block;
+  margin-bottom: 40px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-3);
+}
+
+.term {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.statementAfter {
+  margin-top: 56px;
+}
+
+.closingLine {
+  margin: 40px 0 0;
+  max-width: 30em;
+  font-size: 17px;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  color: var(--color-text-2);
+}
+
+/* ---- Page 5: the last line on soft light ---- */
+
+.closing {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: min(76svh, 720px);
+  margin: clamp(120px, 18vh, 180px) 10px 0;
+  border-radius: 16px;
+  overflow: hidden;
+  isolation: isolate;
+  text-align: center;
+}
+
+.closingInner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+  padding: 96px var(--gutter);
+}
+
+.closingInner .display {
+  max-width: 12em;
+}
+
+.closingInner .buttons {
+  justify-content: center;
+}
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px 24px;
+  padding: 28px calc(var(--gutter) / 2 + 10px) 30px;
+  font-size: 13px;
+  color: var(--color-text-2);
+}
+
+.foot nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+}
+
+.foot a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.foot a:hover {
+  color: var(--color-text);
+}
+
+/* ---- Narrower screens ---- */
+
+@media (max-width: 900px) {
+  .heroHead {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .heroMedia {
+    aspect-ratio: 1.3 / 1;
+    margin-top: 40px;
+  }
+  .columns {
+    grid-template-columns: 1fr 1fr;
+  }
+  .cardMedia {
+    grid-column: 1 / -1;
+  }
+  .items {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 48px;
+  }
+}
+
+@media (max-width: 640px) {
+  .navLinks {
+    display: none;
+  }
+  .navMark {
+    margin-right: 18px;
+  }
+  .heroMedia {
+    aspect-ratio: 0.95 / 1;
+    margin: 36px 6px 0;
+  }
+  .columns {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    margin-top: 64px;
+  }
+  .items {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .index {
+    margin-bottom: 16px;
+  }
+  .closing {
+    margin-left: 6px;
+    margin-right: 6px;
+  }
+  .foot {
+    flex-direction: column;
+    padding-left: var(--gutter);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notchBody {
+    transition: none;
+  }
+  .bars,
+  .sent,
+  .bars i {
+    animation: none;
+  }
+}
+
+/* "What leaves your Mac", its own page: one column on the card. */
+.prose {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: clamp(110px, 18vh, 170px) var(--gutter) 120px;
+}
+
+.prose .display {
+  margin-bottom: 36px;
+  font-size: clamp(2.2rem, 1.5rem + 2vw, 3.25rem);
+}
+
+.prose .body {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+  color: var(--color-text-2);
+}
+
+.back {
+  display: inline-flex;
+  margin-top: 40px;
+}
