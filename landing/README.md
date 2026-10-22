@@ -50,10 +50,8 @@ the full-screen one) from round three (`landing/research/hero-round3-oct17.html`
   - **The first screen**: the sea covers it; along its top the Mac's menu bar, the notch in the middle and the page's
     own "Fovea" and "Download for Mac" in it, in EB Garamond's italic as the film's key captions are (Oct 18); the line
     ("Stay in your window. / Talk to any agent from the notch.", `BookCopy.hero`) in white at its foot, under the
-    horizon, and under the line the way in (Oct 20, Yulun: was the download obvious enough to others? The menu bar's
-    read as part of the picture): the download page's "Download for Mac", with an arrow as it leads to `/download`, and
-    "macOS 14 or later · Apple silicon · Free to start" under it (`FootAct` in `heroes/shared.tsx`); it hangs from the
-    line, which keeps its place, and fades with it. On arrival Fovea does what it does, once, as the app does it
+    horizon, with nothing under it (a "Download for Mac" with its requirements was tried there on Oct 20 and taken out
+    on Oct 21, Yulun). On arrival Fovea does what it does, once, as the app does it
     (`lib/landing/film/hero.ts`, drawn by `heroes/HeroDesk.tsx` with the film's own island, keys, words, styles and
     renderer, so the notch is the film's and the app's): fn ⌃ opens the voice bar; ⌘ ⌘ takes the whole screen (a flash, a picture of what the screen shows
     lifting from it inset 40 pt and flying into the bar); "The future of human agent interaction is here." (Yulun's

@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { REQUIREMENTS } from "../../../lib/download";
 import { BookCopy as c } from "../../../lib/landing/bookCopy";
 import type { FilmPlayer } from "../../../lib/landing/film/player";
 import type { FilmPlace } from "../../../lib/landing/place";
@@ -33,18 +32,6 @@ export function Top({ className = "" }: { className?: string }) {
       <p className="name">Fovea</p>
       <Link className="lp-top-dl" href="/download" data-download="top">{c.download}</Link>
     </header>
-  );
-}
-
-/** Under the first screen's line, the way in (Oct 20, Yulun: is the download obvious enough to others?): the download
- *  page's "Download for Mac" and what it needs under it, as that page sets them. It takes the visitor to /download,
- *  as the menu bar's does, so its arrow points along the way. */
-export function FootAct({ className = "" }: { className?: string }) {
-  return (
-    <p className={`hx-foot-act ${className}`}>
-      <Link className="act-line" href="/download" data-download="first-screen">{c.download}<span className="ar" aria-hidden="true">→</span></Link>
-      <span className="req">{REQUIREMENTS} · Free to start</span>
-    </p>
   );
 }
 

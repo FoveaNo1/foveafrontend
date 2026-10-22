@@ -6,14 +6,14 @@ import type { Scene } from "../../../lib/landing/pictures";
 import { here, keep, returning, settle } from "../../../lib/landing/place";
 import HeroDesk, { deskFit } from "./HeroDesk";
 import Pin, { type PinVars } from "./Pin";
-import { After, FootAct, HeroFilm, LINE, Top, box, n, opening, px } from "./shared";
+import { After, HeroFilm, LINE, Top, box, n, opening, px } from "./shared";
 
 // The desktop, pointed at (Oct 17, after Perplexity's Personal Computer and Mercury): a picture is a Mac's desktop,
 // and on arrival Fovea does its one thing on it, once. Oct 18 (Yulun): the whole screen is taken and "The future of
 // human agent interaction is here." is said; the notch is exactly the app's, drawn by the film's own parts (HeroDesk,
 // lib/landing/film/hero.ts); no glow under the notch or the film. Two ways to hold it:
 // - OnDesktop (the page's, Oct 18, with the sea, P7): the picture fills the first screen, the menu bar along its top
-//   carrying "Fovea" and "Download for Mac", the line at its foot and the download under it (Oct 20); scrolling, the
+//   carrying "Fovea" and "Download for Mac", the line at its foot (nothing under it: Oct 21, Yulun); scrolling, the
 //   notch grows into the film's frame over it and the picture gives way to the paper.
 // - InFrame: on the paper, the line over the desktop in a frame; scrolling, the film takes the desktop's place in the
 //   same frame, from its first screen.
@@ -71,7 +71,7 @@ export function OnDesktop({ pic, at }: { pic: Scene; at?: number }) {
       "--shape-o": n(1 - seg(k, 0.95, 0.99)),
       "--film-o": n(ease.out(seg(k, 0.8, 0.95))),
       "--desk-o": n(1 - ease.inOut(seg(k, 0.6, 0.9))),
-      "--fore-o": n(1 - gone), "--line-y": px(-24 * gone), "--fore-pe": gone > 0.5 ? "none" : "auto",
+      "--fore-o": n(1 - gone), "--line-y": px(-24 * gone),
       "--bar-o": n(ease.out(seg(k, 0.9, 1))),
       "--menu-h": px(nh),
     };
@@ -82,7 +82,6 @@ export function OnDesktop({ pic, at }: { pic: Scene; at?: number }) {
         <div className="hx-desk-full"><HeroDesk pic={pic} at={at} cover from={back?.hero} onTime={(t) => { here.hero = t; }} /></div>
         <Top className="hx-desk-top" />
         <h1 className={`hx-foot-line hx-${pic.foot ?? "ink"}`}>{LINE.map((s) => <span key={s}>{s}</span>)}</h1>
-        <FootAct className={`hx-${pic.foot ?? "ink"}`} />
         <span className="hx-shape" aria-hidden="true" />
         <div ref={frame} className="hx-frame hx-late"><HeroFilm play={open} resume={back?.film} onPlace={(f) => { here.film = f; }} /></div>
       </Pin>
