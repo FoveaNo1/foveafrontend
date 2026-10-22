@@ -4,10 +4,10 @@ import { useCallback, useState } from "react";
 import type { Cycle } from "../../lib/landing/book";
 import CheckoutSheet from "./get/CheckoutSheet";
 import Plans from "./get/Plans";
-import Welcome from "./get/Welcome";
 
 // /pricing: the same three plans as the download page, then everything side by side as a quiet ledger, then the
-// questions people ask (the site's own answers, word for word). Joining opens the same checkout and welcome.
+// questions people ask (the site's own answers, word for word). Joining opens the same checkout, on to Stripe; the
+// Mac app sends people here to upgrade.
 
 const Rows: [string, string, string][] = [
   ["Captures", "50 a week", "Unlimited"],
@@ -33,11 +33,8 @@ const Faq: [string, string][] = [
 export default function PricingBody() {
   const [sheet, setSheet] = useState(false);
   const [cycle, setCycle] = useState<Cycle>("yearly");
-  const [welcome, setWelcome] = useState(false);
   const join = useCallback((c: Cycle) => { setCycle(c); setSheet(true); }, []);
   const closeSheet = useCallback(() => setSheet(false), []);
-  const paid = useCallback(() => setWelcome(true), []);
-  const closeWelcome = useCallback(() => setWelcome(false), []);
 
   return (
     <>
@@ -70,8 +67,7 @@ export default function PricingBody() {
           ))}
         </section>
       </main>
-      <CheckoutSheet open={sheet} cycle={cycle} onClose={closeSheet} onPaid={paid} />
-      <Welcome open={welcome} onClose={closeWelcome} />
+      <CheckoutSheet open={sheet} cycle={cycle} onClose={closeSheet} />
     </>
   );
 }

@@ -1,0 +1,118 @@
+/* The first screens under review (Oct 17, /hero): components/book/heroes. The notch, chosen for the page, and what
+   every hero shares are in book.css; here are the other five. Each stage is held while it changes (Pin); its numbers
+   are written by script as the reader scrolls, so nothing here animates by itself except the title page's words. */
+
+/* ———————————— 2 · The screening: the lights go down while the film rises to the middle; they come back up after */
+.hv-screening .pin-stage { background: var(--paper); }
+.hx-dimmer { position: absolute; inset: 0; z-index: 0; background: #0C0C0B; opacity: var(--dim, 0); }
+.hv-screening .hx-fades { opacity: var(--line-o, 1); }
+.hv-screening .hx-line { top: 23%; font-size: clamp(32px, 4.4vw, 66px); }
+.hv-screening .hx-frame { top: 64px; transform: translateY(var(--ty, 0)) scale(var(--sc, 1)); transform-origin: 50% 0; }
+.hv-screening .inline-film { box-shadow: 0 0 0 .5px rgb(0 0 0 / .12), 0 24px 70px rgb(0 0 0 / .16); }
+.hv-screening .ifc-seg::before { background: rgb(255 255 255 / .16); }
+.hv-screening .ifc-seg i { background: #F8F8F5; }
+.hv-screening .ifc-seg b { color: rgb(255 255 255 / .45); }
+.hv-screening .ifc-seg.on b { color: #F8F8F5; }
+.hv-screening .ifc-bar::-webkit-slider-thumb { background: #F8F8F5; box-shadow: 0 0 0 3px #0C0C0B; }
+.hv-screening .ifc-bar::-moz-range-thumb { background: #F8F8F5; box-shadow: 0 0 0 3px #0C0C0B; }
+.hx-lightsup { height: 42vh; background: linear-gradient(#0C0C0B, var(--paper)); }
+
+/* ———————————— 3 · Title page: the line alone, inking in; it shrinks into the film's caption as the film rises */
+.hx-title { position: absolute; left: 0; right: 0; top: 50%; z-index: 2; width: min(94vw, 13em); margin: 0 auto; translate: 0 -50%;
+  transform: translateY(var(--t-y, 0)) scale(var(--t-s, 1)); transform-origin: 50% 50%;
+  color: color-mix(in oklab, var(--ink), #6B6B67 var(--t-c, 0%));
+  font-family: var(--show); font-weight: 700; font-size: clamp(44px, 6vw, 96px); line-height: 1.02; letter-spacing: -.015em; text-align: center; }
+.hx-title > span { display: block; text-wrap: balance; }
+@media (prefers-reduced-motion: no-preference) {
+  .hx-title .w { animation: hxInk .9s var(--ease-out) both; animation-delay: calc(var(--i, 0) * 85ms + 180ms); }
+}
+@keyframes hxInk { from { opacity: .12; } }
+.hv-title .hx-frame { top: 104px; transform: translateY(var(--f-y, 0)); opacity: var(--f-o, 1); }
+@media (max-width: 640px) { .hv-title .hx-frame { top: 158px; } }
+.hv-title { --fw: min(1180px, 100vw - 2 * var(--g), (100svh - 230px) * 1470 / 956); }
+@media (max-width: 640px) { .hv-title { --fw: min(100vw - 2 * var(--g), (100svh - 230px) * 4 / 5); } }
+
+/* ———————————— 4 · Spec sheet: the line, the sentence and the keys at the left; the film playing at the right */
+.hx-spec { position: relative; padding: 92px var(--g) 0; }
+.hx-spec-grid { display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 2fr); column-gap: clamp(28px, 4vw, 64px); align-items: start;
+  max-width: 1440px; margin: 0 auto; padding-top: 28px; border-top: 1px solid var(--hair); }
+.hx-spec-copy { display: grid; gap: 22px; padding-top: 6px; }
+.hx-kicker { font-family: var(--read); font-variant-caps: all-small-caps; letter-spacing: .12em; font-size: 16px; color: var(--soft); }
+.hx-spec-line { font-family: var(--show); font-weight: 700; font-size: clamp(32px, 3vw, 50px); line-height: 1.04; letter-spacing: -.01em; }
+.hx-spec-def { font-size: clamp(17px, .4vw + 14px, 20px); line-height: 1.45; color: #3A3A38; }
+.hx-keys { display: grid; gap: 10px; padding: 16px 0 0; margin: 0; list-style: none; border-top: 1px solid var(--hair); font-family: var(--read); font-size: 17px; color: var(--soft); }
+.hx-keys li { display: grid; grid-template-columns: 74px 1fr; align-items: center; }
+.hx-keys li > span { display: flex; gap: 4px; }
+.hx-keys kbd { display: inline-grid; place-items: center; min-width: 26px; height: 24px; padding: 0 6px; border-radius: 6px; background: #fff;
+  box-shadow: 0 0 0 .5px rgb(0 0 0 / .18), 0 1.5px 0 rgb(0 0 0 / .16); font-family: var(--ui); font-size: 12px; font-weight: 600; color: var(--ink); }
+@media (max-width: 860px) {
+  .hx-spec-grid { grid-template-columns: minmax(0, 1fr); row-gap: 28px; }
+}
+
+/* ———————————— 5 · Frosted: soft grey; the film behind glass fills the screen, shrinks into a card, then clears */
+.hv-frost { --hx-bg: #F1F1EF; }
+.hv-frost .pin-stage { background: #F1F1EF; }
+.hv-frost .hx-frame { top: 84px; transform: translateY(var(--ty, 0)) scale(var(--sc, 1)); transform-origin: 50% var(--oy, 50%); }
+.hv-frost { --fw: min(1080px, 100vw - 2 * var(--g), (100svh - 230px) * 1470 / 956); }
+@media (max-width: 640px) { .hv-frost { --fw: min(100vw - 2 * var(--g), (100svh - 230px) * 4 / 5); } }
+.hv-frost .inline-film { border-radius: var(--rad, 0); box-shadow: 0 0 0 .5px rgb(0 0 0 / calc(.1 * var(--shadow-o, 1))), 0 40px 90px rgb(0 0 0 / calc(.16 * var(--shadow-o, 1))); }
+.hx-glass { position: absolute; inset: 0; z-index: 4; pointer-events: none; background: rgb(241 241 239 / var(--veil, 0));
+  -webkit-backdrop-filter: blur(var(--blur, 0)) saturate(1.06); backdrop-filter: blur(var(--blur, 0)) saturate(1.06); }
+.hv-frost .pin[data-open="1"] .hx-glass { visibility: hidden; }
+.hx-frost-copy { position: absolute; left: 0; right: 0; top: 50%; z-index: 5; display: grid; justify-items: center; gap: 16px; translate: 0 -50%;
+  transform: translateY(var(--copy-y, 0)); opacity: var(--copy-o, 1); pointer-events: var(--copy-pe, auto); padding: 0 var(--g); text-align: center; }
+.hx-frost-line { font-family: var(--show); font-weight: 600; font-size: clamp(28px, 3.2vw, 46px); line-height: 1.12; }
+.hx-frost-sub { font-family: var(--read); font-style: italic; font-size: 18px; color: var(--soft); margin-bottom: 6px; }
+
+/* ———————————— 6 · On the desk: the film lies back on a desk-coloured page, then stands up to face you */
+.hv-desk { --hx-bg: #ECEAE4; }
+.hv-desk .pin-stage { background: #ECEAE4; }
+.hv-desk .hx-line { top: 23%; font-size: clamp(32px, 4.4vw, 66px); }
+.hv-desk .hx-frame { top: 70px; transform: translateY(var(--ty, 0)) perspective(1800px) rotateX(var(--rx, 0deg)) scale(var(--sc, 1)); transform-origin: 50% var(--oy, 100%); }
+.hv-desk .inline-film { box-shadow: 0 0 0 .5px rgb(0 0 0 / calc(.12 * var(--e, 1))), 0 18px 50px rgb(0 0 0 / calc(.14 * var(--e, 1))); }
+.hx-desk-shadow { position: absolute; left: 0; right: 0; top: var(--sh-y, 90%); z-index: 2; width: var(--sh-w, 80%); height: 46px; margin: 0 auto; translate: 0 -55%;
+  border-radius: 50%; background: radial-gradient(closest-side, rgb(40 32 20 / .3), transparent); filter: blur(8px); opacity: var(--sh-o, 0); pointer-events: none; }
+
+/* ———————————— the index of them (/hero) */
+.hx-index { max-width: 760px; margin: 0 auto; padding: 120px var(--g) 0; }
+.hx-index h1 { font-family: var(--show); font-weight: 700; font-size: clamp(34px, 3vw, 48px); line-height: 1.05; }
+.hx-index > p { margin-top: 18px; font-size: 19px; line-height: 1.5; color: #3A3A38; }
+.hx-index ol { margin: 44px 0 0; padding: 0; list-style: none; display: grid; gap: 30px; }
+.hx-index li { display: grid; gap: 6px; padding-top: 22px; border-top: 1px solid var(--hair); }
+.hx-index li .act-line { font-size: 22px; font-family: var(--show); font-weight: 700; justify-self: start; }
+.hx-index li .after { font-family: var(--read); font-style: italic; font-size: 16px; color: var(--soft); }
+.hx-index li p { font-size: 17.5px; line-height: 1.5; color: #3A3A38; }
+
+.hx-index .hx-round1 { margin-top: 96px; }
+
+/* ===================================== round 3 (Oct 17): a picture, and the product on it =====================================
+   Into the screen (Screen.tsx, after Mercury), On the desktop and In the frame (Desktop.tsx, after Perplexity). */
+
+/* ———————————— Into the screen: a laptop in a room; the film on its screen; the camera moves in */
+.hx-screen-hero .pin-stage { background: var(--paper); }
+.hx-room { position: absolute; left: 0; top: 0; width: var(--ph-w, 100%); height: var(--ph-h, 100%); max-width: none; transform: translate(var(--ph-x, 0), var(--ph-y, 0));
+  opacity: var(--ph-o, 1); filter: blur(var(--ph-blur, 0)); object-fit: cover; }
+@media (max-width: 640px) {
+  /* on a phone the photograph is a band across the middle, melting into the paper above and below */
+  .hx-screen-hero .hx-room { -webkit-mask-image: linear-gradient(transparent, #000 14%, #000 86%, transparent); mask-image: linear-gradient(transparent, #000 14%, #000 86%, transparent); }
+}
+.hx-screen-hero .hx-top { z-index: 6; }
+.hx-onscreen { z-index: 3; }
+.hx-onscreen .inline-film { transform-origin: 0 0; transform: var(--film-tf, none); border-radius: var(--film-r, 10px); aspect-ratio: 1470 / 956;
+  box-shadow: 0 0 0 .5px rgb(0 0 0 / calc(.12 * var(--film-sh, 1))), 0 18px 50px rgb(0 0 0 / calc(.12 * var(--film-sh, 1))); }
+
+/* ———————————— In the frame: on the paper, the line over a Mac's desktop in a frame (HeroDesk), where Fovea does its one
+   thing once; scrolling, the film takes the desktop's place in the same frame */
+.hv-inframe { --fw: min(1080px, 100vw - 2 * var(--g), (100svh - 300px) * 1470 / 956); }
+.hx-frame-line { position: absolute; left: 0; right: 0; top: 76px; z-index: 2; width: min(92vw, 22em); margin: 0 auto; text-align: center; opacity: var(--fore-o, 1);
+  font-family: var(--show); font-weight: 700; font-size: clamp(28px, 3vw, 46px); line-height: 1.08; letter-spacing: -.005em; }
+.hx-frame-line span { display: block; }
+.hx-framed { top: 196px; }
+.hx-under { position: relative; isolation: isolate; aspect-ratio: 1470 / 956; overflow: hidden; border-radius: 10px; box-shadow: 0 0 0 .5px rgb(0 0 0 / .12), 0 18px 50px rgb(0 0 0 / .12); }
+.hx-over { position: absolute; z-index: 1; left: 0; right: 0; top: 0; }
+.hx-over .inline-film { opacity: var(--film-o, 0); }
+@media (max-width: 640px) {
+  .hv-inframe { --fw: calc(100vw - 2 * var(--g)); }
+  .hx-under, .hv-inframe .inline-film { aspect-ratio: 1470 / 956; }
+  .hx-framed { top: 186px; }
+}

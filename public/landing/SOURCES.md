@@ -22,3 +22,28 @@ Claude app's icon), `codex.png` (the Codex app's icon), `fovea.png` (Fovea's dar
 answers). Before launch, confirm their use with Anthropic's and OpenAI's brand guidelines, or swap
 in the marks from their brand kits.
 No Apple logo or Apple app icons are drawn in the mock Mac.
+
+The demo film (`film/`, components/book/film), Unsplash photographs through picsum.photos (the Unsplash license:
+free to use commercially, no attribution required), downloaded Oct 13:
+
+- wall.jpg: picsum id 128, Matteo Minelli, https://unsplash.com/photos/hlnucYOsL-c
+- trail.jpg: picsum id 17, Paul Jarvis, https://unsplash.com/photos/Ven2CV8IJ5A
+- thumb-1036, thumb-216, thumb-29: the same ids on picsum.photos (480 × 320), the trail cards in Field Notes
+- fovea-bar.png: Fovea's own Fovea Bar render (fovea website/assets/product/fovea-bar.png), resized to 1100 px.
+- fovea-mark.png: Fovea's current icon (app-ui-v1/FoveaV1/Sources/FoveaIsland/Resources/Agents/fovea.png), the mark on Quick answers.
+- chatgpt-mark.png, claude-mark.png, cursor-mark.png, grok-mark.png (in agents/): app-ui-v1's destination marks
+  (Sources/FoveaCore/Resources/Destinations, from lobe-icons); out of the film's row of agents since Oct 17.
+- grok-bot.png (in agents/): FoveaV1's Grok Bot icon (Resources/Agents), the 256 × 256 representation of the signed
+  `/Applications/Grok Bot.app` (SpaceXAI, bundle com.anysphere.sand); the same artwork as its App Store icon (Oct 17).
+- claude-code.png, codex.png (in agents/): FoveaV1's (Resources/Agents/SOURCES.md): the Claude app's icon, which
+  Fovea's app shows for Claude Code, and the Codex icon from the signed app.
+
+The film's row of agents (Oct 17): Muse, Claude Code, Codex, Grok Bot, Instinct, Manus, each its own icon:
+- muse.png: Muse from Meta, the 256 × 256 representation of the installed `/Applications/Muse.app` (bundle
+  com.meta.endo, 5.0) `AppIcon.icns`, the same artwork as its App Store icon (apps.apple.com id6760173601).
+- manus.svg: Manus (Meta), `Manus-Icon.svg` from its brand page, manus.im/brand
+  (files.manuscdn.com/assets/image/brand/image/Manus-Icon.svg, 5,635 B), unaltered. Its rules: don't recolour, rotate,
+  flip or outline it.
+- instinct.png: Instinct (instinct.com, Spear Street Technology), its `apple-touch-icon.png` (180 × 180, 1,871 B), the
+  only icon it publishes (no App Store listing, no brand kit).
+- Showing these marks in a marketing film is a trademark question: check before launch (landing/README.md).

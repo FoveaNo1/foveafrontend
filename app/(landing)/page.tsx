@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { buildPageMetadata } from "../../lib/site-metadata";
+import { SITE_URL, buildPageMetadata } from "../../lib/site-metadata";
 import Landing from "../../components/book/Landing";
 
 // Fovea's landing page, "the book" (Oct 13). The design and its research: landing/research/drafts.
 
-export const metadata: Metadata = buildPageMetadata("home");
+const home = buildPageMetadata("home");
+export const metadata: Metadata = { ...home, alternates: { canonical: "/" } };
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -14,7 +15,7 @@ const jsonLd = {
   applicationCategory: "DeveloperApplication",
   description:
     "Fovea is the way in for every agent: your voice and, soon, your eyes. It starts in your workspace, from the Mac's notch.",
-  url: "https://hellofovea.com",
+  url: SITE_URL,
 };
 
 export default function LandingPage() {

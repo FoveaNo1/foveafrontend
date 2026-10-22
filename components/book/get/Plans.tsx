@@ -1,6 +1,6 @@
 "use client";
 
-import { Founding, type Cycle } from "../../../lib/landing/book";
+import type { Cycle } from "../../../lib/landing/book";
 
 // The plans, quiet (research/readable-plans.md, option 1): one idea per line, the informative word first, numerals,
 // the price as the one larger line. Three columns, so all of it is on one screen. Every action is a line of type.
@@ -54,7 +54,7 @@ export default function Plans({ onJoin, headingLevel = "h2", downloadHref = "#to
             <li>First to try eye tracking, and first in line for the Fovea Bar.</li>
             <li>A letter from us.</li>
           </ul>
-          <p className="note">{Founding.left} of {Founding.cap.toLocaleString("en-US")} places left.</p>
+          {/* "N of 1,000 places left" waits for real numbers from the server (Oct 21: the placeholder isn't shown) */}
         </div>
       </div>
     </section>

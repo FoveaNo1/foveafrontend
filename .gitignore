@@ -50,3 +50,7 @@ emails.json
 # claude code (worktrees, session data)
 .claude/
 .gstack/
+
+# landing page working files: research (screenshots, references, drafts) and local backups stay off GitHub
+/landing/research/
+/landing/backups/

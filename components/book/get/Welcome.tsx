@@ -6,8 +6,20 @@ import { Founding, Pictures, sized } from "../../../lib/landing/book";
 // After paying: the founding card arrives unlit, then the hall inside it warms on, as the landing page's does
 // (light before colour); then its words are set, the number last, and the rest follows: a letter, the hall in
 // print, the credits. research/rewards.md (the post-payment moment) and research/emil.md (the numbers).
+// Oct 21: it opens for real on /checkout/success once the backend says Pro is on. Nothing yet keeps a founding
+// number, a print request or a name for the credits, so a real welcome shows no number and doesn't offer those;
+// the design preview (/download?preview=welcome, `demo`) still shows all of it.
 
-export default function Welcome({ open, onClose }: { open: boolean; onClose: () => void }) {
+type Props = {
+  open: boolean;
+  onClose: () => void;
+  /** The design preview: a sample number, the print offer and the credits. */
+  demo?: boolean;
+  /** "Open Fovea": the app's link, with the Checkout session when there is one. */
+  appLink?: string;
+};
+
+export default function Welcome({ open, onClose, demo = false, appLink = "fovea://billing/success" }: Props) {
   const root = useRef<HTMLDivElement>(null);
   const card = useRef<HTMLDivElement>(null);
   const [set, setSet] = useState(false);
@@ -56,7 +68,8 @@ export default function Welcome({ open, onClose }: { open: boolean; onClose: () 
     };
   }, [open, onClose]);
 
-  const no = `No. ${Founding.sampleNumber}`;
+  const no = demo ? `No. ${Founding.sampleNumber}` : null;
+  const since = new Intl.DateTimeFormat("en", { month: "long", year: "numeric" }).format(new Date());
   return (
     <div ref={root} className={`welcome${open ? " open" : ""}${shown ? " shown" : ""}`} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="w-title" aria-hidden={!open} inert={!open}>
       <div className="w-in">
@@ -65,8 +78,8 @@ export default function Welcome({ open, onClose }: { open: boolean; onClose: () 
             {/* eslint-disable-next-line @next/next/no-img-element -- a stand-in hotlinked picture (lib/landing/book.ts) */}
             <div className="ph"><img src={sized(Pictures.hall.src, 800)} alt="" /></div>
             <div className="tx">
-              <div><b>Founding member</b><span className="nm">{name.trim()}</span><small>Since October 2026 · Fovea</small></div>
-              <span className="no">{no}</span>
+              <div><b>Founding member</b><span className="nm">{name.trim()}</span><small suppressHydrationWarning>Since {since} · Fovea</small></div>
+              {no && <span className="no">{no}</span>}
             </div>
             <div className="sheen" />
           </div>
@@ -81,14 +94,14 @@ export default function Welcome({ open, onClose }: { open: boolean; onClose: () 
         </div>
         <article className="letter" aria-label="A letter from Fovea">
           <p>Dear founding member,</p>
-          <p>Thank you for joining Fovea this early. You are {no}.</p>
+          <p>Thank you for joining Fovea this early.{no && ` You are ${no}.`}</p>
           <p>We started Fovea because we wanted to talk to our agents the way we would talk to someone beside us: point at the thing, say what we mean, and get back to work. You are helping us find out how far that goes.</p>
           <p>Your price stays where it is for as long as you are with us. When eye tracking is ready, it comes to you first, and so will the first chance to reserve a Fovea Bar.</p>
           <p>If something feels wrong, or right, write back to the email this came with. It comes to us.</p>
           <p className="sig" aria-label="Signed, Fovea">Fovea</p>
           <p className="from">From all of us at Fovea</p>
         </article>
-        <div className="after">
+        {demo && <div className="after">
           <div>
             {print === "ask" && (
               <>
@@ -105,9 +118,9 @@ export default function Welcome({ open, onClose }: { open: boolean; onClose: () 
           <div>
             <label className="check"><input type="checkbox" /><span /><p>Add my name to the founding members in Fovea’s credits.</p></label>
           </div>
-        </div>
+        </div>}
         <div className="w-end">
-          <a className="act-line" href="fovea://billing/success">Open Fovea <span className="ar" aria-hidden="true">→</span></a>
+          <a className="act-line" href={appLink}>Open Fovea <span className="ar" aria-hidden="true">→</span></a>
           <button className="quiet-link" type="button" onClick={onClose}>Back to the page</button>
         </div>
       </div>

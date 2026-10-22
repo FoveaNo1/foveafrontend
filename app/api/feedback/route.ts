@@ -36,6 +36,11 @@ export async function POST(request: Request) {
     const userAgent = request.headers.get('user-agent') || null;
 
     if (isDevelopmentMode) {
+      // Without Supabase, a deployed site must say so rather than drop the feedback with a 200 (Oct 21).
+      if (process.env.NODE_ENV === 'production') {
+        console.error('Feedback API: NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY are not set; nothing was saved.');
+        return NextResponse.json({ error: 'Feedback is unavailable just now. Please email hello@hellofovea.com.' }, { status: 503 });
+      }
       console.log('[Dev Mode] Feedback submitted:', {
         type, title, description, contact, locale, country, user_agent: userAgent,
       });

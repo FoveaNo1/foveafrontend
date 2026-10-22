@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { getSiteCopy } from "./site-copy";
 
+/** The address the site is served at: hellofovea.com redirects here, and the Mac app links here. Canonical links,
+ *  the sitemap and the structured data all use it, so none of them point at a redirect. */
+export const SITE_URL = "https://www.hellofovea.com";
+
 type PageKey = "home" | "download" | "feedback" | "pricing" | "privacy";
 
 const canonicalPaths: Record<PageKey, string> = {

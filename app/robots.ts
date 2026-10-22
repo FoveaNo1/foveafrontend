@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next";
+import { SITE_URL } from "../lib/site-metadata";
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: { userAgent: "*", allow: "/", disallow: ["/api/", "/account", "/checkout", "/auth/"] },
-    sitemap: "https://hellofovea.com/sitemap.xml",
+    rules: { userAgent: "*", allow: "/", disallow: ["/api/", "/account", "/checkout", "/auth/", "/login", "/hero"] },
+    sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }

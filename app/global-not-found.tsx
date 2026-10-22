@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./(landing)/landing.css";
 
-// The 404 for any URL no page matches. With two root layouts ((landing) and (site)) there is no
-// top-level layout to draw it in, so it brings its own <html>, in the landing page's ink on paper.
+// The 404 for any URL no page matches. The site's root layout is inside a route group ((landing)), so
+// there is no top-level layout to draw it in: it brings its own <html>, in the landing page's ink on paper.
 
 export const metadata: Metadata = {
   title: "Not found · Fovea",

@@ -1,6 +1,9 @@
-// The Privacy Policy and the Terms of Service, word for word as the site had them (components/PrivacyPageContent.tsx and
-// components/TermsPageContent.tsx, Oct 13), set in the landing page's type by components/book/LegalPage.tsx.
-// A link inside a paragraph is written [[text|href]]. Engineers drafted this text: a lawyer should review it.
+// The Privacy Policy and the Terms of Service, word for word as Max's copy of the site has them (Ryan's pick, Oct 20:
+// MaxJiang103/fovea-product-frontend, Jul 20, components/PrivacyPageContent.tsx and components/TermsPageContent.tsx,
+// the same text as this repo's main; every block checked against it and against the live pages Oct 20), set in the
+// landing page's type by components/book/LegalPage.tsx. A link inside a paragraph is written [[text|href]].
+// Engineers drafted this text: the June 21 handoff (HANDOFF-privacy-terms-memory-disclosure-2026-06-21.md) asks for a
+// lawyer's review before it is published.
 
 export type LegalBlock = { k: "h2" | "h3" | "p"; t: string };
 export type LegalDoc = { title: string; updated: string; blocks: LegalBlock[] };

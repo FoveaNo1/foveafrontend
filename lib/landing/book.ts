@@ -38,18 +38,13 @@ export const sized = (src: string, w: number) => `${src}?format=webp&w=${w}`;
 
 export type Cycle = "yearly" | "monthly";
 
-/** What each cycle costs, as the checkout sheet shows it. */
-export const Prices: Record<Cycle, { line: string; total: string; pay: string; name: string; then: string }> = {
-  yearly: { line: "$9 × 12 months", total: "$108", pay: "Pay $108", name: "Yearly", then: "$108 today, then yearly. Cancel any time." },
-  monthly: { line: "1 month", total: "$20", pay: "Pay $20", name: "Monthly", then: "$20 today, then monthly. Cancel any time." },
+/** What each cycle costs, as the checkout shows it. The amount charged is Stripe's (the backend's
+ *  STRIPE_PRICE_PRO_YEARLY / _MONTHLY): keep these in step with those prices. */
+export const Prices: Record<Cycle, { line: string; total: string; name: string; then: string }> = {
+  yearly: { line: "$9 × 12 months", total: "$108", name: "Yearly", then: "$108 today, then yearly. Cancel any time." },
+  monthly: { line: "1 month", total: "$20", name: "Monthly", then: "$20 today, then monthly. Cancel any time." },
 };
 
-/** Founding places: the cap and how many remain. Placeholder numbers until the server provides them. */
-export const Founding = { cap: 1000, left: 588, sampleNumber: "0412" } as const;
-
-/**
- * How "Pay" behaves. "demo" runs the designed checkout and the welcome without charging anything (as asked,
- * Oct 13: no Stripe integration yet). "stripe" sends the visitor to the site's real checkout (/checkout), which
- * already creates a Stripe Checkout session. Switch to "stripe" before taking real payments.
- */
-export const CHECKOUT_MODE: "demo" | "stripe" = "demo";
+/** A founding number, for the welcome's design preview only (/download?preview=welcome). Real numbers aren't given
+ *  out yet: the server doesn't keep them, so a real welcome shows none (Oct 21). */
+export const Founding = { sampleNumber: "0412" } as const;
