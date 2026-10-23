@@ -1,0 +1,576 @@
+/* The demo film (components/book/film). The screen is a 13-inch Mac in points (1470 × 956) under one camera
+   transform; the paper and the words above it are sized from the frame (--fw, --fh). Nothing here transitions or
+   animates on its own: every change comes from the film's clock (lib/landing/film/film.ts), so playing and seeking
+   look the same. Island numbers are Fovea 1.0's (WorkbenchTokens.swift, measured on its pictures). */
+
+.film { position: absolute; inset: 0; overflow: hidden; background: #0B0B0A; container-type: size; --t: 0;
+  --ink: #141414; --sys: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, "Helvetica Neue", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased; user-select: none; }
+.film, .film * { transition: none !important; animation: none !important; box-sizing: border-box; }
+.film * { margin: 0; padding: 0; }
+.film .f-world { position: absolute; left: 0; top: 0; width: 1470px; height: 956px; transform-origin: 0 0; overflow: hidden; font-family: var(--sys); color: #1D1D1F; }
+
+/* ———————————————————— the desk */
+.film .desk { position: absolute; inset: 0; opacity: 0; isolation: isolate; }
+.film .wall { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* the menu bar, plain: the notch sits in it; nothing on it pretends to be the Mac's own */
+.film .menubar { position: absolute; left: 0; right: 0; top: 0; height: 32px; background: rgb(255 255 255 / .16); }
+/* the still copy of Today's desk: the whole-screen capture's picture, drawn as it stands (nothing moves it) */
+.film .desk[data-still] { opacity: 1; pointer-events: none; }
+.film .desk[data-still] .win { opacity: 1; }
+
+/* windows */
+.film .win { position: absolute; left: 0; top: 0; opacity: 0; background: #fff; border-radius: 12px; overflow: hidden; transform-origin: 50% 50%;
+  box-shadow: 0 0 0 .5px rgb(0 0 0 / .14), 0 22px 60px rgb(0 0 0 / .26), 0 4px 14px rgb(0 0 0 / .1); }
+.film .tbar { position: relative; height: 52px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid rgb(0 0 0 / .08); background: #F6F6F6; }
+.film .lights { position: absolute; left: 20px; top: 50%; translate: 0 -50%; display: flex; gap: 8px; }
+.film .lights i { width: 12px; height: 12px; border-radius: 50%; background: #FF5F57; }
+.film .lights i:nth-child(2) { background: #FEBC2E; }
+.film .lights i:nth-child(3) { background: #28C840; }
+.film .ttl { font-size: 13px; font-weight: 600; color: rgb(0 0 0 / .78); }
+
+/* the browser */
+.film .win-browser .tabs { position: relative; height: 40px; display: flex; align-items: flex-end; gap: 2px; padding: 0 12px 0 92px; background: #EDEDED; }
+.film .win-browser .tab { width: 210px; height: 30px; padding: 8px 14px; font-size: 12.5px; border-radius: 8px 8px 0 0; color: rgb(0 0 0 / .6); }
+.film .brow-body { position: absolute; inset: 40px 0 0; }
+.film .url { height: 44px; display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid rgb(0 0 0 / .08); background: #fff; }
+.film .url span { display: none; height: 28px; line-height: 28px; padding: 0 12px; width: 560px; margin: 0 auto; border-radius: 8px; background: #F1F1F2; font-size: 13px; color: rgb(0 0 0 / .62); }
+.film .pg { position: absolute; inset: 44px 0 0; display: none; background: #fff; }
+.film .brow-body[data-state="fieldnotes"] .pg-fieldnotes, .film .brow-body[data-state="prs"] .pg-prs, .film .brow-body[data-state="support"] .pg-support { display: block; }
+.film .brow-body[data-state="fieldnotes"] .u-fieldnotes, .film .brow-body[data-state="prs"] .u-prs, .film .brow-body[data-state="support"] .u-support { display: block; }
+.film .win-browser:has(.brow-body[data-state="fieldnotes"]) .tab[data-tab="fieldnotes"], .film .win-browser:has(.brow-body[data-state="prs"]) .tab[data-tab="prs"], .film .win-browser:has(.brow-body[data-state="support"]) .tab[data-tab="support"] { background: #fff; color: rgb(0 0 0 / .86); }
+.film .pg-fieldnotes { font-family: Charter, Georgia, serif; }
+.film .fn-top { position: absolute; left: 64px; right: 64px; top: 16px; display: flex; gap: 22px; align-items: baseline; font-family: var(--sys); font-size: 13px; color: #555; }
+.film .fn-top b { margin-right: auto; font-family: Charter, Georgia, serif; font-size: 20px; color: #1E3A2B; }
+.film .pg-fieldnotes h4 { position: absolute; left: 64px; top: 56px; font-size: 26px; font-weight: 700; color: #1E3A2B; }
+.film .card { position: absolute; top: 106px; width: 340px; height: 362px; border-radius: 10px; background: #F6F4EE; overflow: hidden; }
+.film .card img { display: block; width: 100%; height: 160px; object-fit: cover; }
+.film .card b { display: block; margin: 16px 18px 6px; font-size: 19px; color: #1E3A2B; }
+.film .card span { display: block; margin: 0 18px; font-size: 14px; line-height: 20px; color: #5B5B55; font-family: var(--sys); }
+.film .mapbtn { position: absolute; width: 148px; height: 38px; margin-top: -84px; border-radius: 19px; background: #1E3A2B; color: #fff; font-family: var(--sys); font-size: 13.5px; font-weight: 600; line-height: 38px; text-align: center; }
+.film .flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+.film .pg h5 { margin: 40px 56px 16px; font-size: 20px; font-weight: 700; }
+.film .lrow { display: flex; align-items: center; gap: 12px; width: 760px; margin-left: 56px; height: 50px; border-bottom: 1px solid rgb(0 0 0 / .07); font-size: 14.5px; }
+.film .lrow .ld { width: 10px; height: 10px; border-radius: 50%; border: 2px solid #8E8E93; }
+.film .lrow .ld.m { border-color: #8250DF; background: #8250DF; }
+.film .lrow .who { margin-left: auto; font-size: 12.5px; color: #8E8E93; }
+
+/* Maya's thread */
+.film .thread { position: absolute; inset: 52px 0 0; padding: 22px 28px; background: #fff; font-size: 14.5px; line-height: 21px; }
+.film .thread .them { max-width: 82%; padding: 10px 14px; border-radius: 16px; background: #E9E9EB; }
+.film .thread .t2 { position: absolute; left: 28px; top: 420px; }
+.film .thread .mine { position: absolute; right: 28px; top: 494px; padding: 9px 14px; border-radius: 16px; background: #0A84FF; color: #fff; }
+.film .chart { position: absolute; border-radius: 14px; background: #fff; box-shadow: 0 0 0 1px rgb(0 0 0 / .1); padding: 14px 16px; margin-top: -52px; }
+.film .chart p { display: flex; justify-content: space-between; font-size: 14px; }
+.film .chart p span { color: #34C759; font-weight: 600; }
+.film .chart svg { display: block; width: 100%; height: 150px; }
+.film .chart .ticks { justify-content: space-between; font-size: 11px; color: #8E8E93; letter-spacing: -.02em; }
+.film .chart .ticks span { color: #8E8E93; font-weight: 400; margin-right: -14px; }
+
+/* ———————————————————— what moves over the screen */
+.film .marks { position: absolute; inset: 0; pointer-events: none; }
+.film .capsel { position: absolute; left: 0; top: 0; background: rgb(128 128 128 / .32); box-shadow: inset 0 0 0 1px rgb(102 102 102 / .75); opacity: 0; }
+/* ⌘ ⌘, the whole screen: a light flash, then its picture (the still desk) lifting off the screen inset 40 pt */
+.film .flash-screen { position: absolute; inset: 0; background: #fff; opacity: 0; }
+.film .scr-fly { position: absolute; left: 0; top: 0; overflow: hidden; opacity: 0; border-radius: var(--rad, 10px);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / .85), 0 18px 50px rgb(0 0 0 / .35); }
+.film .scr-shot { position: absolute; left: 0; top: 0; width: 1470px; height: 956px; transform-origin: 0 0; transform: scale(var(--sc, 1)); }
+/* what the eyes rest on as "this" lands: a light outline, as Settings › Eye Tracking draws it */
+.film .gazemark { position: absolute; left: 0; top: 0; border-radius: 12px; box-shadow: 0 0 0 2px rgb(82 180 245 / .85), 0 0 18px rgb(82 180 245 / .35); opacity: 0; }
+/* a click, made visible: a small ring where the pointer pressed (a screencast's convention, not the Mac's) */
+.film .clickring { position: absolute; left: 0; top: 0; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; border: 2px solid rgb(10 132 255 / .9); opacity: 0; }
+
+.film .ring { position: absolute; left: 0; top: 0; width: 0; height: 0; opacity: 0; }
+.film .ring::before { content: ""; position: absolute; left: -49px; top: -49px; width: 98px; height: 98px; border-radius: 50%;
+  border: 13px solid rgb(82 180 245 / .82); box-shadow: 0 0 22px rgb(82 180 245 / .55), inset 0 0 14px rgb(82 180 245 / .5); }
+.film .ring-label { position: absolute; left: 58px; top: -12px; white-space: nowrap; font-family: "EB Garamond", Georgia, serif; font-style: italic; font-size: 22px; color: #fff;
+  padding: 2px 10px; border-radius: 6px; background: rgb(20 40 60 / .55); opacity: 0; }
+
+.film .cursor { position: absolute; left: 0; top: 0; width: 20px; height: 30px; opacity: 0; }
+.film .cursor svg { position: absolute; left: 0; top: 0; width: 15px; height: 22px; display: none; filter: drop-shadow(0 1px 1.5px rgb(0 0 0 / .35)); }
+.film .cursor .c-cross { width: 22px; height: 22px; left: -11px; top: -11px; }
+.film .cursor .c-ibeam { width: 10px; height: 20px; left: -5px; top: -10px; }
+.film .cursor[data-state="arrow"] .c-arrow, .film .cursor[data-state="ibeam"] .c-ibeam, .film .cursor[data-state="cross"] .c-cross { display: block; }
+
+/* a capture's picture (Minis.tsx): exactly what was taken, drawn in its own coordinates and scaled to its card */
+.film .mini { display: block; overflow: hidden; background: #fff; border-radius: 6px; box-shadow: 0 0 0 .75px rgb(0 0 0 / .2); }
+.film .mini > span { display: none; position: absolute; inset: 0; }
+.film .mini[data-state="glaze"] > [data-m="glaze"], .film .mini[data-state="hdr"] > [data-m="hdr"], .film .mini[data-state="brief"] > [data-m="brief"],
+.film .mini[data-state="chart"] > [data-m="chart"], .film .mini[data-state="prs"] > [data-m="prs"], .film .mini[data-state="screen"] > [data-m="screen"] { display: block; }
+.film .mini .shot { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+/* the whole screen: the still desk, scaled to cover its card (the bar's 40 × 28, the pile's 52 × 40) */
+.film .m-screen .desk { width: 1470px; height: 956px; transform-origin: 0 0; }
+.film .s-voice .th0 .m-screen .desk { transform: translate(-1.53px, 0) scale(.02929); }
+.film .pile .m-screen .desk { transform: translate(-4.73px, 0) scale(.04184); }
+.film .flight { position: absolute; left: 0; top: 0; opacity: 0; border-radius: var(--rad, 4px); }
+
+/* ———————————————————— the island (Native, light glass; FoveaV1 WorkbenchTokens, Spacious) */
+.film .isl { position: absolute; inset: 0; pointer-events: none; --ink: 0 0 0; --acc: 0 122 255; }
+.film .is-glass { position: absolute; left: 0; top: -6px; width: 0; height: 0; opacity: 0; border-radius: 0 0 var(--br, 14px) var(--br, 14px);
+  background: rgb(250 251 252 / .55); -webkit-backdrop-filter: blur(28px) saturate(1.7); backdrop-filter: blur(28px) saturate(1.7); }
+.film .is-ears { position: absolute; left: 0; top: 0; width: 0; height: 0; overflow: visible; opacity: 0; }
+.film .is-ears path { fill: rgb(214 226 238 / .92); }
+.film .is-rim { position: absolute; left: 0; top: 0; width: 0; height: 0; overflow: visible; opacity: 0; }
+.film .is-rim path { fill: none; stroke: rgb(255 255 255 / .55); stroke-width: .75; }
+.film .is-clip { position: absolute; inset: 0; }
+.film .is-notch { position: absolute; left: 645px; top: 0; width: 180px; height: 32px; background: #000; border-radius: 0 0 8px 8px; }
+.film .mark { display: block; flex: none; border-radius: 22%; }
+
+.film .slot { position: absolute; top: 0; opacity: 0; transform-origin: 50% 0; color: rgb(var(--ink) / .9); font-size: 13px; }
+
+/* the voice bar (192 × 76): the stack 14 pt in, nine capsule bars; no glow on its edge (Oct 18) */
+.film .s-voice, .film .s-trans { left: calc(735px - 96px); width: 192px; height: 76px; }
+.film .s-voice .stack { position: absolute; left: 0; top: 0; width: 192px; height: 76px; }
+.film .s-voice .th { position: absolute; opacity: 0; border-radius: 6px; }
+.film .s-voice .th0 { left: 14px; top: 40px; width: 40px; height: 28px; }
+.film .s-voice .th1 { left: 22.2px; top: 41.1px; width: 36.8px; height: 25.8px; rotate: 4deg; }
+.film .s-voice .th2 { left: 30.4px; top: 42.2px; width: 33.6px; height: 23.5px; rotate: -3deg; }
+.film .s-voice .wave { position: absolute; left: 62px; top: 32px; height: 44px; display: flex; align-items: center; gap: 4px; }
+.film .s-voice .wave i { display: block; width: 4px; height: 5.33px; border-radius: 2px; background: #000; }
+/* a file dragged over the notch (Oct 17, FileDropWell): the bar lit as a well in the accent, inset 5 pt in its band */
+.film .s-voice .drop { position: absolute; left: 11px; top: 37px; width: 170px; height: 34px; display: flex; align-items: center; justify-content: center; gap: 7px; opacity: 0;
+  border-radius: 9px; background: rgb(var(--acc) / .16); box-shadow: inset 0 0 0 1.5px rgb(var(--acc)); font-size: 12.5px; font-weight: 500; color: rgb(var(--ink) / .94); white-space: nowrap; }
+.film .s-voice .drop svg { flex: none; }
+/* Transcribing (DSP-02): the word centred in the band, the ellipsis after it */
+.film .s-trans p { position: absolute; left: 0; right: 0; top: 32px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 13.5px; color: rgb(var(--ink) / .95); }
+.film .ell { display: inline-flex; gap: 2px; margin-left: 2px; align-self: center; translate: 0 3px; }
+.film .ell i { display: block; width: 2.6px; height: 2.6px; border-radius: 50%; background: currentColor; opacity: .3; }
+.film .ell[data-state="0"] i:nth-child(1), .film .ell[data-state="1"] i:nth-child(2), .film .ell[data-state="2"] i:nth-child(3) { opacity: 1; }
+
+/* Choose chat (660 wide; a one-line request: 171 tall; content 35 pt in) */
+.film .s-choose { left: calc(735px - 330px); width: 660px; height: 400px; }
+.film .cwrap { position: absolute; inset: 0; }
+.film .s-choose .creq { position: absolute; left: 35px; right: 35px; top: 42px; font-size: 14px; line-height: 19px; color: rgb(var(--ink) / .9); }
+.film .s-choose .row { position: absolute; left: 35px; right: 35px; top: 73px; height: 44px; display: flex; align-items: center; justify-content: space-between; }
+.film .pile { position: relative; width: 66px; height: 40px; }
+.film .pile .mini { position: absolute; left: 0; top: 0; width: 52px; height: 40px; border-radius: 7px; transform-origin: 100% 50%; }
+.film .pile .mini[style*="--i: 1"] { translate: 6px 0; scale: .92; rotate: 5deg; opacity: .65; }
+.film .pile .mini[style*="--i: 2"] { translate: 12px 0; scale: .84; rotate: -4deg; opacity: .65; }
+.film .pills { display: flex; align-items: center; gap: 8px; }
+.film .pill { position: relative; display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px; border-radius: 16px; background: rgb(var(--ink) / .08); font-size: 13px; font-weight: 500; white-space: nowrap; color: rgb(var(--ink) / .9); }
+.film .pill.model { gap: 6px; }
+.film .pill .chev { width: 9px; height: 9px; opacity: .55; }
+.film .pill .model { width: 12px; height: 12px; color: rgb(var(--ink) / .5); }
+.film .pill.chat .mark { width: 18px; height: 18px; }
+.film .pill .settled { display: inline-flex; align-items: center; gap: 8px; }
+/* Soon: the chat pill thinks. It keeps the chat's width (the app does); over it, "Choosing chat" and a ring where the
+   chat's icon will be: a track, and an accent arc that circles a turn a second and fills (--da, --rot from the film) */
+.film .pill .choosing { position: absolute; left: 12px; top: 0; bottom: 0; display: inline-flex; align-items: center; gap: 8px; color: rgb(var(--ink) / .6); white-space: nowrap; }
+.film [data-k="ch:c2pick"] { opacity: 0; transform-origin: 0 50%; }
+/* the model pill holds the width of the model it will pick, so the chat pill never moves when "Auto" turns into it */
+.film .cwrap[data-k="ch:c2"] .pill.model { min-width: 113px; justify-content: center; }
+.film .think { display: block; flex: none; transform: rotate(var(--rot, 0deg)); }
+.film .think circle { fill: none; stroke-width: 2; }
+.film .think .trk { stroke: rgb(var(--ink) / .12); }
+.film .think .arc { stroke: rgb(var(--acc)); stroke-linecap: round; stroke-dasharray: var(--da, 4 47.12); transform: rotate(-90deg); transform-origin: 9px 9px; }
+.film .pill .glow { position: absolute; inset: -2px; border-radius: 18px; box-shadow: 0 0 0 2px rgb(var(--acc) / .55), 0 0 14px rgb(var(--acc) / .35); opacity: 0; }
+.film .send { width: 32px; height: 32px; border-radius: 50%; background: rgb(var(--acc)); color: #fff; display: grid; place-items: center; }
+.film .send svg { width: 13px; height: 13px; }
+.film .sug { position: absolute; left: 35px; right: 35px; top: 127px; height: 28px; display: flex; align-items: center; gap: 6px; }
+.film .sug .lab { font-size: 11px; font-weight: 600; color: rgb(var(--ink) / .5); margin-right: 4px; }
+.film .chip { display: inline-flex; flex: none; white-space: nowrap; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 13px; background: rgb(var(--ink) / .07); font-size: 12.5px; font-weight: 500; color: rgb(var(--ink) / .72); }
+.film .chip.on { background: rgb(var(--acc) / .2); color: rgb(var(--ink) / .94); }
+.film .chip .mark { width: 14px; height: 14px; }
+
+/* the session panel (660 wide; DSP-16 / DSP-18, V2ChatContent): header 42–82 and its rule, the request, "Worked
+   for", the answer, what opens what it made, the bar, "Ask a follow-up", the grab handle (tops: content.ts PANEL) */
+.film .s-answer { left: calc(735px - 330px); width: 660px; }
+.film .head { position: absolute; left: 35px; right: 35px; top: 42px; height: 40px; display: flex; align-items: center; gap: 10px; }
+.film .head::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: rgb(var(--ink) / .12); }
+.film .head .mark { width: 22px; height: 22px; }
+.film .head b { font-size: 14px; font-weight: 600; color: rgb(var(--ink) / .94); white-space: nowrap; }
+.film .head b.quiet { color: rgb(var(--ink) / .5); }
+.film .badge-t { height: 16px; padding: 0 6px; border-radius: 8px; background: rgb(var(--ink) / .1); font-size: 10.5px; font-weight: 500; line-height: 16px; color: rgb(var(--ink) / .5); margin-right: auto; }
+.film .circ { width: 24px; height: 24px; border-radius: 50%; background: rgb(var(--ink) / .08); display: grid; place-items: center; flex: none; }
+.film .circ.sm { width: 22px; height: 22px; }
+.film .circ svg { width: 11px; height: 11px; color: rgb(var(--ink) / .6); }
+.film .s-answer .q { position: absolute; left: 35px; right: 35px; font-size: 15px; font-weight: 600; line-height: 20px; color: rgb(var(--ink) / .94); }
+.film .worked { position: absolute; left: 35px; height: 22px; display: flex; align-items: center; gap: 3px; font-size: 12px; color: rgb(var(--ink) / .5); }
+.film .worked .chev { width: 9px; height: 9px; }
+.film .s-answer .ans { position: absolute; left: 35px; right: 35px; font-size: 13.5px; line-height: 19px; color: rgb(var(--ink) / .88); }
+.film .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .92em; }
+.film .trow { position: absolute; left: 35px; right: 35px; display: grid; grid-template-columns: 120px 1fr; column-gap: 16px; height: 24px; align-items: center; font-size: 13px; color: rgb(var(--ink) / .88); }
+.film .trow.th { font-size: 12px; font-weight: 600; color: rgb(var(--ink) / .5); }
+.film .trow.th::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: rgb(var(--ink) / .1); }
+.film .trow .term { font-family: "Iowan Old Style", Charter, Georgia, serif; font-style: italic; font-size: 13.5px; }
+/* a draft, as the app shows one: a quote card */
+.film .quote { position: absolute; left: 35px; right: 35px; padding: 11px 14px; border-radius: 10px; background: rgb(var(--ink) / .06); display: grid; gap: 8px; font-size: 13.5px; line-height: 19px; color: rgb(var(--ink) / .9); }
+.film .qatt { display: inline-flex; align-items: center; gap: 8px; margin-top: 2px; font-size: 12px; font-weight: 500; color: rgb(var(--ink) / .8); }
+.film .qatt i { display: grid; place-items: center; width: 26px; height: 32px; border-radius: 4px; background: linear-gradient(180deg, #E9D2B3, #B98F68); }
+.film .qatt path { fill: #B4553A; }
+.film .qatt em { font-style: normal; color: rgb(var(--ink) / .45); }
+/* "Open …": what the agent made, opened where it lives */
+.film .openbtn { position: absolute; left: 35px; height: 26px; padding: 0 11px 0 9px; border-radius: 13px; background: rgb(var(--ink) / .09); display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: rgb(var(--ink) / .94); }
+.film .openbtn svg { color: rgb(var(--ink) / .7); }
+/* the bar: the chat's own app at the left; the answer's buttons at the right */
+.film .openin { position: absolute; left: 35px; height: 30px; display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; color: rgb(var(--acc)); }
+.film .openin .ext { width: 9px; height: 9px; }
+.film .sbar { position: absolute; right: 35px; height: 30px; display: flex; align-items: center; gap: 5px; }
+.film .again { height: 24px; padding: 0 10px; border-radius: 12px; background: rgb(var(--ink) / .09); display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500; color: rgb(var(--ink) / .9); }
+.film .again svg { width: 10px; height: 10px; }
+/* "Ask a follow-up" (V2FollowUpField): a capsule 34 tall, its ↑ in a 24 pt disc; then the grab handle */
+.film .follow { position: absolute; left: 35px; right: 35px; height: 34px; border-radius: 17px; padding: 0 12px; background: rgb(var(--ink) / .07);
+  box-shadow: inset 0 0 0 .75px rgb(var(--ink) / .1); font-size: 13px; line-height: 34px; color: rgb(var(--ink) / .4); }
+.film .send2 { position: absolute; right: 5px; top: 5px; width: 24px; height: 24px; border-radius: 50%; background: rgb(var(--ink) / .12); display: grid; place-items: center; }
+.film .send2 svg { width: 11px; height: 11px; color: rgb(var(--ink) / .35); }
+.film .grab { position: absolute; left: 50%; width: 40px; height: 5px; margin: 5.5px 0 0 -20px; border-radius: 3px; background: rgb(var(--ink) / .32); }
+
+/* the board, Badges style (400 wide; DSP-10, DSP-14): Done, then Running, a hairline between; rows 46 tall */
+.film .s-board { left: calc(735px - 200px); width: 400px; padding-top: 42px; }
+.film .bsec.sep { margin-top: 9px; position: relative; }
+.film .bsec.sep::before { content: ""; position: absolute; left: 35px; right: 35px; top: -5px; height: .5px; background: rgb(var(--ink) / .08); }
+.film .brow { position: relative; height: 46px; margin: 0 25px; padding: 0 10px; display: grid; grid-template-columns: 26px 1fr minmax(44px, auto); column-gap: 10px; align-items: center; border-radius: 9px; }
+.film .brow.focus { background: rgb(var(--ink) / .06); }
+.film .brow .ic { position: relative; width: 26px; height: 26px; }
+.film .brow .ic .mark { width: 26px; height: 26px; }
+.film .badge { position: absolute; right: -3px; bottom: -3px; width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 0 2px rgb(232 238 244); display: grid; place-items: center; }
+.film .brow[data-state="working"] .badge { background: rgb(232 236 240); }
+.film .brow[data-state="working"] .badge::after { content: ""; width: 8px; height: 8px; border-radius: 50%; box-sizing: border-box; border: 1.5px solid rgb(var(--ink) / .14);
+  border-top-color: rgb(var(--acc)); transform: rotate(calc(var(--t) * 327deg)); }
+.film .brow[data-state="done"] .badge { background: #34C759; }
+.film .brow[data-state="done"] .badge::after { content: ""; width: 5px; height: 3px; border-left: 1.5px solid #fff; border-bottom: 1.5px solid #fff; transform: rotate(-45deg) translate(0.5px, -0.5px); }
+.film .brow .tx { display: grid; min-width: 0; gap: 1px; }
+.film .brow .tx b { font-size: 13.5px; font-weight: 600; color: rgb(var(--ink) / .92); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.film .brow .line { font-size: 11.5px; color: rgb(var(--ink) / .6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.film .steps { position: relative; height: 15px; overflow: hidden; }
+.film .steps > span { position: absolute; left: 0; right: 0; top: 0; display: none; }
+.film .steps.one > span, .film .steps[data-state="0"] > [data-i="0"], .film .steps[data-state="1"] > [data-i="1"], .film .steps[data-state="2"] > [data-i="2"] { display: flex; }
+.film .step { display: flex; align-items: center; gap: 4px; font-size: 11.5px; white-space: nowrap; overflow: hidden; }
+.film .step .sg { width: 10px; height: 10px; color: rgb(var(--ink) / .5); flex: none; }
+.film .step .verb { color: rgb(var(--ink) / .55); }
+.film .step .obj { color: rgb(var(--ink) / .92); font-weight: 500; }
+.film .step .obj.mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; font-weight: 500; }
+.film .step .add { color: rgb(var(--ink) / .85); font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; }
+.film .step .del { color: rgb(var(--ink) / .45); font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; }
+.film .brow .tm { font-size: 11.5px; font-weight: 500; color: rgb(var(--ink) / .4); text-align: right; }
+
+/* ———————————————————— the paper: cards and the world, sized to the frame */
+.film .paper { position: absolute; inset: 0; background: var(--paper); opacity: 0; container-type: inline-size; color: var(--ink); }
+.film .pnotch { position: absolute; left: 50%; top: 0; width: calc(var(--fw) * 180 / 1470); height: calc(var(--fw) * 32 / 1470); margin-left: calc(var(--fw) * -90 / 1470);
+  background: #000; border-radius: 0 0 calc(var(--fw) * 9 / 1470) calc(var(--fw) * 9 / 1470); opacity: 0;
+  transform: translateY(calc(var(--slide, 0) * (var(--fh) * .42 - min(var(--fw) * .56, 820px) * .257 + var(--fw) * .012))); }
+.film .pc { position: absolute; left: 50%; top: 50%; width: min(86%, 20em); translate: -50% -50%; text-align: center; text-wrap: balance; opacity: 0; }
+.film .pc.big { font-family: var(--font-cormorant), "Cormorant Garamond", serif; font-weight: 700; font-size: clamp(20px, calc(var(--fw) * .038), 58px); line-height: 1.1; }
+.film .pc.mid { font-family: var(--font-cormorant), "Cormorant Garamond", serif; font-weight: 700; font-size: clamp(18px, calc(var(--fw) * .028), 42px); line-height: 1.1; }
+.film .pc.small { font-family: var(--font-eb), "EB Garamond", serif; font-style: italic; font-weight: 500; font-size: clamp(12px, calc(var(--fw) * .016), 23px); color: #6B6B67; width: min(86%, 30em); }
+.film .pc.title { width: min(90%, 24em); }
+.film .pc.title span { display: block; }
+.film .pc.up { top: 46%; }
+.film .pc.below { top: 56%; }
+.film .pc.lower { top: 74%; }
+.film .pc.lowest { top: 82%; }
+.film .pc.saw { top: 50%; }
+.film .pc.you { top: 73%; }
+.film .pbar { position: absolute; left: 50%; top: 42%; width: min(56%, 820px); translate: -50% -50%; opacity: 0; filter: drop-shadow(0 18px 30px rgb(0 0 0 / .12)); }
+.film .photo { position: absolute; left: 50%; top: 44%; width: min(62%, 120vh); aspect-ratio: 3 / 2; translate: -50% -50%; border-radius: 3px; overflow: hidden; opacity: 0; }
+.film .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.film .pring { position: absolute; width: 1em; height: 1em; border-radius: 50%; opacity: 0; pointer-events: none;
+  border: .13em solid rgb(82 180 245 / .85); box-shadow: 0 0 .22em rgb(82 180 245 / .55), inset 0 0 .14em rgb(82 180 245 / .5); }
+.film .pring.in { font-size: calc(var(--fw) * .07); left: var(--rx, 50%); top: var(--ry, 50%); translate: -50% -50%; }
+.film .eyes, .film .look { position: relative; display: inline-block; }
+.film .eyes .pring, .film .look .pring { left: 50%; top: 52%; font-size: 1.9em; translate: -50% -50%; }
+.film .memory { position: absolute; left: 0; right: 0; top: 34%; display: flex; justify-content: center; gap: calc(var(--fw) * .02); translate: 0 -50%; }
+.film .memc { display: grid; justify-items: center; gap: calc(var(--fw) * .01); }
+.film .memt { font-family: var(--font-eb), "EB Garamond", serif; font-style: italic; font-size: clamp(11px, calc(var(--fw) * .0125), 18px); color: #6B6B67; font-variant-numeric: tabular-nums; opacity: 0; }
+/* the day's line, drawn morning to evening behind the moments */
+.film .dayline { position: absolute; left: 50%; top: 34%; width: calc(var(--fw) * .6); height: 1px; margin-left: calc(var(--fw) * -.3); background: rgb(20 20 20 / .2); transform-origin: 0 50%; opacity: 0; }
+/* the agents: tiles in a row, each reached by a dot that left the notch */
+.film .agents { position: absolute; left: 0; right: 0; top: 52%; height: 0; }
+/* six agents, each its own icon: an app icon is drawn as it is (it carries its own shape and padding); a plain mark
+   sits on a white rounded tile */
+.film .agw { position: absolute; left: calc(50% + var(--i) * var(--fw) * .1); top: 0; }
+.film .ag { position: absolute; left: calc(var(--fw) * -.031); top: calc(var(--fw) * -.031); width: calc(var(--fw) * .062); height: calc(var(--fw) * .062); border-radius: 22.5%;
+  display: grid; place-items: center; overflow: hidden; opacity: 0; background: #fff; box-shadow: 0 0 0 .5px rgb(0 0 0 / .12), 0 6px 16px rgb(0 0 0 / .1); }
+.film .ag img { display: block; width: 100%; height: 100%; object-fit: contain; }
+/* a macOS app icon fills ~80% of its canvas: grown to match the tiles, with no tile behind it */
+.film .ag.own { overflow: visible; background: none; box-shadow: none; }
+.film .ag.own img { width: 124%; height: 124%; flex: none; }
+.film .agn { position: absolute; left: 50%; top: calc(var(--fw) * .039); translate: -50% 0; white-space: nowrap; font-family: var(--sys); font-size: clamp(9px, calc(var(--fw) * .0098), 13px); color: #6B6B67; opacity: 0; }
+.film .adot { position: absolute; width: 7px; height: 7px; margin: -3.5px; border-radius: 50%; background: #141414; opacity: 0;
+  left: calc((1 - var(--q, 0)) * var(--i) * var(--fw) * -.1); top: calc((1 - var(--q, 0)) * (var(--fw) * .0218 - var(--fh) * .52)); }
+.film .mem { position: relative; width: calc(var(--fw) * .096); aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: #fff; box-shadow: 0 0 0 1px rgb(0 0 0 / .08); opacity: 0;
+  display: grid; place-items: center; font-size: calc(var(--fw) * .0105);
+  transform: translate(calc(var(--up, 0) * var(--dx)), calc(var(--up, 0) * var(--fh) * -.38 + (1 - var(--pin, 1)) * 12px)) scale(calc(1 - var(--up, 0) * .82)); }
+.film .mem-trail { background: url("/landing/film/trail.jpg") 50% 70% / 260% auto; }
+.film .mem-lake { background: url("/landing/film/wall.jpg") 30% 62% / 330% auto; }
+.film .mem-vase { background: linear-gradient(180deg, #E9D2B3, #B98F68); }
+.film .mem svg { width: 70%; }
+.film .mem-vase svg { width: auto; height: 64%; }
+.film .pc.last { top: 50%; }
+
+/* ———————————————————— on top: key caps, the tag, words */
+.film .over { position: absolute; inset: 0; pointer-events: none; }
+/* the keys pressed: big, centred low, each held until the next (a screencast's key display) */
+.film .keys { position: absolute; left: 0; right: 0; bottom: calc(var(--fw) * .04 + clamp(14px, calc(var(--fw) * .019), 28px) * 2.2); height: 0; }
+.film .kc { position: absolute; left: 50%; bottom: 0; translate: -50% 0; display: flex; align-items: center; gap: 8px; opacity: 0; padding: 8px 10px; border-radius: 14px;
+  background: rgb(20 20 18 / .42); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.film kbd { display: grid; place-items: center; min-width: clamp(28px, calc(var(--fw) * .034), 48px); height: clamp(28px, calc(var(--fw) * .034), 48px); padding: 0 .55em; border-radius: 8px;
+  background: #fff; color: #1D1D1F; font-family: var(--sys); font-size: clamp(13px, calc(var(--fw) * .0155), 21px); font-weight: 600;
+  box-shadow: 0 0 0 .5px rgb(0 0 0 / .2), 0 3px 0 rgb(0 0 0 / .22), 0 6px 16px rgb(0 0 0 / .18); }
+.film kbd.wide { padding: 0 .8em; }
+/* pressed: the cap goes down */
+.film .kc[data-state="down"] kbd { translate: 0 2px; box-shadow: 0 0 0 .5px rgb(0 0 0 / .2), 0 1px 0 rgb(0 0 0 / .22), 0 2px 6px rgb(0 0 0 / .14); background: #F1F1F1; }
+.film .kc em { margin-left: .3em; color: #fff; font-family: var(--font-eb), "EB Garamond", serif; font-style: italic; font-weight: 500; font-size: clamp(14px, calc(var(--fw) * .0175), 24px); white-space: nowrap; }
+.film .tag { position: absolute; left: calc(var(--fw) * .022); top: calc(var(--fw) * .022); padding: .35em .8em; border-radius: 99px; opacity: 0;
+  background: color-mix(in srgb, var(--paper) 90%, transparent); color: #141414; box-shadow: 0 0 0 .5px rgb(0 0 0 / .12);
+  font-family: var(--sys); font-size: clamp(10px, calc(var(--fw) * .0095), 13px); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+.film .subs { position: absolute; left: 0; right: 0; bottom: calc(var(--fw) * .04); display: grid; justify-items: center; transition: none; }
+.film .sub, .film .cap { grid-area: 1 / 1; max-width: 80%; padding: .28em .8em .34em; border-radius: .4em; background: color-mix(in srgb, var(--paper) 93%, transparent); color: #141414; opacity: 0;
+  font-family: var(--font-eb), "EB Garamond", serif; font-weight: 500; font-size: clamp(14px, calc(var(--fw) * .019), 28px); line-height: 1.3; text-align: center;
+  box-shadow: 0 6px 20px rgb(0 0 0 / .12); }
+.film .cap { font-style: italic; color: #3A3A38; }
+.film .sub .w { opacity: 0; }
+.film .sub .w.capture { text-decoration: underline; text-decoration-color: rgb(0 0 0 / .35); text-underline-offset: .2em; }
+.film .sub .w.gaze { text-decoration: underline; text-decoration-color: #52B4F5; text-decoration-thickness: 2px; text-underline-offset: .2em; }
+.film .fadeblack { position: absolute; inset: 0; background: #0B0B0A; opacity: 0; }
+.film .f-debug { position: absolute; right: 8px; top: 8px; padding: 4px 8px; border-radius: 6px; background: rgb(0 0 0 / .6); color: #fff; font: 12px/1.3 ui-monospace, monospace; z-index: 9; }
+
+/* ———————————————————— Soon's routing tags */
+.film .rtag { position: absolute; translate: -50% 0; padding: 2px 8px 3px; border-radius: 6px; background: color-mix(in srgb, var(--paper) 94%, transparent); white-space: nowrap;
+  font-family: var(--font-eb), "EB Garamond", serif; font-style: italic; font-size: 15px; color: #3A3A38; box-shadow: 0 0 0 .5px rgb(0 0 0 / .12); opacity: 0; }
+.film .pill .mauto, .film .pill .mpick { display: inline; }
+.film .pill .mpick { display: none; }
+.film .cwrap[data-state="routed"] .pill .mauto { display: none; }
+.film .cwrap[data-state="routed"] .pill .mpick { display: inline; }
+.film .cwrap[data-state="choosing"] .pill .mauto, .film .cwrap[data-state="settled"] .pill .mauto { color: rgb(var(--ink) / .5); }
+/* ———————————————————— Today's desk: Blender, the reference board, the Studio Nord folder, Mail */
+.film .win.dark { background: #2B2B2B; color: #E6E6E6; }
+.film .win.dark .tbar { background: #232323; border-bottom-color: rgb(255 255 255 / .06); }
+.film .win.dark .ttl { color: rgb(255 255 255 / .72); }
+
+/* Blender 5.2 in its default theme (userdef_default_theme.c; the manual's startup screen): the top bar and status bar
+   #181818, the gaps #161616, editor headers and regions #303030, panels #3d3d3d, the Outliner #282828, text #e6e6e6;
+   blue (#4772b3) only for state, orange only for the one selection; Inter at 11 pt on 20 pt rows (12 here, so it
+   reads when the camera leans in). macOS gives it a plain 28 pt title bar. --g the glaze, --l the loft's light,
+   --c the 4:5 camera (0 to 1, set by the film). */
+.film .win-blender { background: #161616; }
+.film .win-blender .tbar { height: 28px; }
+.film .win-blender .ttl { font-size: 12px; font-weight: 500; }
+.film .bl { position: absolute; left: 0; right: 0; top: 28px; bottom: 0; --g: 0; --l: 0; --c: 0; background: #161616; color: #E6E6E6;
+  font-family: Inter, var(--sys); font-size: 12px; line-height: 1; }
+.film .bl .bi { display: block; flex: none; width: 14px; height: 14px; color: #D6D6D6; }
+.film .bl .bi.or { color: #F0A04A; }
+.film .bl .bi.gr { color: #6CC56C; }
+.film .bl .bi.pk { color: #E87470; }
+.film .bl .bcar { display: block; flex: none; width: 7px; height: 7px; color: #A0A0A0; }
+/* the top bar: menus, the workspaces as pills (5.x), the scene */
+.film .bl-top { position: absolute; left: 0; right: 0; top: 0; height: 26px; display: flex; align-items: center; gap: 10px; padding: 0 8px; background: #181818; }
+.film .bl-menus { display: flex; gap: 1px; flex: none; }
+.film .bl-menus span { padding: 4px 7px; border-radius: 4px; }
+.film .bl-tabs { display: flex; gap: 3px; flex: 1; min-width: 0; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, #000 80%, transparent); mask-image: linear-gradient(90deg, #000 80%, transparent); }
+.film .bl-tabs span { flex: none; padding: 4px 10px; border-radius: 10px; background: #1D1D1D; color: #989898; }
+.film .bl-tabs span.on { background: #303030; color: #fff; }
+.film .bl-scene { display: flex; align-items: center; gap: 6px; flex: none; height: 20px; padding: 0 8px; border-radius: 4px; background: #282828; }
+.film .bl-scene b { font-weight: 400; }
+/* the editors, 2 pt apart with 6 pt corners: the viewport over the Timeline; the Outliner over the Properties */
+.film .bv { position: absolute; left: 0; top: 28px; width: 680px; height: 406px; overflow: hidden; border-radius: 6px; background: #3D3D3D; }
+.film .bo { position: absolute; left: 682px; top: 28px; width: 248px; height: 152px; overflow: hidden; border-radius: 6px; background: #282828; display: grid; align-content: start; padding-top: 28px; }
+.film .bp { position: absolute; left: 682px; top: 182px; width: 248px; height: 346px; overflow: hidden; border-radius: 6px; background: #303030; }
+.film .bt { position: absolute; left: 0; top: 436px; width: 680px; height: 92px; overflow: hidden; border-radius: 6px; background: #303030; }
+.film .bs { position: absolute; left: 0; right: 0; bottom: 0; height: 22px; display: flex; align-items: center; gap: 16px; padding: 0 10px; background: #181818; color: #838383; font-size: 11.5px; }
+.film .bs span { display: inline-flex; align-items: center; gap: 4px; }
+.film .bs .bi { width: 13px; height: 13px; color: #838383; }
+.film .bs em { margin-left: auto; font-style: normal; }
+/* headers and their buttons */
+.film .bh { position: absolute; left: 0; right: 0; top: 0; height: 26px; display: flex; align-items: center; gap: 4px; padding: 0 5px; background: #303030; }
+.film .bb { display: inline-flex; align-items: center; gap: 3px; height: 20px; padding: 0 5px; border-radius: 4px; flex: none; }
+.film .bb.bdd { background: #3D3D3D; padding: 0 7px; gap: 5px; }
+.film .bb.on { background: #4772B3; }
+.film .bb.on .bi { color: #fff; }
+.film .bm { padding: 0 6px; flex: none; }
+.film .bsearch { display: flex; align-items: center; flex: 1; min-width: 30px; height: 20px; padding: 0 6px; border-radius: 4px; background: #1D1D1D; }
+.film .bsearch .bi { width: 12px; height: 12px; color: #888; }
+/* the 3D viewport: its header floats over the view (region overlap); Rendered shading, through the camera */
+.film .bv-h { position: absolute; left: 0; right: 0; top: 0; height: 26px; z-index: 3; display: flex; align-items: center; gap: 3px; padding: 0 5px; background: rgb(48 48 48 / .82); }
+.film .bv-h .sm { margin-left: 8px; }
+.film .bv-hr { margin-left: auto; display: flex; align-items: center; gap: 3px; }
+.film .bsh-g { display: flex; gap: 1px; margin: 0 3px 0 4px; padding: 1px; border-radius: 5px; background: #3D3D3D; }
+.film .bsh { display: grid; place-items: center; width: 22px; height: 18px; border-radius: 4px; color: #D6D6D6; }
+.film .bsh-rend { background: #4772B3; color: #fff; }
+.film .bsh svg { display: block; }
+.film .bv-r { position: absolute; left: 0; top: 0; width: 680px; height: 406px; }
+/* a longer lens and a portrait frame: the vase grows in the frame as the camera changes */
+.film .bv-shot { transform-box: view-box; transform-origin: 340px 228px; transform: scale(calc(1 + var(--c) * .2)); }
+.film .bw0 { stop-color: color-mix(in oklab, #8C9096, #C99A68 calc(var(--l) * 100%)); }
+.film .bw1 { stop-color: color-mix(in oklab, #A9ACB1, #E6C49A calc(var(--l) * 100%)); }
+.film .bf0 { stop-color: color-mix(in oklab, #A2A5AA, #DDB487 calc(var(--l) * 100%)); }
+.film .bf1 { stop-color: color-mix(in oklab, #7C7F84, #A97E55 calc(var(--l) * 100%)); }
+.film .bv-win { fill: #FFE9C4; opacity: calc(var(--l) * .5); }
+.film .bp0 { stop-color: color-mix(in oklab, #D3D0C9, #F2DDBF calc(var(--l) * 100%)); }
+.film .bp1 { stop-color: color-mix(in oklab, #B5B1AA, #D9B78E calc(var(--l) * 100%)); }
+.film .bp2 { stop-color: color-mix(in oklab, #85827C, #9A744E calc(var(--l) * 100%)); }
+.film .bp-top { fill: color-mix(in oklab, #DDDAD3, #F7E6CC calc(var(--l) * 100%)); }
+.film .bv-cast { fill: #000; opacity: calc(.22 + var(--l) * .08); transform-box: fill-box; transform-origin: 50% 50%; transform: translateX(calc(var(--l) * 26px)) scaleX(calc(1 + var(--l) * .35)); }
+.film .bv-shadow { fill: #000; opacity: calc(.55 - var(--l) * .1); transform-box: fill-box; transform-origin: 20% 50%; transform: translateX(calc(var(--l) * 18px)) scaleX(calc(1 + var(--l) * .9)); }
+/* the vase: grey clay until the glaze; warm on its lit side and its rim once the loft's light is in */
+.film .bv0 { stop-color: color-mix(in oklab, color-mix(in oklab, #6F6A63, #5C2416 calc(var(--g) * 100%)), #4A2A16 calc(var(--l) * 25%)); }
+.film .bv1 { stop-color: color-mix(in oklab, color-mix(in oklab, #B9B3AA, #B24F33 calc(var(--g) * 100%)), #F0A86E calc(var(--l) * 30%)); }
+.film .bv2 { stop-color: color-mix(in oklab, color-mix(in oklab, #C8C3BA, #C8613F calc(var(--g) * 100%)), #FFC690 calc(var(--l) * 30%)); }
+.film .bv3 { stop-color: color-mix(in oklab, color-mix(in oklab, #A49F96, #9A4129 calc(var(--g) * 100%)), #B8693F calc(var(--l) * 20%)); }
+.film .bv4 { stop-color: color-mix(in oklab, #6A665F, #5E2516 calc(var(--g) * 100%)); }
+.film .bv5 { stop-color: color-mix(in oklab, color-mix(in oklab, #7C7871, #6E2C1A calc(var(--g) * 100%)), #E2995E calc(var(--l) * 45%)); }
+.film .bv-pool { opacity: calc(.4 + var(--g) * .6); }
+.film .bv-foot { fill: #C6A27E; opacity: calc(var(--g) * .95); }
+.film .bv-rim { fill: #FFC88E; opacity: calc(var(--l) * .5); }
+.film .bv-spec { fill: #fff; opacity: calc(.06 + var(--g) * .62); }
+.film .bv-sheen { fill: #fff; opacity: calc(.05 + var(--g) * .3); }
+.film .bv-lip { fill: #fff; opacity: calc(.12 + var(--g) * .55); }
+.film .bv-sel { fill: none; stroke: #FFA028; stroke-width: .9; opacity: .95; }
+/* the camera: 16:9 at 35 mm, then the agent's 4:5 at 50 mm; outside it, the passepartout (black at .5) */
+.film .bv-cam, .film .bv-camglow { position: absolute; left: 50%; top: 216px; height: 340px; width: calc(604px - var(--c) * 332px); translate: -50% -50%; pointer-events: none; }
+.film .bv-cam { box-shadow: 0 0 0 1px rgb(255 255 255 / .55), 0 0 0 999px rgb(0 0 0 / .5); outline: 1px dashed rgb(0 0 0 / .5); outline-offset: -1px; }
+.film .bv-camglow { opacity: 0; box-shadow: 0 0 0 1.5px rgb(255 160 40 / .95), 0 0 18px rgb(255 160 40 / .5); }
+.film .bl-noise { position: absolute; inset: 26px 0 0; opacity: 0; pointer-events: none; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2'/></filter><rect width='160' height='160' filter='url(%23n)' opacity='.9'/></svg>"); }
+.film .bv-txt { position: absolute; left: 52px; top: 35px; z-index: 2; font-size: 11.5px; line-height: 16px; text-shadow: 0 1px 2px rgb(0 0 0 / .6); }
+.film .bv-tools { position: absolute; left: 6px; top: 34px; z-index: 2; width: 36px; padding: 2px; display: grid; gap: 2px; border-radius: 6px; background: rgb(40 40 40 / .92); }
+.film .bv-tools span { display: grid; place-items: center; height: 30px; border-radius: 4px; }
+.film .bv-tools span.on { background: #4772B3; }
+.film .bv-tools span.on .bi { color: #fff; }
+.film .bv-tools .bi { width: 16px; height: 16px; }
+.film .bv-tools .gap { display: block; height: 4px; }
+.film .bv-giz { position: absolute; right: 10px; top: 36px; z-index: 2; overflow: visible; }
+.film .bv-giz text { font: 700 9px Inter, var(--sys); fill: #000; text-anchor: middle; }
+.film .bv-nav { position: absolute; right: 36px; top: 124px; z-index: 2; display: grid; gap: 2px; }
+.film .bv-nav span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: rgb(48 48 48 / .72); }
+/* the Outliner: the scene's collection, its objects with their data, the vase active */
+.film .br { height: 20px; display: flex; align-items: center; gap: 5px; padding: 0 6px 0 8px; color: #C3C3C3; white-space: nowrap; }
+.film .br.alt { background: #2B2B2B; }
+.film .br.r1 { padding-left: 8px; }
+.film .br.r2 { padding-left: 20px; }
+.film .br.on { background: #334D80; }
+.film .br.on .bn { color: #FFAF29; }
+.film .br .tw { width: 9px; font-style: normal; font-size: 9px; color: #9A9A9A; }
+.film .br.r0 .bi { margin-left: 14px; }
+.film .bvis { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+.film .bvis .bi { width: 13px; height: 13px; color: #BDBDBD; }
+.film .bvis .ck { display: block; width: 11px; height: 11px; border-radius: 3px; background: #4772B3; }
+/* the Properties editor: its tabs down the left, the Material tab on */
+.film .bp-tabs { position: absolute; left: 0; top: 26px; bottom: 0; width: 26px; padding: 4px 0 0 3px; display: grid; align-content: start; gap: 1px; background: #1D1D1D; }
+.film .bp-tabs span { display: grid; place-items: center; height: 20px; border-radius: 4px 0 0 4px; }
+.film .bp-tabs span .bi { width: 13px; height: 13px; color: inherit; }
+.film .bp-tabs span.on { background: #303030; }
+.film .bp-tabs .gap { display: block; height: 5px; }
+.film .bp-body { position: absolute; left: 26px; right: 0; top: 26px; bottom: 0; padding: 6px 6px 0; display: grid; align-content: start; gap: 4px; font-size: 11.5px; }
+.film .bp-path { display: flex; align-items: center; gap: 4px; height: 20px; color: #C8C8C8; }
+.film .bp-path span { margin: 0 2px; color: #777; }
+.film .bp-list { height: 44px; padding: 2px; border-radius: 4px; background: #282828; }
+.film .bp-list p { display: flex; align-items: center; gap: 5px; height: 20px; padding: 0 6px; border-radius: 3px; }
+.film .bp-list p.on { background: #334D80; }
+.film .bp-db { display: flex; }
+.film .bfld { display: flex; align-items: center; gap: 5px; flex: 1; min-width: 0; height: 20px; padding: 0 7px; border-radius: 4px; background: #1D1D1D; font-style: normal; white-space: nowrap; overflow: hidden; color: #E6E6E6; }
+.film .bdot { display: block; flex: none; width: 8px; height: 8px; border-radius: 50%; background: #63C763; }
+.film .bp-ph { display: flex; align-items: center; height: 24px; padding: 0 8px; border-radius: 4px; background: #3D3D3D; }
+.film .bp-panel { position: relative; display: grid; gap: 3px; padding-bottom: 6px; border-radius: 4px; background: #3D3D3D; }
+.film .bp-panel .bp-ph { background: none; }
+.film .bp-r { display: grid; grid-template-columns: 70px 1fr; align-items: center; gap: 6px; height: 20px; padding: 0 8px; }
+.film .bp-r > span { text-align: right; color: #C8C8C8; white-space: nowrap; }
+.film .bsw { display: block; height: 20px; border-radius: 4px; background: color-mix(in oklab, #B9B4AB, #B4553A calc(var(--g) * 100%)); box-shadow: inset 0 0 0 1px rgb(0 0 0 / .35); }
+.film .bsl { position: relative; display: block; height: 20px; overflow: hidden; border-radius: 4px; background: #545454; font-style: normal; }
+.film .bsl b { position: absolute; left: 0; top: 0; bottom: 0; background: #4772B3; }
+.film .bsl.rough b { width: calc(50% - var(--g) * 15%); }
+.film .bsl.full b { width: 100%; }
+.film .bsl em { position: absolute; inset: 0; display: grid; place-items: center; font-style: normal; color: #fff; }
+/* the glaze lands: Base Color and Roughness glow */
+.film .bl-glow { position: absolute; left: 3px; right: 3px; top: 48px; height: 70px; border-radius: 6px; opacity: 0; box-shadow: 0 0 0 1.5px rgb(255 160 40 / .9), 0 0 16px rgb(255 160 40 / .45); }
+/* the Timeline: its header, the frame ruler, the blue playhead at frame 1 */
+.film .bt-play { display: flex; align-items: center; gap: 1px; margin-left: 14px; padding: 1px; border-radius: 5px; background: #3D3D3D; }
+.film .bt-play span { display: grid; place-items: center; min-width: 20px; height: 18px; font-size: 9px; color: #D6D6D6; }
+.film .bt-play .rec { display: block; width: 9px; height: 9px; margin: 0 6px; border-radius: 50%; background: #D6D6D6; }
+.film .bt-fr { display: grid; place-items: center; width: 56px; height: 20px; margin-left: auto; border-radius: 4px; background: #545454; }
+.film .bt-fr b, .film .bt-se b { font-weight: 400; }
+.film .bt-se { display: flex; align-items: center; gap: 8px; height: 20px; margin-left: 6px; padding: 0 8px; border-radius: 4px; background: #545454; }
+.film .bt-se span { color: #C8C8C8; }
+.film .bt-ruler { position: absolute; left: 0; right: 0; top: 28px; height: 20px; background: #1D1D1D; color: #808080; font-size: 11px; }
+.film .bt-ruler span { position: absolute; top: 4px; translate: -50% 0; }
+.film .bt-head { position: absolute; left: 30px; top: 2px; height: 16px; padding: 0 5px; border-radius: 4px; translate: -50% 0; background: #4772B3; color: #fff; font-style: normal; font-size: 11px; line-height: 16px; }
+.film .bt-line { position: absolute; left: 30px; top: 48px; bottom: 0; width: 1.5px; background: #4772B3; }
+
+/* the reference board: three photographs of glazes */
+.film .rb { position: absolute; inset: 52px 0 0; background: #222; }
+.film .rb-ph { position: absolute; top: 12px; width: 146px; height: 220px; margin: 0; border-radius: 2px; overflow: hidden; display: grid; place-items: end center; padding-bottom: 14px;
+  background: linear-gradient(170deg, #EDE6DA, #D8CFC1); }
+.film .rb-ph svg { width: 112px; height: 156px; }
+.film .rb-ph.terra path { fill: #B4553A; }
+.film .rb-ph.terra { background: radial-gradient(circle at 30% 30%, #F1E7D8, #D9C9B4); }
+.film .rb-ph.celadon { background: linear-gradient(180deg, #E4E1D8, #C7C2B5); }
+.film .rb-ph.celadon path { fill: #9DB8A4; }
+.film .rb-ph.ash { background: linear-gradient(180deg, #3D3A36, #2A2825); }
+.film .rb-ph.ash path { fill: #E4DED2; }
+
+/* Finder: the Studio Nord folder, icon view */
+.film .fd { position: absolute; inset: 52px 0 0; background: #fff; }
+.film .fd-side { position: absolute; left: 0; top: 0; bottom: 0; width: 128px; padding: 10px 8px; display: grid; align-content: start; gap: 2px; background: #F4F4F5; font-size: 12px; }
+.film .fd-side b { font-size: 10.5px; color: #999; padding: 2px 8px; font-weight: 600; }
+.film .fd-side span { padding: 3px 8px; border-radius: 5px; color: #333; }
+.film .fd-side .on { background: rgb(0 0 0 / .08); }
+.film .fd-item { position: absolute; display: grid; justify-items: center; align-content: start; gap: 6px; margin-top: -52px; }
+.film .fd-th { display: grid; place-items: center; width: 84px; height: 56px; border-radius: 4px; box-shadow: 0 0 0 .5px rgb(0 0 0 / .15), 0 1px 3px rgb(0 0 0 / .12); overflow: hidden; }
+.film .fd-th.loft { background: linear-gradient(180deg, #F5D6A6 0 30%, #C98B54 60%, #5E3C26); }
+.film .fd-th.overcast { background: linear-gradient(180deg, #E6E8EA, #A9ADB1 60%, #6B6F73); }
+.film .fd-th.river { background: linear-gradient(180deg, #BFD8EA 0 45%, #6E8F57 60%, #3D5232); }
+.film .fd-th.v2, .film .fd-th.v3 { background: linear-gradient(180deg, #E9D2B3, #B98F68); }
+.film .fd-th svg { width: 30px; height: 44px; }
+.film .fd-th.v2 path { fill: #AFA9A0; }
+.film .fd-th.v3 path { fill: #B4553A; }
+.film .fd-item b { font-size: 11px; font-weight: 400; color: #222; text-align: center; line-height: 1.25; word-break: break-all; }
+.film .fd-item[data-k="fd:v3"] { opacity: 0; }
+
+
+/* Mail: the inbox, Dana's message. When the agent drafts, her message moves left and the reply is written beside it,
+   in the Mail that was already open (--sp, 0 to 1, set by the film) */
+.film .ml { position: absolute; inset: 52px 0 0; display: grid; grid-template-columns: 360px 1fr; background: #fff; }
+.film .ml-list { border-right: 1px solid rgb(0 0 0 / .08); background: #FAFAFA; }
+.film .ml-list p { display: grid; grid-template-columns: 1fr auto; padding: 10px 18px; border-bottom: 1px solid rgb(0 0 0 / .05); font-size: 13px; }
+.film .ml-list p.on { background: #DCE8FB; }
+.film .ml-list b { font-weight: 600; }
+.film .ml-list span { grid-column: 1; color: #555; }
+.film .ml-list em { grid-row: 1; grid-column: 2; font-style: normal; font-size: 12px; color: #888; }
+.film .ml-read { position: relative; overflow: hidden; --sp: 0; }
+.film .ml-msg { position: absolute; left: 0; top: 0; bottom: 0; width: calc(100% - var(--sp) * 52%); padding: 18px 32px; }
+.film .ml-from { display: grid; gap: 2px; padding-bottom: 12px; margin-bottom: 14px; border-bottom: 1px solid rgb(0 0 0 / .07); font-size: 13px; color: #555; }
+.film .ml-from b { font-size: 15px; color: #111; }
+.film .ml-body { font-size: 15px; line-height: 24px; color: #222; margin-bottom: 8px; }
+.film .ml-brief { position: relative; }
+.film .ml-reply { position: absolute; right: 0; top: 0; bottom: 0; width: 52%; padding: 12px 22px; border-left: 1px solid rgb(0 0 0 / .08); background: #fff;
+  opacity: var(--sp); translate: calc((1 - var(--sp)) * 24px) 0; font-size: 13.5px; color: #222; }
+.film .ml-rh { display: flex; align-items: center; gap: 8px; height: 24px; }
+.film .ml-rh b { font-size: 14px; font-weight: 600; }
+.film .ml-draft { margin-left: auto; padding: 2px 8px; border-radius: 5px; background: rgb(0 0 0 / .06); font-size: 11.5px; color: #8A8A8A; }
+.film .ml-rf { display: flex; align-items: center; gap: 6px; height: 25px; border-bottom: 1px solid rgb(0 0 0 / .07); }
+.film .ml-rf span { color: #888; }
+.film .ml-rf .tok { padding: 1px 7px; border-radius: 10px; background: #E1ECFC; color: #1A5DD0; font-style: normal; }
+.film .ml-rb { display: grid; gap: 4px; margin-top: 9px; line-height: 19px; }
+.film .ml-rb p { min-height: 19px; }
+.film .ml-att { position: absolute; left: 22px; bottom: 12px; display: inline-flex; align-items: center; gap: 8px; padding: 5px 10px 5px 5px; border-radius: 8px; background: #F4F4F5; opacity: 0; font-size: 12px; }
+.film .ml-att i { display: grid; place-items: center; width: 30px; height: 38px; border-radius: 4px; background: linear-gradient(180deg, #E9D2B3, #B98F68); }
+.film .ml-att path { fill: #B4553A; }
+.film .ml-att b { font-weight: 600; }
+.film .ml-att em { font-style: normal; color: #888; }
+
+/* marks over what is taken */
+.film .mk { position: absolute; left: 0; top: 0; opacity: 0; }
+/* words selected while Fovea listens: the app's own selection, then Fovea's highlight, the accent at .32 (Oct 17) */
+.film .mk-text { border-radius: 3px; background: rgb(0 122 255 / .2); }
+.film .mk-text[data-state="taken"] { background: rgb(0 122 255 / .32); }
+/* a file dragged onto the notch: its picture, see-through, under the pointer */
+.film .flight.drag { box-shadow: 0 8px 22px rgb(0 0 0 / .22); }
+
+/* Soon's attachments, opened from Choose chat's pile (V2FeedbackViews): a numbered row in a radius-12 card, 16 pt
+   dark number badges; then the second up close, "2 · source", with "‹ esc" */
+.film .refrow { position: absolute; display: flex; gap: 10px; padding: 10px; opacity: 0; border-radius: 12px; transform-origin: 30px 0;
+  background: rgb(252 252 253 / .95); box-shadow: 0 0 0 .5px rgb(0 0 0 / .14), 0 12px 32px rgb(0 0 0 / .18); }
+.film .refc { position: relative; flex: none; height: 60px; }
+.film .refc .mini { position: relative; width: 100%; height: 100%; border-radius: 8px; }
+.film .refc-chart { width: 102px; }
+.film .refc-prs { width: 132px; }
+.film .num { position: absolute; left: -5px; top: -5px; width: 16px; height: 16px; border-radius: 50%; background: #111114; color: rgb(255 255 255 / .9); font-size: 9.5px; font-weight: 700; line-height: 16px; text-align: center; }
+.film .reflook { position: absolute; left: 0; top: 0; opacity: 0; overflow: hidden; border-radius: 12px; background: rgb(252 252 253 / .97); box-shadow: 0 0 0 .5px rgb(0 0 0 / .14), 0 16px 40px rgb(0 0 0 / .22); }
+.film .reflook-in { position: absolute; left: 0; top: 0; transform-origin: 0 0; transform: scale(var(--k, 1)); }
+.film .reflook-pic { position: absolute; left: 10px; top: 10px; right: 10px; height: 230px; overflow: hidden; border-radius: 8px; background: #fff; box-shadow: 0 0 0 .75px rgb(0 0 0 / .12); }
+.film .prl { width: 780px; transform-origin: 0 0; transform: scale(.72); }
+.film .prl h5 { margin: 18px 28px 6px; font-size: 20px; font-weight: 700; }
+.film .prl .lrow { width: 720px; margin-left: 28px; height: 46px; }
+.film .reflook-cap { position: absolute; left: 12px; top: 248px; font-size: 11.5px; color: rgb(0 0 0 / .55); }
+.film .reflook-esc { position: absolute; left: 10px; bottom: 10px; display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 9px; border-radius: 11px; background: rgb(0 0 0 / .08); font-size: 11.5px; font-weight: 500; color: rgb(0 0 0 / .7); }
+.film .tag.tag2 { top: calc(var(--fw) * .022 + 2.6em); text-transform: none; letter-spacing: .01em; font-weight: 500; }

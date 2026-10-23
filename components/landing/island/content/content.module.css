@@ -1,0 +1,163 @@
+/* What the island holds, Native light, Spacious (WorkbenchTokens.V2 and Board). Words are the
+   system's ink at an opacity; the accent only on Send and the chosen chip. */
+
+/* Agents keep their own app icons, drawn as-is (PRD §2: provider artwork keeps its colours). */
+.mark {
+  flex: none;
+}
+
+/* Choose chat: 660 wide, the content 22 in from every side of the body and 14 under the notch. */
+.choose {
+  padding: calc(32px + 14px) 22px 22px;
+}
+
+.request {
+  margin: 0;
+  font-size: 15px;
+  line-height: 23px;
+  color: rgb(12 12 12 / 0.9);
+}
+
+.bound {
+  white-space: nowrap;
+}
+
+/* A referent's number beside the words that mean it (the Captures window's number tabs). */
+.tag {
+  display: inline-grid;
+  place-items: center;
+  min-width: 16px;
+  height: 16px;
+  margin: 0 1px 0 4px;
+  padding: 0 4px;
+  border-radius: 5px;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1;
+  vertical-align: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+.attachRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  margin-top: 16px;
+}
+
+.pile {
+  position: relative;
+  width: 80px;
+  height: 44px;
+}
+
+.thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 63px;
+  height: 44px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow:
+    0 0 0 0.75px rgb(12 12 12 / 0.2),
+    0 2px 6px rgb(0 0 0 / 0.08);
+  transform-origin: 50% 100%;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 250px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 18px;
+  background: rgb(12 12 12 / 0.06);
+  font-size: 14px;
+  font-weight: 500;
+  color: rgb(12 12 12 / 0.86);
+}
+
+.pillText {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.chevron {
+  flex: none;
+  color: rgb(12 12 12 / 0.45);
+}
+
+.modelGlyph {
+  flex: none;
+  color: rgb(12 12 12 / 0.6);
+}
+
+.send {
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+.chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  margin-top: 12px;
+}
+
+.chipLabel {
+  margin-right: -2px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgb(12 12 12 / 0.5);
+}
+
+.chip {
+  border: 0;
+  font-family: inherit;
+  cursor: default;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 15px;
+  background: rgb(12 12 12 / 0.06);
+  font-size: 13px;
+  font-weight: 500;
+  color: rgb(12 12 12 / 0.72);
+  white-space: nowrap;
+}
+
+.chosen {
+  background: rgb(0 122 255 / 0.2);
+  color: rgb(12 12 12 / 0.86);
+}
+
+button.chip {
+  cursor: pointer;
+}
+
+button.chip:hover:not(.chosen) {
+  background: rgb(12 12 12 / 0.1);
+}
