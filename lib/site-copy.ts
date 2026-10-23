@@ -20,7 +20,7 @@ const siteCopy = {
           "Preview the Fovea beta download entry point for macOS and the optional browser extension.",
       },
       feedback: {
-        title: "Fovea - Send Feedback",
+        title: "Send feedback · Fovea",
         description:
           "Report bugs, request features, and share feedback for the Fovea beta.",
       },
@@ -30,7 +30,7 @@ const siteCopy = {
           "Choose a Fovea plan for multimodal capture: voice, text, and images in one structured input flow.",
       },
       privacy: {
-        title: "Fovea - Privacy Policy",
+        title: "Privacy Policy · Fovea",
         description:
           "Read how Fovea handles microphone audio, selected text, screenshots, and account information.",
       },

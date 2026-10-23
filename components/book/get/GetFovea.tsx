@@ -41,7 +41,8 @@ export default function GetFovea() {
       </main>
       <SiteFoot />
       <CheckoutSheet open={sheet !== null} cycle={cycle} onClose={closeSheet} />
-      <Welcome open={preview} onClose={closePreview} demo />
+      {/* the design preview only when asked for, so its sample founding number is never in the page */}
+      {preview && <Welcome open onClose={closePreview} demo />}
     </>
   );
 }
