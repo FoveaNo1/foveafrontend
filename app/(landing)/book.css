@@ -443,9 +443,10 @@ a, button, input, select, label { -webkit-tap-highlight-color: transparent; touc
    A Mac's menu bar, its notch in the middle, the line under it; scrolling, the notch grows down into the film's frame
    and the film plays (components/book/heroes/Notch.tsx). The stage is held while it changes (Pin.tsx); its numbers are
    written by script as the reader scrolls. The other first screens under review: app/(landing)/hero/heroes.css. */
-/* the frame's width: as large as the screen allows with room for the bar under it (a phone frames it 4:5) */
-.hx { --fw: min(1180px, 100vw - 2 * var(--g), (100svh - 190px) * 1470 / 956); background: var(--hx-bg, var(--paper)); }
-@media (max-width: 640px) { .hx { --fw: min(100vw - 2 * var(--g), (100svh - 190px) * 4 / 5); } .hx-menubar .name { font-size: 18px; } .hx-menubar a { font-size: 14px; } }
+/* the frame's width: as large as the screen allows with room for the bar under it, at the film's 16:9 (Oct 25: the
+   recorded film; the drawn film framed the Mac's screen, 4:5 on a phone) */
+.hx { --fw: min(1180px, 100vw - 2 * var(--g), (100svh - 190px) * 16 / 9); background: var(--hx-bg, var(--paper)); }
+@media (max-width: 640px) { .hx { --fw: min(100vw - 2 * var(--g), (100svh - 190px) * 16 / 9); } .hx-menubar .name { font-size: 18px; } .hx-menubar a { font-size: 14px; } }
 
 .pin { position: relative; height: calc(100svh + var(--len, 100vh)); }
 .pin-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
@@ -545,6 +546,18 @@ a, button, input, select, label { -webkit-tap-highlight-color: transparent; touc
 .if-line { position: absolute; left: 0; right: 0; bottom: 0; z-index: 4; height: 2px; background: rgb(255 255 255 / .16); pointer-events: none; }
 .if-line::after { content: ""; position: absolute; inset: 0; transform: scaleX(var(--p, 0)); transform-origin: 0 50%; background: rgb(255 255 255 / .75); }
 .if-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* the recorded film (Oct 25): 16:9, the picture filling the frame; its sound off until the viewer turns it on, the
+   button in the corner as quiet as the play mark */
+.inline-film.if-rec { aspect-ratio: 16 / 9; }
+.if-video { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; border-radius: inherit; }
+.if-sound { position: absolute; right: 12px; bottom: 12px; z-index: 4; display: grid; place-items: center; width: 34px; height: 34px; padding: 0;
+  border: 0; border-radius: 50%; background: rgb(20 20 18 / .5); color: #fff; cursor: pointer; opacity: .78;
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); transition: opacity var(--t-hover) ease, background var(--t-hover) ease; }
+.if-sound svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.if-sound .if-cone { fill: currentColor; stroke: none; }
+.if-sound.on { opacity: .9; }
+@media (hover: hover) and (pointer: fine) { .if-sound:hover { opacity: 1; background: rgb(20 20 18 / .7); } }
+.if-sound:focus-visible { opacity: 1; outline: 2px solid var(--ink); outline-offset: 2px; }
 
 .ifc { margin-top: 14px; font-family: var(--ui); color: var(--ink); }
 .ifc-track { position: relative; display: block; height: 34px; --p: 0; container-type: inline-size; }
@@ -562,7 +575,11 @@ a, button, input, select, label { -webkit-tap-highlight-color: transparent; touc
 .ifc-seg b { position: absolute; left: 2px; top: 21px; font-size: 10.5px; font-weight: 600; line-height: 1; color: var(--soft); white-space: nowrap; }
 .ifc-seg.on b { color: var(--ink); }
 @container (max-width: 760px) { .ifc-seg.narrow b { display: none; } }
-@media (max-width: 640px) { .inline-film { aspect-ratio: 4 / 5; border-radius: 6px; } }
+/* the music's credit, as its licence asks (CC BY 4.0): under the bar, as small and soft as the parts' names */
+.ifc-credit { margin: 2px 0 0; font-size: 10.5px; line-height: 1.3; color: var(--quiet); text-align: right; }
+.ifc-credit a { color: inherit; text-decoration: none; transition: color var(--t-hover) ease; }
+@media (hover: hover) and (pointer: fine) { .ifc-credit a:hover { color: var(--ink); } }
+@media (max-width: 640px) { .inline-film { aspect-ratio: 4 / 5; border-radius: 6px; } .if-sound { right: 8px; bottom: 8px; width: 30px; height: 30px; } }
 
 /* ———————————— The first screen (Oct 18, Yulun: B, full screen, the sea): a Mac's desktop fills it, the menu bar along its
    top carrying the page's own "Fovea" and "Download for Mac", the line at its foot; Fovea does its one thing once at
@@ -589,6 +606,8 @@ a, button, input, select, label { -webkit-tap-highlight-color: transparent; touc
 .hx-ondesk .hx-shape { z-index: 7; clip-path: var(--clip, inset(0 calc(50% - 90px) calc(100% - 32px) calc(50% - 90px))); }
 .hx-late { z-index: 8; }
 .hx-late .inline-film { opacity: var(--film-o, 0); }
+/* a phone: the 16:9 film and its bar in the middle of the screen, not at its top over an empty half (Oct 25) */
+@media (max-width: 640px) { .hx-ondesk .hx-late:has(.if-rec) { top: max(70px, calc(50svh - (var(--fw) * 9 / 16 + 64px) / 2)); } }
 
 /* the scene (HeroDesk): the picture and the menu bar cover its frame; the island's screen may reach past it */
 .film.hd { background: #C9D3D3; }

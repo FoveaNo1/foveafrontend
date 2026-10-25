@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { BookCopy as c } from "../../../lib/landing/bookCopy";
 import { ease, mix, seg } from "../../../lib/landing/film/ease";
-import type { FilmPlayer } from "../../../lib/landing/film/player";
+import type { FilmHandle } from "../../../lib/landing/film/player";
 import { ROUND3, type HeroId } from "../../../lib/landing/heroes";
 import { picture, type Laptop, type Scene } from "../../../lib/landing/pictures";
 import { InFrame, OnDesktop } from "./Desktop";
@@ -117,7 +117,7 @@ function Spec() {
  *  shrinks into a card with soft corners and a soft shadow, then clears (after Apple Vision Pro's frosted sheet). */
 function Frost() {
   const frame = useRef<HTMLDivElement>(null);
-  const player = useRef<FilmPlayer | null>(null);
+  const player = useRef<FilmHandle | null>(null);
   const restarted = useRef(false);
   const vars: PinVars = (k, st) => {
     const f = box(frame.current?.querySelector(".inline-film"), st.el);
