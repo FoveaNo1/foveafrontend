@@ -147,17 +147,17 @@ export function keys(c: Ctx, presses: Press[], hold = 1.9) {
   });
 }
 /** A click, made visible: a small ring that opens where the pointer pressed. */
-function clickAt(c: Ctx, at: number, p: Pt) {
+export function clickAt(c: Ctx, at: number, p: Pt) {
   if (c.t < at || c.t > at + 0.45) return;
   const q = seg(c.t, at, at + 0.45);
   set(c, "click", { x: p.x, y: p.y, s: mix(0.5, 1.25, ease.out(q)), o: 1 - q });
 }
-const caption = (c: Ctx, id: string, a: number, b: number) => { const o = window01(c.t, a, b, 0.4, 0.4); if (o > 0) set(c, `cap:${id}`, { o }); };
-const pointer = (c: Ctx, p: Pt, kind: string, o = 1) => { if (o > 0) set(c, "cursor", { x: p.x, y: p.y, o, st: kind }); };
+export const caption = (c: Ctx, id: string, a: number, b: number) => { const o = window01(c.t, a, b, 0.4, 0.4); if (o > 0) set(c, `cap:${id}`, { o }); };
+export const pointer = (c: Ctx, p: Pt, kind: string, o = 1) => { if (o > 0) set(c, "cursor", { x: p.x, y: p.y, o, st: kind }); };
 export const glow = (c: Ctx, key: string, a: number) => { const o = window01(c.t, a, a + 1.1, 0.35, 0.6); if (o > 0) set(c, key, { o }); };
 
 /** A capture's flight from where it was taken into its place in the stack (the film's 0.6 s; the app's spring). */
-function flight(c: Ctx, key: string, kind: string, from: Rect, start: number, slot: number) {
+export function flight(c: Ctx, key: string, kind: string, from: Rect, start: number, slot: number) {
   if (c.t < start || c.t > start + CAPTURE.flight + 0.05 || c.reduced) return;
   const p = spring(seg(c.t, start, start + CAPTURE.flight));
   const r = lerpRect(from, STACK[slot], p);
@@ -166,7 +166,7 @@ function flight(c: Ctx, key: string, kind: string, from: Rect, start: number, sl
 }
 
 /** The stack in the bar, the waveform making room for it, and the flights that fill it (`own`: the shot flies it). */
-function stack(c: Ctx, items: { kind: string; at: number; from: Rect; own?: boolean }[]) {
+export function stack(c: Ctx, items: { kind: string; at: number; from: Rect; own?: boolean }[]) {
   let n = 0, waveFrom = WAVE_X[0], waveAt = -1;
   items.forEach((it, i) => {
     if (!it.own) flight(c, `fl:${i}`, it.kind, it.from, it.at, i);
@@ -229,6 +229,7 @@ function card(c: Ctx, key: string, a: number, b: number, rise = 8) {
 function A0(c: Ctx) {
   paper(c, 1);
   card(c, "cd:title", T.A0 + 0.35, T.B1 - 0.05);
+  card(c, "cd:titleSmall", T.A0 + 0.95, T.B1 - 0.05, 4);
   set(c, "fade", { o: 1 - ease.out(seg(c.t, 0, 0.7)) });
 }
 

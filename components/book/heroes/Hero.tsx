@@ -192,7 +192,7 @@ export default function Hero({ id, pic, at }: { id: HeroId; pic?: string; at?: n
   const r3 = ROUND3.find((h) => h.id === id);
   const chosen = picture(pic) ?? picture(r3?.pic);
   if (id === "screen") return <Screen pic={(chosen?.kind === "laptop" ? chosen : picture("blinds")) as Laptop} />;
-  if (id === "desktop") return <OnDesktop pic={(chosen?.kind === "scene" ? chosen : picture("green-hills")) as Scene} at={at} />;
+  if (id === "desktop") return <><OnDesktop pic={(chosen?.kind === "scene" ? chosen : picture("green-hills")) as Scene} at={at} /><After /></>;
   if (id === "framed") return <InFrame pic={(chosen?.kind === "scene" ? chosen : picture("misty-hills")) as Scene} at={at} />;
   switch (id) {
     case "notch": return <Notch />;

@@ -47,6 +47,30 @@ export const BookCopy = {
     steps: ["what you saw,", "what you heard,", "what you said,", "how you actually felt,", "and what you actually liked."],
     coda: "Fovea starts at your desk, and truly personal agents come closer with everything we build next.",
   },
+  /** After the film (Oct 24): what Fovea does today, one thing at a time, each beside a scene of someone doing it on
+   *  their Mac (components/book/showcase). Yulun's: item 1's title and words, item 2's words, item 3's title; the rest
+   *  are drafts for review. `label` says what the scene shows, for screen readers. */
+  showcase: {
+    title: "Your agents, a sentence away.",
+    items: [
+      {
+        id: "point", title: "Stay in the window.",
+        text: "Take any attachments, talk to your Codex or Claude Code through Fovea.",
+        label: "A Mac’s screen in dark mode. ⌘ and a drag over a button that sits low, again over one that’s right, and a spec dragged onto the notch; “Line this up with this one, like the spec.” is said and sent to Codex, which lines the button up, all without leaving the browser.",
+      },
+      {
+        id: "notch", title: "Keep every agent moving.",
+        text: "Every Claude Code and Codex chat you have running waits in the notch. Approve what it asks, read what it did, and ask a follow-up without leaving your window.",
+        label: "A Mac’s screen in dark mode. The board under the notch: Claude Code asks to run npm test and is allowed; Codex’s finished answer opens; a follow-up, “Mention the snow banner too.”, is asked by voice; then the chat is pulled out of the notch into a window of its own, where the new answer comes in.",
+      },
+      {
+        // Oct 24, Yulun's title; the words a draft
+        id: "talk", title: "Talk, and it cleans up for you.",
+        text: "Press fn and think out loud: change your mind, come back to a point, press ⌘ to add what’s on your screen. Press fn again, and Fovea writes it up in order, wherever you’re typing.",
+        label: "A Mac’s screen in dark mode, an email open. fn is pressed and a list is talked through: the pricing page, the demo video, the press kit and the FAQ; then “Actually, drop the video”; the banner cut off on mobile, taken with ⌘; then one more for Friday, the launch email. fn again, and the email reads as a list of four without the video, the late item in it, and the banner’s picture after the words.",
+      },
+    ],
+  },
   last: "Today, the notch. Next, everything you look at.",
   /** Beside "Download for Mac" under the film (Oct 18, Yulun's words): the way to Fovea Vision. */
   visionLink: "Learn about Fovea’s vision",

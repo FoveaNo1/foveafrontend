@@ -1,0 +1,254 @@
+/* After the film (Oct 24): what Fovea does today, one thing at a time, set out as Dia's site sets out its features
+   (diabrowser.com, read Oct 24: a list held 20% down the screen beside the pictures, an item lit as its picture's top
+   passes 40% of the screen, its words opening under it, blank space between the pictures), in the book's own type:
+   Cormorant for the large lines, EB Garamond for the words, the margin's italic numerals, ink on the paper. Each
+   picture is a Mac's whole screen in dark mode (Demo.tsx, scenes.tsx); the scenes' own rules follow the section's. */
+
+.sc-sec { padding: clamp(96px, 16vh, 168px) var(--g) 0; }
+.sc-h { max-width: 16ch; margin: 0 auto clamp(44px, 7vh, 72px); text-align: center; text-wrap: balance;
+  font-family: var(--show); font-weight: 700; font-size: clamp(34px, 2.4vw + 14px, 52px); line-height: 1.05; letter-spacing: -.005em; }
+.sc-grid { display: grid; grid-template-columns: minmax(0, 3.4fr) minmax(0, 8.6fr); column-gap: clamp(28px, 3.2vw, 60px); max-width: 1320px; margin: 0 auto; }
+
+/* the list: held while the pictures pass; the reader's item in ink, a line beside it, its words open under it */
+.sc-list { position: sticky; top: 20vh; display: grid; margin: 0; padding: 0; list-style: none; }
+.sc-item { position: relative; display: grid; width: 100%; padding: 18px 0 18px 26px; border: 0; background: none; text-align: left; cursor: pointer; color: var(--ink); }
+.sc-item:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 4px; }
+.sc-bar { position: absolute; left: 0; top: 16%; bottom: 16%; width: 2px; background: var(--ink); opacity: 0; transition: opacity 300ms var(--ease-out); }
+.sc-item.on .sc-bar { opacity: 1; }
+.sc-num { font-family: var(--read); font-style: italic; font-weight: 500; font-size: 18px; line-height: 1.3; color: var(--quiet); font-variant-numeric: lining-nums; transition: color 300ms var(--ease-out); }
+.sc-item.on .sc-num { color: var(--grey); }
+.sc-t { margin-top: 2px; font-family: var(--show); font-weight: 700; font-size: clamp(25px, .8vw + 16px, 31px); line-height: 1.08; letter-spacing: -.005em; color: #B6B6B1;
+  text-wrap: balance; transition: color 300ms var(--ease-out); }
+.sc-item.on .sc-t { color: var(--ink); }
+@media (hover: hover) and (pointer: fine) { .sc-item:not(.on):hover .sc-t { color: var(--grey); } }
+.sc-more { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 450ms var(--ease-out), opacity 300ms var(--ease-out); }
+.sc-more > span { overflow: hidden; }
+.sc-item.on .sc-more { grid-template-rows: 1fr; opacity: 1; }
+.sc-d { display: block; padding-top: 10px; max-width: 26em; font-family: var(--read); font-weight: 500; font-size: 18px; line-height: 1.45; color: #3A3A38; text-wrap: pretty; }
+
+/* the pictures: each a Mac's whole screen, so the notch is the size it is on a real one; blank space between them */
+.sc-demos { display: grid; row-gap: clamp(96px, 16vh, 176px); }
+.sc-demo { margin: 0; }
+.sc-frame { position: relative; aspect-ratio: 1470 / 956; overflow: hidden; border-radius: 10px; background: #111113;
+  box-shadow: 0 0 0 .5px rgb(0 0 0 / .2), 0 18px 50px rgb(0 0 0 / .16); }
+.sc-frame .film { border-radius: inherit; }
+.sc-cap { display: none; }
+/* the way in, after the showcase */
+.sc-sec + .hx-after { padding-top: clamp(64px, 11vh, 120px); }
+
+@media (max-width: 899px) {
+  .sc-grid { grid-template-columns: minmax(0, 1fr); }
+  .sc-side { display: none; }
+  .sc-demos { row-gap: 72px; }
+  /* the screen, and under it a strip for the keys and the words, so nothing covers so small a screen */
+  .sc-frame { aspect-ratio: 1470 / 1530; }
+  .sc-cap { display: grid; justify-items: start; padding: 18px 2px 0; }
+  .sc-cap .sc-t { color: var(--ink); }
+  .sc-cap .sc-d { padding-top: 8px; font-size: 17px; }
+}
+
+/* ============================== the scenes (scenes.tsx), over the film's own rules (film/film.css) ============================== */
+/* A Mac in dark mode, as the app's own dark pictures have it: the wallpaper as it is (a little dimmed for the evening),
+   the menu bar and the windows dark, the island dark glass over them; the loop goes into the dark and out */
+.film.sc { background: #111113; }
+.film.sc .desk, .film.sc .win { opacity: 1; }
+.film .sc-dip { position: absolute; inset: 0; background: #0D0D0E; opacity: 0; pointer-events: none; }
+.film.sc .wall { filter: brightness(.86) saturate(1.1); }
+.film.sc .menubar { background: rgb(0 0 0 / .22); }
+.film.sc .win { background: #1E1E20; box-shadow: 0 0 0 .5px rgb(255 255 255 / .16), 0 0 0 1.5px rgb(0 0 0 / .5), 0 24px 70px rgb(0 0 0 / .5), 0 4px 14px rgb(0 0 0 / .3); }
+.film.sc .tbar { background: #2C2C2E; border-bottom: 1px solid rgb(0 0 0 / .45); }
+.film.sc .ttl { color: rgb(255 255 255 / .8); }
+.film.sc .tag.tag1 { text-transform: none; letter-spacing: .01em; font-weight: 500; }
+
+/* The island as Fovea draws it on the real Mac in Dark (NativeGlass.swift, BehindWindowBlur): the system's HUD blur of
+   what's behind it, black at .22 over that, a rim of white at .14; white words. The blur's colour was matched on the
+   app's own pictures (handoff LOOK-04, LOOK-10: a sky of 80 136 188 behind reads 37 76 115 through it). Only the notch
+   is black. The stacks lie flat (Oct 21: no tilt). */
+.film.sc .isl { --ink: 255 255 255; --acc: 10 132 255; }
+.film.sc .is-glass { background: rgb(30 32 36 / .18); -webkit-backdrop-filter: blur(26px) saturate(1.5) brightness(.58); backdrop-filter: blur(26px) saturate(1.5) brightness(.58); }
+.film.sc .is-ears path { fill: rgb(68 70 71); }
+.film.sc .is-rim path { stroke: rgb(255 255 255 / .14); }
+.film.sc .s-voice .wave i, .film.sc .s-band .wave i { background: #fff; }
+.film.sc .mini { box-shadow: 0 0 0 .75px rgb(255 255 255 / .22); }
+.film.sc .s-voice .th1, .film.sc .s-voice .th2, .film.sc .pile .mini[style*="--i: 1"], .film.sc .pile .mini[style*="--i: 2"] { rotate: none; }
+.film.sc .badge { box-shadow: 0 0 0 2px rgb(36 37 40); }
+.film.sc .brow[data-state="working"] .badge { background: rgb(58 59 62); }
+.film.sc .brow[data-state="done"] .badge { background: #30D158; }
+.film.sc .brow[data-state="needs"] .badge { background: #FF9F0A; }
+.film.sc .sc-q { color: #FF9F0A; }
+
+/* the aurora while the person talks to their agent (lib/landing/film/aurora.ts; FoveaV1 VoiceGlow.swift): over what the
+   island holds, inside its outline. The inner light (alpha .46, to 75 %) masked to its ceiling and to 16 pt of the
+   edges; the bloom (alpha .9, to 77 %) blurred 5.7 pt under the wider ceiling; the lit edge, the lobes (alpha 1) and a
+   white core painted into the 1 pt ring inside the outline. The palette through brightness 1.15 and saturate 1.2, its
+   hue drifting with the film (--hue). The film sizes the ceilings (--cx --cy, --bx --by) and every lobe. */
+.film .aur { position: absolute; left: 0; top: 0; width: 0; height: 0; opacity: 0; pointer-events: none;
+  filter: hue-rotate(var(--hue, 0deg)) brightness(1.15) saturate(1.2); }
+.film .aur-l, .film .aur-l > div { position: absolute; inset: 0; }
+.film .aur i { position: absolute; left: 0; top: 0; display: block; width: 0; height: 0; background: radial-gradient(closest-side, rgb(var(--c) / var(--a)), rgb(var(--c) / 0) var(--f)); }
+.film .aur-inner { --a: .46; --f: 75%;
+  -webkit-mask-image: radial-gradient(ellipse var(--cx) var(--cy) at 50% 100%, #000, rgb(0 0 0 / .5) 45%, rgb(0 0 0 / .3) 85%, transparent);
+  mask-image: radial-gradient(ellipse var(--cx) var(--cy) at 50% 100%, #000, rgb(0 0 0 / .5) 45%, rgb(0 0 0 / .3) 85%, transparent); }
+.film .aur-inner > div {
+  -webkit-mask-image: linear-gradient(to top, #000, transparent 16px), linear-gradient(to right, #000, transparent 16px, transparent calc(100% - 16px), #000);
+  mask-image: linear-gradient(to top, #000, transparent 16px), linear-gradient(to right, #000, transparent 16px, transparent calc(100% - 16px), #000); }
+.film .aur-bloom { --a: .9; --f: 77%;
+  -webkit-mask-image: radial-gradient(ellipse var(--bx) var(--by) at 50% 100%, #000, rgb(0 0 0 / .5) 35%, transparent);
+  mask-image: radial-gradient(ellipse var(--bx) var(--by) at 50% 100%, #000, rgb(0 0 0 / .5) 35%, transparent); }
+.film .aur-bloom > div { filter: blur(5.7px); }
+.film .aur-stroke { --a: 1; --f: 75%;
+  -webkit-mask-image: radial-gradient(ellipse var(--cx) var(--cy) at 50% 100%, #000, rgb(0 0 0 / .5) 45%, transparent);
+  mask-image: radial-gradient(ellipse var(--cx) var(--cy) at 50% 100%, #000, rgb(0 0 0 / .5) 45%, transparent); }
+.film .aur-l > .aur-ring { border-radius: 0 0 var(--br, 14px) var(--br, 14px); padding: 1px;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+.film .aur i.core { background: radial-gradient(closest-side, rgb(255 255 255 / .45), rgb(255 255 255 / .14) 30%, transparent 65%); }
+
+/* the board's bar (Oct 24, OpenChat.swift): the greeting, and the search on a quiet disc */
+.film .sc-hello { height: 34px; margin: 0 25px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; }
+.film .sc-hello b { font-size: 13.5px; font-weight: 600; color: rgb(var(--ink) / .92); }
+.film .sc-search { width: 26px; height: 26px; border-radius: 50%; background: rgb(var(--ink) / .08); display: grid; place-items: center; color: rgb(var(--ink) / .72); }
+
+/* a request in its bubble at the right (Oct 24, V2RequestBubble): 14.5 pt, ink .11, rounded 16, at most 82 % of its
+   column; the agent's answer open at the left */
+.film .sc-bub { position: absolute; max-width: 484px; padding: 7.5px 12px; border-radius: 16px; background: rgb(var(--ink) / .11); font-size: 14.5px; line-height: 18px; color: rgb(var(--ink) / .96); white-space: nowrap; }
+/* the agent at work under a request: its ring, the step, the time it has run */
+.film .sc-work { position: absolute; height: 28px; display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 500; color: rgb(var(--ink) / .6); white-space: nowrap; }
+.film .sc-work b { font-weight: 500; color: rgb(var(--ink) / .92); font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; }
+.film .sc-work em { margin-left: auto; font-style: normal; font-variant-numeric: tabular-nums; color: rgb(var(--ink) / .4); }
+/* the requests' outline (Notion's): a short line for each, the one in view lit */
+.film .sc-rail { position: absolute; right: 12px; width: 16px; display: grid; gap: 6px; justify-items: end; }
+.film .sc-rail i { display: block; width: 16px; height: 2px; border-radius: 1px; background: rgb(var(--ink) / .22); }
+.film .sc-rail i:not(.on) { width: 11px; }
+.film .sc-rail i.on { background: rgb(var(--ink) / .92); }
+.film .sc-rail.sc-outline { right: 41px; width: 18px; }
+.film .sc-rail.sc-outline i.on { width: 18px; }
+/* the session's bar (V2SessionBar): Open in its agent; Copy Answer and Answer again once done, Stop while it works */
+.film .sc-sbar { position: absolute; left: 35px; right: 35px; height: 30px; display: flex; align-items: center; gap: 5px; }
+.film .sc-sbar .sp { flex: 1; }
+.film .sc-chip { height: 24px; padding: 0 10px; border-radius: 12px; background: rgb(var(--ink) / .09); display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500; color: rgb(var(--ink) / .8); white-space: nowrap; }
+.film .sc-chip svg { width: 10px; height: 10px; flex: none; }
+.film .sc-sbar.narrow .sc-chip { min-width: 24px; padding: 0 7px; justify-content: center; }
+.film .sc-sbar[data-state="working"] .when-done, .film .sc-sbar[data-state="done"] .when-work { display: none; }
+
+/* icons on the desktop: a PDF, a folder, their names under them */
+.film .dicon { position: absolute; width: 64px; display: grid; justify-items: center; gap: 5px; }
+.film .dicon i { display: block; }
+.film .dicon .pdf svg { display: block; width: 52px; height: 65px; filter: drop-shadow(0 1px 2px rgb(0 0 0 / .25)); }
+.film .dicon .pdf svg rect:first-child { fill: none; }
+.film .dicon .folder { width: 60px; height: 46px; margin: 10px 0 9px; border-radius: 6px; background: linear-gradient(180deg, #7CC4F2, #4FA6E4);
+  box-shadow: inset 0 7px 0 rgb(255 255 255 / .22), 0 1px 3px rgb(0 0 0 / .2); }
+.film .dicon em { font-style: normal; font-size: 11.5px; font-weight: 500; color: #fff; text-align: center; white-space: nowrap; text-shadow: 0 1px 2px rgb(0 0 0 / .7); }
+
+/* point: Field Notes' trails, its own light pages in the browser's dark frame */
+.film .sc-tabs { position: relative; height: 38px; display: flex; align-items: flex-end; gap: 2px; padding: 0 12px 0 88px; background: #2A2A2C; }
+.film .sc-tabs > span:not(.lights) { width: 190px; height: 29px; padding: 7px 14px; border-radius: 8px 8px 0 0; font-size: 12px; color: rgb(255 255 255 / .5); }
+.film .sc-tabs > span.on { background: #3A3A3C; color: rgb(255 255 255 / .9); }
+.film .sc-url { height: 40px; display: flex; align-items: center; padding: 0 16px; background: #3A3A3C; border-bottom: 1px solid rgb(0 0 0 / .5); }
+.film .sc-url span { width: 420px; height: 26px; margin: 0 auto; padding: 0 12px; border-radius: 8px; background: #232325; font-size: 12.5px; line-height: 26px; color: rgb(255 255 255 / .62); }
+.film .sc-page { position: absolute; inset: 78px 0 0; background: #F7F5EF; }
+.film .sc-fn { position: absolute; left: 36px; right: 36px; top: 18px; display: flex; gap: 22px; align-items: baseline; font-size: 13px; color: #555; }
+.film .sc-fn b { margin-right: auto; font-family: Charter, Georgia, serif; font-size: 19px; color: #1E3A2B; }
+.film .sc-page h4 { position: absolute; left: 36px; top: 56px; font-family: Charter, Georgia, serif; font-size: 25px; font-weight: 700; color: #1E3A2B; }
+.film .sc-card { position: absolute; overflow: hidden; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px rgb(0 0 0 / .06); }
+.film .sc-card img { display: block; width: 100%; height: 130px; object-fit: cover; }
+.film .sc-card b { display: block; margin: 14px 18px 6px; font-family: Charter, Georgia, serif; font-size: 18px; color: #1E3A2B; }
+.film .sc-card span { display: block; margin: 0 18px; font-size: 13px; line-height: 19px; color: #5B5B55; }
+.film .sc-btn { position: absolute; border-radius: 18px; background: #1E3A2B; color: #fff; font-size: 13.5px; font-weight: 600; line-height: 36px; text-align: center; }
+.film .sc-glow { position: absolute; border-radius: 18px; opacity: 0; box-shadow: 0 0 0 2px rgb(10 132 255 / .75), 0 0 16px rgb(10 132 255 / .4); }
+/* what point takes: the two buttons and the spec; what talk takes: the phone's banner */
+.film .mini[data-state="low"] > [data-m="low"], .film .mini[data-state="ok"] > [data-m="ok"], .film .mini[data-state="spec"] > [data-m="spec"],
+.film .mini[data-state="banner"] > [data-m="banner"] { display: block; }
+/* the session's row: at work, then done */
+.film .brow[data-state="working"] .sc-done { display: none; }
+.film .brow[data-state="done"] .steps { display: none; }
+
+/* notch: an editor, dark, the person at work in it */
+.film .sc-ed { background: #1E1E1E; }
+.film .sc-tree { position: absolute; left: 0; top: 52px; bottom: 0; width: 210px; padding: 12px 10px; display: grid; align-content: start; gap: 2px;
+  background: #252526; border-right: 1px solid rgb(0 0 0 / .4); font-size: 13px; color: rgb(255 255 255 / .74); }
+.film .sc-tree b { padding: 2px 8px 6px; font-size: 10.5px; font-weight: 600; letter-spacing: .06em; color: rgb(255 255 255 / .4); }
+.film .sc-tree span { padding: 3px 8px; border-radius: 5px; white-space: nowrap; }
+.film .sc-tree .in { padding-left: 20px; }
+.film .sc-tree .in2 { padding-left: 34px; }
+.film .sc-tree .on { background: rgb(10 132 255 / .3); color: #fff; }
+.film .sc-code { position: absolute; left: 210px; right: 0; top: 52px; bottom: 0; padding: 18px 0; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 14px; line-height: 24px; color: #D4D4D4; white-space: pre; }
+.film .sc-code p { display: flex; min-height: 24px; }
+.film .sc-code i { flex: none; width: 56px; padding-right: 20px; font-style: normal; text-align: right; color: #6E7681; }
+.film .sc-code .k { color: #C586C0; }
+.film .sc-code .s { color: #CE9178; }
+.film .sc-code .y { color: #4EC9B0; }
+.film .sc-code .f { color: #DCDCAA; }
+.film .sc-code .g { color: #569CD6; }
+.film .sc-code .a { color: #9CDCFE; }
+/* the board's row that needs you (V2Board, Native): the badge amber with "!", the question amber, its command in code;
+   Deny and the action's own verb in place of the time; allowed, it's back at work */
+.film .brow[data-state="needs"] .badge { background: #FF9500; }
+.film .brow[data-state="needs"] .badge::after { content: "!"; font: 800 8.5px/1 var(--sys); color: #fff; }
+.film .sc-q { color: #EF8A00; }
+.film .sc-q code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; }
+.film .sc-acts { display: none; gap: 5px; }
+.film .brow[data-state="needs"] .sc-acts { display: flex; }
+.film .brow[data-state="needs"] .sc-now, .film .brow[data-state="needs"] .sc-run { display: none; }
+.film .brow[data-state="working"] .sc-q { display: none; }
+.film .sc-abtn { display: grid; place-items: center; width: 46px; height: 20px; border-radius: 10px; background: rgb(var(--ink) / .14); font-size: 11.5px; font-weight: 500; color: rgb(var(--ink) / .9); white-space: nowrap; }
+.film .sc-abtn.pri { width: 70px; background: rgb(var(--acc)); color: #fff; }
+.film .sc-abtn.pri[data-state="down"] { background: rgb(var(--acc) / .7); }
+.film .sc-hov { position: absolute; inset: 0; border-radius: 9px; background: rgb(var(--ink) / .06); opacity: 0; }
+/* the session opened from the board, and asked more: its exchanges, the outline's gutter at the right */
+.film .sc-anbody { position: absolute; left: 0; top: 0; width: 660px; height: 100%; }
+.film .sc-q2 { position: absolute; inset: 0; opacity: 0; }
+.film .sc-ring { display: block; flex: none; width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid rgb(var(--ink) / .14); border-top-color: rgb(var(--acc)); transform: rotate(calc(var(--t, 0) * 327deg)); }
+/* asking more by voice: the band between the notch and the session (voiceBelow, 44 pt), Voiceflow's waveform in it */
+.film .s-band { left: calc(735px - 330px); width: 660px; height: 76px; }
+.film .s-band .wave { position: absolute; left: 50%; top: 32px; height: 44px; translate: -50% 0; display: flex; align-items: center; gap: 4px; }
+.film .s-band .wave i { display: block; width: 4px; height: 5.33px; border-radius: 2px; background: #000; }
+.film .bd-trans { position: absolute; left: 0; right: 0; top: 32px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 13.5px; color: rgb(var(--ink) / .95); opacity: 0; }
+/* the chat pulled out (V2DetachedWindow): the same glass in a window rounded 16, one rim, a light close shadow */
+.film .sc-pull { position: absolute; left: 0; top: 0; width: 340px; height: 468px; }
+.film .sc-pull-glass { position: absolute; inset: 0; border-radius: 16px; opacity: 0; background: rgb(30 32 36 / .18);
+  -webkit-backdrop-filter: blur(26px) saturate(1.5) brightness(.58); backdrop-filter: blur(26px) saturate(1.5) brightness(.58);
+  box-shadow: inset 0 0 0 .75px rgb(255 255 255 / .14), 0 6px 24px rgb(0 0 0 / .35); }
+.film .sc-pull-body { position: absolute; inset: 0; opacity: 0; --ink: 255 255 255; --acc: 10 132 255; color: rgb(var(--ink) / .9); font-size: 13px; }
+.film .pw-head { position: absolute; left: 12px; right: 12px; top: 12px; height: 22px; display: flex; align-items: center; gap: 8px; }
+.film .pw-head b { margin-right: auto; font-size: 13px; font-weight: 600; color: rgb(var(--ink) / .94); white-space: nowrap; }
+.film .pw-head .circ { width: 20px; height: 20px; }
+.film .pw-a2 { opacity: 0; }
+.film .sc-pull .ans { position: absolute; font-size: 13.5px; line-height: 19px; color: rgb(var(--ink) / .88); white-space: nowrap; }
+
+/* talk: Mail, a new message, dark; the iPhone simulator beside it */
+.film .sc-mail .send { position: absolute; left: 96px; top: 50%; translate: 0 -50%; display: grid; color: rgb(255 255 255 / .62); }
+.film .sc-mrow { position: absolute; left: 0; right: 0; height: 36px; display: flex; align-items: center; gap: 8px; padding: 0 24px; border-bottom: 1px solid rgb(255 255 255 / .08);
+  font-size: 13.5px; color: rgb(255 255 255 / .88); }
+.film .sc-mrow .k { color: rgb(255 255 255 / .45); }
+.film .sc-mrow .tok { padding: 1px 8px; border-radius: 6px; background: rgb(10 132 255 / .26); color: #A9D1FF; }
+.film .sc-body { position: absolute; left: 24px; right: 24px; top: 0; opacity: 0; font-size: 16px; line-height: 24px; color: rgb(255 255 255 / .9); }
+.film .sc-body p { position: absolute; left: 0; white-space: nowrap; }
+.film .sc-body .li { left: 6px; display: flex; gap: 8px; }
+.film .sc-body .li span { min-width: 14px; color: rgb(255 255 255 / .9); }
+.film .sc-shot { position: absolute; overflow: hidden; border-radius: 6px; opacity: 0; box-shadow: 0 0 0 .5px rgb(255 255 255 / .2); }
+.film .sc-shot .shot { display: block; width: 100%; height: 100%; }
+.film .sc-mail .caret { position: absolute; width: 1.5px; height: 19px; background: #0A84FF; opacity: 0; }
+/* where the words went, lit a moment (IslandModel+Live markLanding): the grey of a mark round a file */
+.film .sc-land { position: absolute; border-radius: 8px; opacity: 0; background: rgb(128 128 128 / .2); box-shadow: inset 0 0 0 1px rgb(170 170 170 / .55); }
+.film .sc-phone { position: absolute; border-radius: 42px; background: #0C0C0D; box-shadow: 0 0 0 1px rgb(255 255 255 / .14), 0 0 0 2.5px #2A2A2C, 0 24px 60px rgb(0 0 0 / .5); }
+.film .sc-phone .scr { position: absolute; inset: 9px; border-radius: 33px; overflow: hidden; background: #F7F5EF; }
+.film .sc-phone .sb { position: absolute; left: 0; right: 0; top: 0; height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px 0 30px;
+  font-size: 13.5px; font-weight: 600; color: #111; }
+.film .sc-phone .bat { width: 22px; height: 11px; border-radius: 3px; box-shadow: inset 0 0 0 1.2px rgb(0 0 0 / .5); background: linear-gradient(90deg, #111 70%, transparent 70%) 2px 2px / 16px 7px no-repeat; }
+.film .sc-phone .di { position: absolute; left: 50%; top: 11px; width: 74px; height: 22px; margin-left: -37px; border-radius: 11px; background: #000; }
+.film .sc-phone .bn { position: absolute; left: 0; top: 48px; width: max-content; height: 36px; padding: 0 12px; display: flex; align-items: center; background: #1E3A2B; color: #fff;
+  font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.film .sc-phone .nav { position: absolute; left: 16px; right: 16px; top: 96px; height: 30px; display: flex; align-items: center; justify-content: space-between; }
+.film .sc-phone .nav b { font-family: Charter, Georgia, serif; font-size: 17px; color: #1E3A2B; }
+.film .sc-phone .nav i { width: 18px; height: 12px; border-top: 2px solid #1E3A2B; border-bottom: 2px solid #1E3A2B; background: linear-gradient(#1E3A2B, #1E3A2B) center / 100% 2px no-repeat; }
+.film .sc-phone img { position: absolute; left: 14px; top: 136px; width: calc(100% - 28px); height: 160px; object-fit: cover; border-radius: 10px; }
+.film .sc-phone h5 { position: absolute; left: 16px; right: 16px; top: 312px; font-family: Charter, Georgia, serif; font-size: 21px; line-height: 26px; font-weight: 700; color: #1E3A2B; }
+.film .sc-phone .p { position: absolute; left: 16px; right: 16px; top: 374px; font-size: 13.5px; line-height: 20px; color: #55554F; }
+/* everything said, in one box: what's taken back struck through, the item remembered last marked; the keys over it */
+.film.sc-talk .keys { bottom: calc(var(--fw) * .035 + clamp(12px, calc(var(--fw) * .0155), 20px) * 6.6 + 14px); }
+.film .sub.tr-box { max-width: 78%; text-align: left; font-size: clamp(12px, calc(var(--fw) * .0155), 20px); line-height: 1.38; padding: .45em .9em .5em; }
+.film .sub.tr-box .w[data-state="later"] { display: none; }
+.film .sub.tr-box .w.capture { text-decoration: none; }
+.film .sub.tr-box .w.capture .t { text-decoration: underline; text-decoration-color: rgb(0 0 0 / .35); text-underline-offset: .2em; }
+.film .sub.tr-box .w[data-state="x"] .t { color: #96968F; text-decoration: line-through; text-decoration-thickness: 1.5px; text-decoration-color: #6B6B67; }
+.film .sub.tr-box .w[data-state="add"] .t { background: rgb(255 214 10 / .38); border-radius: 2px; box-shadow: 0 0 0 1px rgb(255 214 10 / .38); }

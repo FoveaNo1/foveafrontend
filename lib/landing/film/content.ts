@@ -67,8 +67,9 @@ export const BEATS = {
 
 /** The cards, on paper. */
 export const CARDS = {
-  /** The film opens on what the product is, on paper, in one line. */
-  title: { text: BookCopy.hero },
+  /** The film opens on what the product is, on paper, in one line; under it, whose agents (Oct 24, Yulun: the viewer's
+   *  own Claude Code and Codex; a draft line). */
+  title: { text: BookCopy.hero, small: "Starting with your own Claude Code and Codex." },
   eyes: { text: "And soon, your eyes.", small: "Not a cursor but a brand new way of capturing attention." },
   /** Session routing, coming with the eyes: every agent you have running answers as one being, and Fovea sends each
    *  request to the session it belongs to (Oct 17). */
@@ -113,7 +114,8 @@ export const KEYS = {
   fnDone: { caps: ["fn", "⌃"], label: "done" },
   cmd: { caps: ["⌘"], label: "part of the screen" },
   cmd2: { caps: ["⌘", "⌘"], label: "whole screen" },
-  ret: { caps: ["return"], label: "send" },
+  // where it goes (Oct 24): every request the film sends goes to the viewer's own Claude Code
+  ret: { caps: ["enter"], label: "to your Claude Code" },
   esc: { caps: ["esc"], label: "close" },
   back: { caps: ["esc"], label: "back" },
 } as const;
