@@ -2,6 +2,14 @@
 
 ## The film, recorded (Oct 25)
 
+**v6 (Oct 27), Yulun's notes on it:** a keyboard under the old way's typing, each key going down and lighting as its
+letter is typed ("so that it seems like the ppl is typing"); FoveaOS right after *Next*, using your voice to run the
+Mac: "Open Spotify, find a jazz playlist, and play it.", and Spotify does it, nothing clicked (its card's line "Say it,
+and your Mac does it.", the key caption and the island's step list are drafts); and the hardware card's "Fovea is not
+making another pair of glasses, rings, or necklaces." 2:01.0 now (1:47.7 before). How it was made:
+`landing/research/launch-film/README.md`, round five. Spotify's name, mark and look are drawn; they join the agents'
+marks on the list for a trademark check.
+
 Yulun: "change the original launch video to this" (the demo film, round four, `fovea-demo-film-v4-4k.mp4`), then
 "this is actually the key enter, not return". The film the notch grows into is now that recorded film, v5: round four
 with every key that sends reading "enter" (the demo film's session re-rendered those seconds;
@@ -18,27 +26,30 @@ footage captures (`capture-hd.mjs`) read that drawn film from `localhost:3000/`,
   at the top over an empty half.
 - **The copies,** made by `landing/research/launch-film/tools/webcut` (macOS's own encoder, Lanczos scaling, a keyframe
   every second, the index first, the sound copied as it is) from the 4K master:
-  - `public/landing/film/fovea-film-v5-1440.mp4`: HEVC, 2560 × 1440, 42.6 MB, for screens 900 px and wider.
-  - `fovea-film-v5-720.mp4`: HEVC, 1280 × 720, 18.4 MB, for phones.
-  - `fovea-film-v5-1080.mp4`: H.264, 1920 × 1080, 45.7 MB, for any browser without HEVC (Firefox, Chromium on Linux).
-  - All 60 fps. Up close they match the master, apart from the wallpaper's grain.
-  - `fovea-film-v5-poster.jpg` is the title card, shown only under Reduce Motion, where the film waits to be played.
+  - `public/landing/film/fovea-film-v6-1440.mp4`: HEVC, 2560 × 1440, 48.7 MB, for screens 900 px and wider.
+  - `fovea-film-v6-720.mp4`: HEVC, 1280 × 720, 20.9 MB, for phones.
+  - `fovea-film-v6-1080.mp4`: H.264, 1920 × 1080, 49.7 MB, for any browser without HEVC (Firefox, Chromium on Linux).
+    Cut at 3.3 Mb/s (v5's was 3.5) to stay under 50 MB at the new length.
+  - All 60 fps. Up close they match the master, apart from the wallpaper's grain (the 1080p copy is a little softer
+    on the photographs).
+  - `fovea-film-v6-poster.jpg` is the title card, shown only under Reduce Motion, where the film waits to be played.
     The film itself opens on black, as the notch it grows from is black.
 - **Sound:** it plays silently by itself, as a browser only allows. A button in the frame's corner turns the music on.
   Where a browser won't play it at all (iOS's Low Power Mode), the play mark shows and it waits.
 - **The music's credit,** which its licence requires (CC BY 4.0), sits under the bar: "Petrichor" by Scott Buckley.
 - **The parts on the bar** are named as the film's own cards name them: Today (0 s, "Today, it takes all this."), Fovea
-  (13.2 s), Next (68.6 s). Draft names.
+  (14.5 s), Next (69.9 s). Draft names.
 - **Hosting:** the copies are served from `public/` like any other file, with byte ranges (Safari needs them).
-  - A full viewing is 18–46 MB, depending on the copy, and counts against the Vercel plan's data transfer. For heavy
+  - A full viewing is 21–50 MB, depending on the copy, and counts against the Vercel plan's data transfer. For heavy
     launch traffic, a streaming host (Mux, Cloudflare Stream) would take that off the site.
-  - The three copies add about 107 MB to the repository (each under GitHub's 50 MB warning).
+  - The three copies add about 119 MB to the repository (each under GitHub's 50 MB warning); v5's 107 MB stay in its
+    history.
 
 ```
-tools/webcut ~/Desktop/fovea-demo-film-v5-4k.mp4 fovea-film-v5-1440.mp4 2560 3200000 hevc
-tools/webcut ~/Desktop/fovea-demo-film-v5-4k.mp4 fovea-film-v5-720.mp4 1280 1200000 hevc
-tools/webcut ~/Desktop/fovea-demo-film-v5-4k.mp4 fovea-film-v5-1080.mp4 1920 3500000 h264
-tools/stills ~/Desktop/fovea-demo-film-v5-4k.mp4 . 15.0   # the title card, then sips -s format jpeg -s formatOptions 82 -Z 2560
+tools/webcut ~/Desktop/fovea-demo-film-v6-4k.mp4 fovea-film-v6-1440.mp4 2560 3200000 hevc
+tools/webcut ~/Desktop/fovea-demo-film-v6-4k.mp4 fovea-film-v6-720.mp4 1280 1200000 hevc
+tools/webcut ~/Desktop/fovea-demo-film-v6-4k.mp4 fovea-film-v6-1080.mp4 1920 3300000 h264
+tools/stills ~/Desktop/fovea-demo-film-v6-4k.mp4 . 16.3   # the title card, then sips -s format jpeg -s formatOptions 82 -Z 2560
 ```
 
 The showcase's "return" key (scene 1, "to your Codex") reads "enter" too, as does the drawn film's.

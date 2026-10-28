@@ -62,8 +62,8 @@ test("the film's parts start at its start, in order, each long enough to name, a
     const stop = chapters[i + 1]?.at ?? duration;
     assert.ok(stop - c.at >= 10, `${c.title}: ${(stop - c.at).toFixed(1)} s`);
   });
-  assert.equal(chapterOf(chapters, 13.19), 0);
-  assert.equal(chapterOf(chapters, 13.2), 1);
+  assert.equal(chapterOf(chapters, chapters[1].at - 0.01), 0);
+  assert.equal(chapterOf(chapters, chapters[1].at), 1);
   assert.equal(chapterOf(chapters, duration), 2);
 });
 
@@ -107,4 +107,9 @@ test("the title card stands in where nothing plays by itself; the music is credi
   assert.ok(FILM_VIDEO_TRANSCRIPT.startsWith("“Imagine interacting with agents, effortlessly.”"));
   assert.ok(FILM_VIDEO_TRANSCRIPT.includes("Petrichor") && FILM_VIDEO_TRANSCRIPT.includes("Scott Buckley"));
   assert.ok(FILM_VIDEO_TRANSCRIPT.includes("enter sends it") && !/\breturn\b/i.test(FILM_VIDEO_TRANSCRIPT), "the key that sends is enter");
+  // Yulun's notes (Oct 27): FoveaOS right after Next, and the hardware card's line
+  const next = FILM_VIDEO_TRANSCRIPT.indexOf("Next."), os = FILM_VIDEO_TRANSCRIPT.indexOf("FoveaOS");
+  assert.ok(next >= 0 && os > next && os < FILM_VIDEO_TRANSCRIPT.indexOf("All your agents, as one."), "FoveaOS comes right after Next");
+  assert.ok(FILM_VIDEO_TRANSCRIPT.includes("Open Spotify, find a jazz playlist, and play it."));
+  assert.ok(FILM_VIDEO_TRANSCRIPT.includes("Fovea is not making another pair of glasses, rings, or necklaces."));
 });
