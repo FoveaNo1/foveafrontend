@@ -48,8 +48,8 @@ export const BookCopy = {
     coda: "Fovea starts at your desk, and truly personal agents come closer with everything we build next.",
   },
   /** After the film (Oct 24): what Fovea does today, one thing at a time, each beside a scene of someone doing it on
-   *  their Mac (components/book/showcase). Yulun's: item 1's title and words, item 2's words, item 3's title; the rest
-   *  are drafts for review. `label` says what the scene shows, for screen readers. */
+   *  their Mac (components/book/showcase). Yulun's: item 1's title and words, item 2's words, item 3's title and words
+   *  (Oct 27); the rest are drafts for review. `label` says what the scene shows, for screen readers. */
   showcase: {
     title: "Your agents, a sentence away.",
     items: [
@@ -64,9 +64,9 @@ export const BookCopy = {
         label: "A Mac’s screen in dark mode. The board under the notch: Claude Code asks to run npm test and is allowed; Codex’s finished answer opens; a follow-up, “Mention the snow banner too.”, is asked by voice; then the chat is pulled out of the notch into a window of its own, where the new answer comes in.",
       },
       {
-        // Oct 24, Yulun's title; the words a draft
+        // Oct 24, Yulun's title; Oct 27, Yulun's words
         id: "talk", title: "Talk, and it cleans up for you.",
-        text: "Press fn and think out loud: change your mind, come back to a point, press ⌘ to add what’s on your screen. Press fn again, and Fovea writes it up in order, wherever you’re typing.",
+        text: "Press fn and think out loud: change your mind, come back to a point, and add attachments.",
         label: "A Mac’s screen in dark mode, an email open. fn is pressed and a list is talked through: the pricing page, the demo video, the press kit and the FAQ; then “Actually, drop the video”; the banner cut off on mobile, taken with ⌘; then one more for Friday, the launch email. fn again, and the email reads as a list of four without the video, the late item in it, and the banner’s picture after the words.",
       },
     ],

@@ -29,7 +29,7 @@ const held = (id, key, step = 0.05) => {
 const glass = (id, t) => SCENES[id].at(t).k["is:glass"];
 const words = (line, idx) => idx.map((i) => line.words[i].text).join(" ");
 
-test("the copy: Yulun's words for the first item and the third's title, a draft under it, words for a screen reader", () => {
+test("the copy: Yulun's words, a draft title for the second item, words for a screen reader", () => {
   const s = BookCopy.showcase;
   assert.deepEqual([...s.items].map((i) => i.id), ["point", "notch", "talk"]);
   for (const i of s.items) {
@@ -40,6 +40,7 @@ test("the copy: Yulun's words for the first item and the third's title, a draft 
   assert.equal(s.items[0].text, "Take any attachments, talk to your Codex or Claude Code through Fovea.");
   assert.match(s.items[1].text, /Claude Code and Codex/);
   assert.equal(s.items[2].title, "Talk, and it cleans up for you.");
+  assert.equal(s.items[2].text, "Press fn and think out loud: change your mind, come back to a point, and add attachments.", "Yulun's words (Oct 27)");
   assert.match(s.items[1].label, /pulled out of the notch/);
 });
 
