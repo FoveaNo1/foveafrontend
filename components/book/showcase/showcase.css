@@ -60,48 +60,9 @@
 .film.sc .ttl { color: rgb(255 255 255 / .8); }
 .film.sc .tag.tag1 { text-transform: none; letter-spacing: .01em; font-weight: 500; }
 
-/* The island as Fovea draws it on the real Mac in Dark (NativeGlass.swift, BehindWindowBlur): the system's HUD blur of
-   what's behind it, black at .22 over that, a rim of white at .14; white words. The blur's colour was matched on the
-   app's own pictures (handoff LOOK-04, LOOK-10: a sky of 80 136 188 behind reads 37 76 115 through it). Only the notch
-   is black. The stacks lie flat (Oct 21: no tilt). */
-.film.sc .isl { --ink: 255 255 255; --acc: 10 132 255; }
-.film.sc .is-glass { background: rgb(30 32 36 / .18); -webkit-backdrop-filter: blur(26px) saturate(1.5) brightness(.58); backdrop-filter: blur(26px) saturate(1.5) brightness(.58); }
-.film.sc .is-ears path { fill: rgb(68 70 71); }
-.film.sc .is-rim path { stroke: rgb(255 255 255 / .14); }
-.film.sc .s-voice .wave i, .film.sc .s-band .wave i { background: #fff; }
+/* The island is the notch as FoveaV1 draws it since Oct 28 (components/book/film/notch.css); what Fovea took lies
+   flat (Oct 21: no tilt). */
 .film.sc .mini { box-shadow: 0 0 0 .75px rgb(255 255 255 / .22); }
-.film.sc .s-voice .th1, .film.sc .s-voice .th2, .film.sc .pile .mini[style*="--i: 1"], .film.sc .pile .mini[style*="--i: 2"] { rotate: none; }
-.film.sc .badge { box-shadow: 0 0 0 2px rgb(36 37 40); }
-.film.sc .brow[data-state="working"] .badge { background: rgb(58 59 62); }
-.film.sc .brow[data-state="done"] .badge { background: #30D158; }
-.film.sc .brow[data-state="needs"] .badge { background: #FF9F0A; }
-.film.sc .sc-q { color: #FF9F0A; }
-
-/* the aurora while the person talks to their agent (lib/landing/film/aurora.ts; FoveaV1 VoiceGlow.swift): over what the
-   island holds, inside its outline. The inner light (alpha .46, to 75 %) masked to its ceiling and to 16 pt of the
-   edges; the bloom (alpha .9, to 77 %) blurred 5.7 pt under the wider ceiling; the lit edge, the lobes (alpha 1) and a
-   white core painted into the 1 pt ring inside the outline. The palette through brightness 1.15 and saturate 1.2, its
-   hue drifting with the film (--hue). The film sizes the ceilings (--cx --cy, --bx --by) and every lobe. */
-.film .aur { position: absolute; left: 0; top: 0; width: 0; height: 0; opacity: 0; pointer-events: none;
-  filter: hue-rotate(var(--hue, 0deg)) brightness(1.15) saturate(1.2); }
-.film .aur-l, .film .aur-l > div { position: absolute; inset: 0; }
-.film .aur i { position: absolute; left: 0; top: 0; display: block; width: 0; height: 0; background: radial-gradient(closest-side, rgb(var(--c) / var(--a)), rgb(var(--c) / 0) var(--f)); }
-.film .aur-inner { --a: .46; --f: 75%;
-  -webkit-mask-image: radial-gradient(ellipse var(--cx) var(--cy) at 50% 100%, #000, rgb(0 0 0 / .5) 45%, rgb(0 0 0 / .3) 85%, transparent);
-  mask-image: radial-gradient(ellipse var(--cx) var(--cy) at 50% 100%, #000, rgb(0 0 0 / .5) 45%, rgb(0 0 0 / .3) 85%, transparent); }
-.film .aur-inner > div {
-  -webkit-mask-image: linear-gradient(to top, #000, transparent 16px), linear-gradient(to right, #000, transparent 16px, transparent calc(100% - 16px), #000);
-  mask-image: linear-gradient(to top, #000, transparent 16px), linear-gradient(to right, #000, transparent 16px, transparent calc(100% - 16px), #000); }
-.film .aur-bloom { --a: .9; --f: 77%;
-  -webkit-mask-image: radial-gradient(ellipse var(--bx) var(--by) at 50% 100%, #000, rgb(0 0 0 / .5) 35%, transparent);
-  mask-image: radial-gradient(ellipse var(--bx) var(--by) at 50% 100%, #000, rgb(0 0 0 / .5) 35%, transparent); }
-.film .aur-bloom > div { filter: blur(5.7px); }
-.film .aur-stroke { --a: 1; --f: 75%;
-  -webkit-mask-image: radial-gradient(ellipse var(--cx) var(--cy) at 50% 100%, #000, rgb(0 0 0 / .5) 45%, transparent);
-  mask-image: radial-gradient(ellipse var(--cx) var(--cy) at 50% 100%, #000, rgb(0 0 0 / .5) 45%, transparent); }
-.film .aur-l > .aur-ring { border-radius: 0 0 var(--br, 14px) var(--br, 14px); padding: 1px;
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
-.film .aur i.core { background: radial-gradient(closest-side, rgb(255 255 255 / .45), rgb(255 255 255 / .14) 30%, transparent 65%); }
 
 /* the board's bar (Oct 24, OpenChat.swift): the greeting, and the search on a quiet disc */
 .film .sc-hello { height: 34px; margin: 0 25px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; }
@@ -198,22 +159,32 @@
 .film .sc-anbody { position: absolute; left: 0; top: 0; width: 660px; height: 100%; }
 .film .sc-q2 { position: absolute; inset: 0; opacity: 0; }
 .film .sc-ring { display: block; flex: none; width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid rgb(var(--ink) / .14); border-top-color: rgb(var(--acc)); transform: rotate(calc(var(--t, 0) * 327deg)); }
-/* asking more by voice: the band between the notch and the session (voiceBelow, 44 pt), Voiceflow's waveform in it */
-.film .s-band { left: calc(735px - 330px); width: 660px; height: 76px; }
-.film .s-band .wave { position: absolute; left: 50%; top: 32px; height: 44px; translate: -50% 0; display: flex; align-items: center; gap: 4px; }
-.film .s-band .wave i { display: block; width: 4px; height: 5.33px; border-radius: 2px; background: #000; }
-.film .bd-trans { position: absolute; left: 0; right: 0; top: 32px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 13.5px; color: rgb(var(--ink) / .95); opacity: 0; }
-/* the chat pulled out (V2DetachedWindow): the same glass in a window rounded 16, one rim, a light close shadow */
-.film .sc-pull { position: absolute; left: 0; top: 0; width: 340px; height: 468px; }
-.film .sc-pull-glass { position: absolute; inset: 0; border-radius: 16px; opacity: 0; background: rgb(30 32 36 / .18);
-  -webkit-backdrop-filter: blur(26px) saturate(1.5) brightness(.58); backdrop-filter: blur(26px) saturate(1.5) brightness(.58);
-  box-shadow: inset 0 0 0 .75px rgb(255 255 255 / .14), 0 6px 24px rgb(0 0 0 / .35); }
-.film .sc-pull-body { position: absolute; inset: 0; opacity: 0; --ink: 255 255 255; --acc: 10 132 255; color: rgb(var(--ink) / .9); font-size: 13px; }
+/* the chat pulled out (V2DetachedWindow, Compact): a small window 313 × 431 in the notch's glass, rounded 12, one rim,
+   a light close shadow; its words at the notch's sizes */
+.film .sc-pull { position: absolute; left: 0; top: 0; width: 313px; height: 431px; }
+.film .sc-pull-glass { position: absolute; inset: 0; border-radius: 12px; opacity: 0; background: rgb(38 39 42 / .8);
+  -webkit-backdrop-filter: blur(30px) saturate(1.4) brightness(.6); backdrop-filter: blur(30px) saturate(1.4) brightness(.6);
+  box-shadow: inset 0 0 0 .75px rgb(255 255 255 / .14), 0 6px 12px rgb(0 0 0 / .3); }
+.film .sc-pull-body { position: absolute; inset: 0; opacity: 0; --ink: 255 255 255; --acc: 10 132 255; color: rgb(var(--ink) / .9); font-size: 12px; }
 .film .pw-head { position: absolute; left: 12px; right: 12px; top: 12px; height: 22px; display: flex; align-items: center; gap: 8px; }
-.film .pw-head b { margin-right: auto; font-size: 13px; font-weight: 600; color: rgb(var(--ink) / .94); white-space: nowrap; }
-.film .pw-head .circ { width: 20px; height: 20px; }
+.film .pw-head .mark { width: 14px; height: 14px; }
+.film .pw-head b { margin-right: auto; font-size: 12.5px; font-weight: 600; color: rgb(var(--ink) / .94); white-space: nowrap; }
+.film .pw-head .hg { width: 18px; height: 18px; display: grid; place-items: center; color: rgb(255 255 255 / .55); }
 .film .pw-a2 { opacity: 0; }
-.film .sc-pull .ans { position: absolute; font-size: 13.5px; line-height: 19px; color: rgb(var(--ink) / .88); white-space: nowrap; }
+.film .sc-pull .ans { position: absolute; font-size: 12px; line-height: 16.5px; color: rgb(var(--ink) / .88); white-space: nowrap; }
+.film .sc-pull .sc-bub { max-width: 260px; padding: 6px 11px; border-radius: 14px; font-size: 12.5px; line-height: 16.5px; }
+.film .sc-pull .worked { height: 18px; gap: 4px; font-size: 11px; }
+.film .sc-pull .worked svg { width: 8px; height: 8px; }
+.film .sc-pull .quote { padding: 9px 12px; border-radius: 9px; font-size: 12px; line-height: 16.5px; }
+.film .sc-pull .sc-work { height: 22px; gap: 5px; font-size: 11px; }
+.film .sc-pull .sc-work b { font-size: 10.5px; }
+.film .sc-pull .sc-ring { width: 10px; height: 10px; }
+.film .sc-pull .sc-rail { right: 9px; }
+.film .sc-pull .sc-sbar { height: 22.5px; gap: 4px; }
+.film .sc-pull .sc-chip { height: 20.5px; padding: 0 7px; border-radius: 10.25px; font-size: 11px; }
+.film .sc-pull .follow { height: 26px; border-radius: 13px; padding: 0 10px; font-size: 11.5px; line-height: 26px; }
+.film .sc-pull .send2 { right: 4px; top: 4px; width: 18px; height: 18px; }
+.film .sc-pull .send2 svg { width: 10px; height: 10px; }
 
 /* talk: Mail, a new message, dark; the iPhone simulator beside it */
 .film .sc-mail .send { position: absolute; left: 96px; top: 50%; translate: 0 -50%; display: grid; color: rgb(255 255 255 / .62); }

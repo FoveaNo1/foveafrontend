@@ -56,12 +56,12 @@ export const BookCopy = {
       {
         id: "point", title: "Stay in the window.",
         text: "Take any attachments, talk to your Codex or Claude Code through Fovea.",
-        label: "A Mac’s screen in dark mode. ⌘ and a drag over a button that sits low, again over one that’s right, and a spec dragged onto the notch; “Line this up with this one, like the spec.” is said and sent to Codex, which lines the button up, all without leaving the browser.",
+        label: "A Mac’s screen in dark mode. ⌘ and a drag over a button that sits low, again over one that’s right, and a spec dragged to the notch, where a drop zone opens under it; “Line this up with this one, like the spec.” is said and sent to Codex, which lines the button up, all without leaving the browser.",
       },
       {
         id: "notch", title: "Keep every agent moving.",
         text: "Every Claude Code and Codex chat you have running waits in the notch. Approve what it asks, read what it did, and ask a follow-up without leaving your window.",
-        label: "A Mac’s screen in dark mode. The board under the notch: Claude Code asks to run npm test and is allowed; Codex’s finished answer opens; a follow-up, “Mention the snow banner too.”, is asked by voice; then the chat is pulled out of the notch into a window of its own, where the new answer comes in.",
+        label: "A Mac’s screen in dark mode. Claude Code’s chat pops up from the notch asking to run npm test, and the run is allowed right there; Codex’s chat pops up with its finished answer; a follow-up, “Mention the snow banner too.”, is asked by voice; then the chat is pulled out of the notch into a window of its own, where the new answer comes in, while the board shows both at work.",
       },
       {
         // Oct 24, Yulun's title; Oct 27, Yulun's words
