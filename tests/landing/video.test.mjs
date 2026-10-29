@@ -112,4 +112,7 @@ test("the title card stands in where nothing plays by itself; the music is credi
   assert.ok(next >= 0 && os > next && os < FILM_VIDEO_TRANSCRIPT.indexOf("All your agents, as one."), "FoveaOS comes right after Next");
   assert.ok(FILM_VIDEO_TRANSCRIPT.includes("Open Spotify, find a jazz playlist, and play it."));
   assert.ok(FILM_VIDEO_TRANSCRIPT.includes("Fovea is not making another pair of glasses, rings, or necklaces."));
+  // v7 (Oct 28): the notch as the app draws it now: Wings listening, Choose chat's sentence, the answer popping up
+  assert.ok(FILM_VIDEO_TRANSCRIPT.includes("a black bar that says Listening") && FILM_VIDEO_TRANSCRIPT.includes("reads as one sentence"));
+  assert.ok(FILM_VIDEO_TRANSCRIPT.includes("pops up from the notch by itself"));
 });
