@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { BookCopy as c } from "../../../lib/landing/bookCopy";
-import type { FilmPlayer } from "../../../lib/landing/film/player";
+import type { FilmHandle } from "../../../lib/landing/film/player";
 import type { FilmPlace } from "../../../lib/landing/place";
 import InlineFilm from "../InlineFilm";
 
@@ -52,7 +52,7 @@ export function After({ className = "" }: { className?: string }) {
 export const START = 0;
 
 type HeroFilmProps = {
-  play?: boolean; onPlayer?: (p: FilmPlayer) => void; start?: number;
+  play?: boolean; onPlayer?: (p: FilmHandle) => void; start?: number;
   /** As the reader left it, when they come back to the page; and who is told how it is (lib/landing/place.ts). */
   resume?: FilmPlace; onPlace?: (p: FilmPlace | undefined) => void;
 };

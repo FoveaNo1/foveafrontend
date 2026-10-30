@@ -6,7 +6,7 @@ import { CARDS, line } from "./content";
 const said = (...ids: string[]) => ids.map((id) => `“${line(id).plain}”`);
 
 export const TRANSCRIPT = [
-  CARDS.title.text,
+  CARDS.title.text, CARDS.title.small,
   "In Blender, pointing at a glaze on the reference board, a light in the project's folder and a line of the client's email:", ...said("vase"),
   "Claude Code glazes, lights and frames the vase while you watch. Minutes later, the notch shows it done, and what changed opens from there. Then, taking the whole screen, the client's email on it:", ...said("send"),
   "The reply is written in the Mail that is already open, the render attached, and the draft comes back to the notch. It is never sent for you.",

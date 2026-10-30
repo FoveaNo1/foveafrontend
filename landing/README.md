@@ -1,5 +1,174 @@
 # Fovea: the landing page
 
+## The film, recorded (Oct 25)
+
+**v7 (Oct 28), the app's new look** (Yulun: "i have changed the look of our app ui. update our website and launch
+video accordingly"): the same 2:01.0 film, cut and music, with the notch redrawn as FoveaV1 draws it since Oct 28
+(app-ui-v1 `ddfa51a`: Wings, the Halo, the Sentence, one board, pop-ups; checked side by side with the app's own
+pictures from `--design-shots notch`):
+- **Wings**, the listening bar: black at the menu bar's height, grown sideways from the notch; "Listening", or what was
+  taken as a small pile, at its left; five small bars and a little light in the accent's colours in its bottom-right
+  corner at its right. Transcribing (Voiceflow's "Thinking") has a ring that fills. The aurora along the bar's edge
+  is gone, as in the app.
+- **The drop zone**: lock.svg dragged near the notch opens a glass card under the bar, "Drop files here", lit in the
+  accent as the file comes over it ("Let go to add it").
+- **Choose chat is one sentence**: the request large, a hairline, then what was taken, To the chat, thinking default,
+  Send ↵. In the chart scene the chat changes with a click on its name (the suggestions open under it) and one on
+  Signups dashboard; the routing (Next) is a sentence a part.
+- **Panels in dark glass blended into the notch** (the Halo), at the app's Compact sizes: the board ("Hello, Ryan.",
+  rows with their badges), the sessions.
+- **Claude Code's answer pops up by itself** when the work is done, instead of the pointer opening the board and its
+  row (`POP_UP.md`, Oct 28).
+How it was made: `landing/research/launch-film/README.md`, round six.
+
+**v6 (Oct 27), Yulun's notes on it:** a keyboard under the old way's typing, each key going down and lighting as its
+letter is typed ("so that it seems like the ppl is typing"); FoveaOS right after *Next*, using your voice to run the
+Mac: "Open Spotify, find a jazz playlist, and play it.", and Spotify does it, nothing clicked (its card's line "Say it,
+and your Mac does it.", the key caption and the island's step list are drafts); and the hardware card's "Fovea is not
+making another pair of glasses, rings, or necklaces." 2:01.0 now (1:47.7 before). How it was made:
+`landing/research/launch-film/README.md`, round five. Spotify's name, mark and look are drawn; they join the agents'
+marks on the list for a trademark check.
+
+Yulun: "change the original launch video to this" (the demo film, round four, `fovea-demo-film-v4-4k.mp4`), then
+"this is actually the key enter, not return". The film the notch grows into is now that recorded film, v5: round four
+with every key that sends reading "enter" (the demo film's session re-rendered those seconds;
+`landing/research/launch-film/README.md` has how the film is made). The film drawn live in the page
+(`lib/landing/film/film.ts`, `components/book/film/Film.tsx`) is on no page any more. A development-only `/?film=live`
+that still showed it was removed the same day: it looked like the old film was still up. The demo film's
+footage captures (`capture-hd.mjs`) read that drawn film from `localhost:3000/`, so they can't be rerun as they are.
+
+- **Where:** `components/book/film/FilmVideo.tsx` plays it and hands `InlineFilm` the same handle the drawn film did
+  (`FilmHandle`, `lib/landing/film/player.ts`), so it plays, pauses, resumes and returns exactly as before. Its facts
+  (length, parts, copies, poster, music, words for screen readers) are `lib/landing/film/video.ts`;
+  `tests/landing/video.test.mjs` reads each copy's codecs, index, length and size from the file itself.
+- **The frame is 16:9** (it was the Mac's screen, 4:5 on a phone). On a phone it sits in the middle of the screen, not
+  at the top over an empty half.
+- **The copies,** made by `landing/research/launch-film/tools/webcut` (macOS's own encoder, Lanczos scaling, a keyframe
+  every second, the index first, the sound copied as it is) from the 4K master:
+  - `public/landing/film/fovea-film-v7-1440.mp4`: HEVC, 2560 × 1440, 48.6 MB, for screens 900 px and wider.
+  - `fovea-film-v7-720.mp4`: HEVC, 1280 × 720, 20.8 MB, for phones.
+  - `fovea-film-v7-1080.mp4`: H.264, 1920 × 1080, 49.7 MB, for any browser without HEVC (Firefox, Chromium on Linux).
+    Cut at 3.3 Mb/s (v5's was 3.5) to stay under 50 MB at the film's length.
+  - All 60 fps. Up close they match the master, apart from the wallpaper's grain (the 1080p copy is a little softer
+    on the photographs).
+  - `fovea-film-v7-poster.jpg` is the title card, shown only under Reduce Motion, where the film waits to be played.
+    The film itself opens on black, as the notch it grows from is black.
+- **Sound:** it plays silently by itself, as a browser only allows. A button in the frame's corner turns the music on.
+  Where a browser won't play it at all (iOS's Low Power Mode), the play mark shows and it waits.
+- **The music's credit,** which its licence requires (CC BY 4.0), sits under the bar: "Petrichor" by Scott Buckley.
+- **The parts on the bar** are named as the film's own cards name them: Today (0 s, "Today, it takes all this."), Fovea
+  (14.5 s), Next (69.9 s). Draft names.
+- **Hosting:** the copies are served from `public/` like any other file, with byte ranges (Safari needs them).
+  - A full viewing is 21–50 MB, depending on the copy, and counts against the Vercel plan's data transfer. For heavy
+    launch traffic, a streaming host (Mux, Cloudflare Stream) would take that off the site.
+  - The three copies add about 119 MB to the repository (each under GitHub's 50 MB warning); v5's 107 MB and v6's 119 MB
+    stay in its history.
+
+```
+tools/webcut ~/Desktop/fovea-demo-film-v7-4k.mp4 fovea-film-v7-1440.mp4 2560 3200000 hevc
+tools/webcut ~/Desktop/fovea-demo-film-v7-4k.mp4 fovea-film-v7-720.mp4 1280 1200000 hevc
+tools/webcut ~/Desktop/fovea-demo-film-v7-4k.mp4 fovea-film-v7-1080.mp4 1920 3300000 h264
+tools/stills ~/Desktop/fovea-demo-film-v7-4k.mp4 . 16.3   # the title card, then sips -s format jpeg -s formatOptions 82 -Z 2560
+```
+
+The showcase's "return" key (scene 1, "to your Codex") reads "enter" too, as does the drawn film's.
+
+## After the film: what Fovea does today (Oct 24)
+
+Yulun asked for a showcase after the film: each thing Fovea does today shown the way Dia's site shows its features,
+with an animation of a person using Fovea on their Mac rather than still pictures. "Download for Mac" and "Learn about
+Fovea's vision" now come after it. Nothing else was added: no privacy band, no "Next", no Fovea Bar.
+
+- **Dia, as built** (diabrowser.com, read Oct 24):
+  - A centred heading over a 12-column grid.
+  - On the left, 4 columns: the list, held 20% down the screen. Each item is a mono number, a serif title, and its
+    words, which open under it once it's lit.
+  - The lit item has a 3 pt bar at its left and its title in ink; the others are at .45.
+  - On the right, 8 columns: each picture sits in a block 60% of the screen tall. An item lights once its picture's
+    top passes 40% of the screen.
+  - A click on an item scrolls its picture up beside the list.
+  - The pictures themselves are still screenshots.
+  - On a phone the list goes: each picture has its words under it.
+- **Ours** (`components/book/showcase/Showcase.tsx`, `showcase.css`):
+  - Dia's structure in the book's type: Cormorant for the titles, EB Garamond for the words, the margin's italic
+    numerals, and a 2 pt ink bar.
+  - Each picture is a scene drawn with the film's own parts (`lib/landing/film/showcase.ts`, `Demo.tsx`,
+    `scenes.tsx`, `film.css`), with the keys and words as the film shows them.
+  - Only the reader's scene plays, from the desk at rest each time it becomes theirs, looping through the dark.
+  - Under Reduce Motion each scene is one still.
+  - Words: Yulun's for item 1 (title and line), item 2 (line) and item 3 (title); the heading, item 2's title and
+    item 3's line are drafts for review (`BookCopy.showcase`).
+- **Round two** (Yulun, Oct 24 evening):
+  - **The whole screen in every frame**, so the notch is the size it is on a real Mac (180 of 1470 pt). On a phone the
+    frame is taller than the screen, and the keys and words sit in the strip under it.
+  - **Blank space between the pictures**, as Dia leaves it (16% of the screen's height).
+  - **Dark mode, in the app's own glass.** On the real Mac in Dark the island is the system's HUD blur of what's behind
+    it, black at .22 over that, and a rim of white at .14 (FoveaV1 `NativeGlass.swift`). In CSS: `blur(26px)
+    saturate(1.5) brightness(.58)` under a faint tint, matched on the app's own pictures (handoff `LOOK-04`, `LOOK-10`:
+    a sky of 80 136 188 behind reads 37 76 115 through it). The windows are dark; the wallpaper is only dimmed a
+    little, so the glass shows what it covers.
+  - **The aurora while you talk to your agent** (Yulun: "the notch actually has a dim aurora when the user is talking
+    to it"), ported from FoveaV1's `VoiceGlow.swift` (its take on libraries.dev/voice's voice-glow, the Wide style)
+    into `lib/landing/film/aurora.ts`: seven lobes of the Colorful palette inside the island's bottom edge, their
+    bloom, and the lit 1 pt edge with a white core, swelling and flowing sideways with the words (the app's driver:
+    attack 325 ms, release 860 ms, idle 0.18, hue ±24° over 12 s), dim at rest. As the app shows it
+    (`AgentEdgeLayer`): under the bar from fn ⌃ to fn ⌃ in point, at the session's foot while asking more in notch,
+    then the progress bar while the words are transcribed, filling the edge from the left. Never in Voiceflow, which
+    is white (`NATIVE.md`, round three).
+  - **The notch as FoveaV1 draws it today:** the board's bar ("Hello, Ryan." and the search, `OpenChat.swift`), the
+    request in its bubble at the right with the answer open at the left (`V2RequestBubble`), the requests' outline in
+    a 30 pt gutter, the bar's Open in Codex · Copy Answer · Answer again (Stop while it works), and flat stacks (no
+    tilt since Oct 21).
+- **Round three: the app's new look** (Yulun, Oct 28: "i have changed the look of our app ui. update our website and
+  launch video accordingly"). The notch is drawn as FoveaV1 draws it since `ddfa51a`, by parts the first screen
+  shares (`lib/landing/film/notch.ts`, `components/book/film/Notch.tsx`, `notch.css`) and with the launch film's
+  numbers:
+  - **At rest** the notch is black with its 6 pt ears. **Wings**, the listening bar, is black at the menu bar's height
+    (10 pt ears, 12 pt corners), each wing as wide as its wider side needs: "Listening", or the pile of what was taken
+    (a front card 26 × 18, two peeking out behind it), at the left; five small bars at the right (3–12 pt), and the
+    light in its bottom-right corner: three blurred lights in Multicolor's hues (pink, blue, violet), brighter and larger
+    with the voice, the edge lit along the corner (`WingsAurora`). Voiceflow has it too. Transcribing ("Thinking" in
+    Voiceflow): the word, the site's three dots, a white ring filling.
+  - **Panels** are dark glass with the notch's black blended in (the Halo: 12 pt past its edge, blurred 5), at Compact's
+    sizes: 516 pt wide (the board 316.5), content 32 pt in and 53.5 down.
+  - **Choose chat is the Sentence**: the request at 15.5 pt, a hairline, then the pile, To [chat] · thinking [default]
+    and Send ↵ in the accent, the controls' words bold over a dotted rule in the accent.
+  - **The drop zone** floats 8 pt under the bar: "Drop files here" in a dashed well; over it, lit in the accent, "Let go
+    to add it".
+  - **A session pops up by itself** when it needs you or is done (`POP_UP.md`): the notch scene now opens on Claude
+    Code's chat asking to run `npm test` (Runs, Changes, Allow: Just This Once; Deny and Run Tests in its bar), and
+    Codex's chat popping up done. Asking more by voice, Wings is drawn black on the session's glass beside the notch;
+    the session stays where it was (no band any more).
+  - The aurora along the island's edge (`aurora.ts`) is gone, from the scenes and the code.
+- **The scenes**:
+  - **point** (Stay in the window.): ⌘ and a drag over a button that sits low, again over one that's right, and a spec
+    dragged to the notch, let go in the drop zone that opens under it. "Line this up with this one, like the spec." goes to the person's own Codex, and the button
+    comes up into line, all without leaving the browser.
+  - **notch** (Keep every agent moving.): the sessions come to the notch.
+    - Claude Code's chat pops up asking to run `npm test`, with Deny and Run Tests (the verb FoveaV1's `ApprovalVerb`
+      gives it) in its bar. Run Tests is chosen; it's back at work and goes 1.2 s later.
+    - Codex's chat pops up with its finished answer.
+    - fn asks more: Wings over the session, "Listening", then Transcribing, and the question goes in, at work.
+    - The chat is pulled out by its grab bar (past 28 pt it comes out as a 313 × 431 window that follows the pointer,
+      `V2DetachedWindow`), let go at the right; the notch shows the board a moment and rests, and the answer comes in
+      in the window.
+  - **talk** (Talk, and it cleans up for you.): Voiceflow into an email, thinking out loud. A list of four, "Actually,
+    drop the video", another subject with the phone's cut-off banner taken by ⌘, then "one more for Friday: the launch
+    email". fn again: the email reads as a list of four without the video and with the launch email, the other
+    subject after it, and the banner's picture after the words (Oct 17: what was taken goes after the words). Under
+    the screen, everything said: the video struck as it's taken back, the late item marked.
+    - FoveaV1 1.0's own clean-up (`TranscriptCleaner`) only takes out ums and adds a capital and a full stop; the
+      shipping FoveaMac has a Polished mode ("de-colloquialize, smooth, and lay out the text"). The scene shows the
+      clean-up as Yulun described it.
+- **In the film, the viewer's own agents named** (Yulun, Oct 24):
+  - The opening card's small line: "Starting with your own Claude Code and Codex."
+  - The return key reads "to your Claude Code".
+  - The work tag reads "Your Claude Code at work, sped up".
+- **Checking it**:
+  - In development, `window.foveaScenes.point.seek(t)` (likewise `.notch`, `.talk`) holds a scene at any moment.
+  - `tests/landing/showcase.test.mjs` pins the timing, the island's shapes (the notch, Wings, the sentence, the board,
+    the sessions), the light in the bar's corner, and the reading time of every key and line.
+
 ## Accounts, payments and going live (Oct 21)
 
 What the site talks to, and how it reaches www.hellofovea.com. Signing in, checkout and the account were the
@@ -52,15 +221,17 @@ the full-screen one) from round three (`landing/research/hero-round3-oct17.html`
     ("Stay in your window. / Talk to any agent from the notch.", `BookCopy.hero`) in white at its foot, under the
     horizon, with nothing under it (a "Download for Mac" with its requirements was tried there on Oct 20 and taken out
     on Oct 21, Yulun). On arrival Fovea does what it does, once, as the app does it
-    (`lib/landing/film/hero.ts`, drawn by `heroes/HeroDesk.tsx` with the film's own island, keys, words, styles and
-    renderer, so the notch is the film's and the app's): fn ⌃ opens the voice bar; ⌘ ⌘ takes the whole screen (a flash, a picture of what the screen shows
-    lifting from it inset 40 pt and flying into the bar); "The future of human agent interaction is here." (Yulun's
-    words) is said, as subtitles; fn ⌃ again, Transcribing; Choose chat with "Landing page" (Claude Code) already
-    picked; Return; the board shows it at work for 3 s; the notch closes. About 13 s. Each key shows as the film shows
-    it. Nothing glows under the notch (Oct 18: the rainbow went from every hand-over and from the film's voice bar).
+    (`lib/landing/film/hero.ts`, drawn by `heroes/HeroDesk.tsx` with the showcase's notch, `components/book/film/Notch.tsx`,
+    and the film's keys, words, styles and renderer, so the notch is the app's as it is since Oct 28): fn ⌃ opens Wings,
+    "Listening"; ⌘ ⌘ takes the whole screen (a flash, a picture of what the screen shows lifting from it inset 40 pt
+    and flying into the bar's pile); "The future of human agent interaction is here." (Yulun's words) is said, as
+    subtitles; fn ⌃ again, Transcribing and its ring; Choose chat's sentence with "Landing page" (Claude Code) already
+    picked; Return; the board shows it at work for 3 s; the notch rests. About 13 s. Each key shows as the film shows
+    it. Nothing glows under the notch (Oct 18: the rainbow went from every hand-over and from the film's voice bar); since
+    Oct 28 a little light sits in Wings' corner while it listens, as in the app.
     The clock runs only while the page is in front, from when the picture has loaded; under Reduce Motion one still
     (the session on the board). On a phone the island leans in so it can be read, and the top bar steps aside while
-    Choose chat or the board is open.
+    the island is out past the notch (Wings, Choose chat, the board).
   - **Scrolling**, the stage is held (`Pin.tsx`) while the notch grows into the film's frame (the hand-over chosen on
     Oct 17, now with no glow), the picture gives way to the paper, and the film plays from its first screen; the top
     bar stays, as the page's.
@@ -71,6 +242,11 @@ the full-screen one) from round three (`landing/research/hero-round3-oct17.html`
     (Today, Soon, Next), draggable; no button, no times.
   - **Under it** "Download for Mac" and, beside it, "Learn about Fovea’s vision" (Oct 18), underlined words like the
     others (`After` in `heroes/shared.tsx`); then the foot.
+  - **The ending** (Oct 30, Yulun): the paper stops under those two links, a sheet with rounded corners lying over the
+    first screen's picture, a band of the screen (44% of it, 300 to 460 px) rather than all of it, and the foot sits
+    on the picture in white (`components/book/Ending.tsx`). The band shows the sea's middle, the horizon across it, and
+    asks for the same copy as the first screen, so the picture is already loaded. Fifteen pictures were tried there
+    side by side, the first screen's among them; Yulun chose it, and the band's height, the shortest of three.
   - **Coming back** (Oct 20, Yulun): back on `/` from another page, by "Fovea" at its top, any link home or the
     browser's Back, the reader is where they left it, not on the first screen: as far down, the first screen's scene at
     the moment it had reached, the film playing on from where it was, or held there paused or ended
@@ -92,7 +268,8 @@ the full-screen one) from round three (`landing/research/hero-round3-oct17.html`
   - The notch with the dancer three ways (`/hero/notch-wallpaper`, `-plate`, `-pointed`), and round one's six.
 - **The pictures are stand-ins** found on Cosmos and hotlinked: `lib/landing/pictures.ts` (five laptops for A, sixteen
   pictures for B and C, each with its Cosmos page) and the dancer (`lib/landing/book.ts`). None may go on the page as it
-  is: the chosen one gets licensed or commissioned, with leave to put interface over it.
+  is: the chosen one gets licensed or commissioned, with leave to put interface over it. The sea is on the page twice,
+  the first screen and the ending, so its licence covers both.
 - Kept in `landing/backups/2026-10-16-before-screening.tgz`: the hall photograph and its light (`Room.tsx`), "Watch
   the demo" with its pop-up player and dock (`WatchDemo.tsx`), the first round of page versions and the three
   directions.
@@ -323,7 +500,8 @@ app/(landing)/            the page's own root layout (Inter, the boot script), l
                           the reveal), the page, what-leaves-your-mac, share image
 app/(site)/               every other page, unchanged, under the site's own root layout (mint, Geist)
 app/global-not-found.tsx  the 404 (two root layouts leave no top-level one)
-app/icon.svg, apple-icon  the highlighter loop icon
+app/favicon.ico           the tab icon: the app's icon, the pressed loop (public/landing/SOURCES.md)
+app/apple-icon.png        the same for iOS, full-bleed at 180 px
 lib/landing/copy.ts       every word
 lib/landing/tokens.ts     Site, Reveal, and the app's island tokens (the old demo's)
 lib/landing/gradient.ts   the pictures' looks (pure, tested)

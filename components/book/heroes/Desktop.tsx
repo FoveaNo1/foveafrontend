@@ -21,7 +21,8 @@ import { After, HeroFilm, LINE, Top, box, n, opening, px } from "./shared";
 /** The picture fills the first screen as a Mac's desktop, the page's own top bar in its menu bar, the line at its
  *  foot; scrolling, the notch grows into the film's frame (the hand-over chosen on Oct 17, Notch.tsx, with no glow),
  *  the picture gives way to the paper, and the film plays from its first screen. Come back to from another page
- *  (Oct 20), it opens where the reader left it: as far down, the scene and the film as they were. */
+ *  (Oct 20), it opens where the reader left it: as far down, the scene and the film as they were. What follows it is
+ *  the page's (Oct 24: the showcase, then the way in; components/book/Landing.tsx). */
 export function OnDesktop({ pic, at }: { pic: Scene; at?: number }) {
   const frame = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
@@ -85,7 +86,6 @@ export function OnDesktop({ pic, at }: { pic: Scene; at?: number }) {
         <span className="hx-shape" aria-hidden="true" />
         <div ref={frame} className="hx-frame hx-late"><HeroFilm play={open} resume={back?.film} onPlace={(f) => { here.film = f; }} /></div>
       </Pin>
-      <After />
     </>
   );
 }

@@ -1,39 +1,38 @@
 // The first screen's scene (Oct 18): a Mac's desktop, the chosen picture its wallpaper, and Fovea doing what it does,
-// once, on arrival. It is drawn with the film's own parts and numbers, so the notch is Fovea 1.0's as the film draws it
-// (tokens.ts, island.ts; FoveaV1 WorkbenchTokens.swift and the pictures DSP-01, -02, -03, -10): fn ⌃ opens the voice
-// bar; ⌘ ⌘ takes the whole screen, a flash, and its picture flies into the bar; "The future of human agent interaction
-// is here." is said; fn ⌃ again, Transcribing; Choose chat, the chat already picked; Return sends; the board holds the
-// session at work for 3 s, then the notch closes. Each key shows as the film shows it, the words as its subtitles, and
-// nothing glows under the notch (Yulun, Oct 18). Pure: the scene at t. components/book/heroes/HeroDesk.tsx plays it once;
-// under Reduce Motion it shows one still, the session on the board.
+// once, on arrival, with its notch as FoveaV1 draws it since Oct 28 (notch.ts: Wings, the Halo, the Sentence, one
+// board): fn ⌃ opens Wings, "Listening"; ⌘ ⌘ takes the whole screen, a flash, and its picture flies into the bar's
+// pile; "The future of human agent interaction is here." is said; fn ⌃ again, Transcribing and its ring; Choose
+// chat's sentence, the chat already picked; Return sends; the board holds the session at work for 3 s, then the notch
+// rests. Each key shows as the film shows it, the words as its subtitles. Pure: the scene at t.
+// components/book/heroes/HeroDesk.tsx plays it once; under Reduce Motion it shows one still, the session on the board.
 
 import { clamp, ease, mix, seg, spring, window01 } from "./ease";
-import { bars, islandPath, outlineAt, rimPath, type OutlineKey } from "./island";
-import { level, lineOpacity, shown, speak } from "./speech";
-import { CAPTURE, OUTLINE, SPRING, STAGE, glassAt } from "./tokens";
-import { STACK, WAVE_X, WIDE, earsPath, glow, keys, lerpRect, live, pathAt, press, set, slotP, type Ctx, type Frame, type Span } from "./film";
+import { outlineAt, type OutlineKey } from "./island";
+import { lineOpacity, shown, speak } from "./speech";
+import { CAPTURE, NOTCH, SPRING, STAGE } from "./tokens";
+import { WIDE, glow, keys, lerpRect, live, press, set, type Ctx, type Frame, type Span } from "./film";
+import { NOUT, SIDE, barAt, bodyOf, boardH, notch, pileSlot, pileW, sentenceH, wings } from "./notch";
 import type { Agent, Rect, Step } from "./content";
 
 /** What is said (Yulun's words, Oct 18). */
 export const HERO_LINE = "The future of human agent interaction is here.";
-/** Where it goes: the chat Fovea picks (the agent working on the landing page), the others it suggests, and what the
- *  session is doing on the board once it is sent. */
-export const HERO_CHAT: { agent: Agent; name: string; chips: { agent: Agent; name: string }[]; step: Step } = {
+/** Where it goes: the chat Fovea picks (the agent working on the landing page), and what the session is doing on the
+ *  board once it is sent. */
+export const HERO_CHAT: { agent: Agent; name: string; step: Step } = {
   agent: "claude-code",
   name: "Landing page",
-  chips: [{ agent: "claude-code", name: "Landing page" }, { agent: "codex", name: "Pricing page" }, { agent: "claude-code", name: "New chat" }],
   step: { glyph: "read", verb: "Reading", obj: "the screenshot" },
 };
 
 /** The scene's beats, seconds from arrival. */
 export const HB = {
-  /** fn ⌃: the voice bar opens as the key is let go */
+  /** fn ⌃: Wings opens as the key is let go */
   fn: 0.8,
   /** ⌘ ⌘: the whole screen (the second press within 0.35 s) */
   cmd2: [2.2, 2.45],
   /** the flash, and the picture lifting from the screen inset 40 pt… */
   cap: 2.65,
-  /** …which flies into the bar (CAPTURE.flight) */
+  /** …which flies into the bar's pile (CAPTURE.flight) */
   fly: 3.1,
   /** the words, one every 0.32 s */
   say: 3.95,
@@ -41,7 +40,7 @@ export const HB = {
   done: 6.85,
   /** Choose chat, the chat already picked */
   choose: 7.95,
-  /** Return sends; the board holds the session 3 s, then the notch closes */
+  /** Return sends; the board holds the session 3 s, then the notch rests */
   ret: 9.3,
   close: 12.5,
   end: 12.8,
@@ -52,18 +51,23 @@ export const HB = {
 /** The words, as the film times speech. */
 export const HERO_SPEECH = speak("hero", HB.say, HERO_LINE);
 
+/** When the picture has landed: the bar's left is the pile from then. */
+const LANDED = HB.fly + CAPTURE.flight;
 const I = (at: number, to: OutlineKey["to"], dur: number): OutlineKey => ({ at, to, dur });
 const ISLAND: OutlineKey[] = [
-  I(0, OUTLINE.rest, 0),
-  I(HB.fn + press, OUTLINE.bar, SPRING.barOpen),
-  I(HB.choose, OUTLINE.choose, SPRING.resize),
-  I(HB.ret + press, OUTLINE.board(1, 1), SPRING.resize),
-  I(HB.close, OUTLINE.rest, SPRING.close),
+  I(0, NOUT.rest, 0),
+  I(HB.fn + press, NOUT.wings(SIDE.listen), SPRING.barOpen),
+  I(LANDED, NOUT.wings(pileW(1)), SPRING.resize),
+  I(HB.done + press, NOUT.wings(SIDE.trans, SIDE.ring), SPRING.resize),
+  I(HB.choose, NOUT.panel(sentenceH(1)), SPRING.open),
+  I(HB.ret + press, NOUT.board(boardH(1)), SPRING.resize),
+  I(HB.close, NOUT.rest, SPRING.close),
 ];
-export const HERO_SLOTS: Record<"voice" | "trans" | "choose" | "board", Span[]> = {
-  voice: [[HB.fn + press, HB.done + press]],
-  trans: [[HB.done + press, HB.choose, 0.3]],
-  choose: [[HB.choose, HB.ret + press, 0.3]],
+/** The bar listening, then transcribing; the panels that open under the notch. */
+const VOICE: Span[] = [[HB.fn + press, HB.done + press]];
+const TRANS: Span[] = [[HB.done + press, HB.choose, 0.2]];
+export const HERO_SLOTS: Record<"sent" | "board", Span[]> = {
+  sent: [[HB.choose, HB.ret + press, 0.3]],
   board: [[HB.ret + press, HB.close, 0.24]],
 };
 
@@ -79,42 +83,34 @@ const MENU = 32;
 export function heroAt(t: number, opts: { reduced?: boolean; screen?: Rect } = {}): Frame {
   const f: Frame = { t, chapter: 0, shot: "hero", aim: WIDE, k: {} };
   const c: Ctx = { f, t, reduced: opts.reduced };
-  // the scene says when a panel is open under the notch (a phone's top bar steps aside for it); the board's working
+  // the scene says when the island is out past the notch (a phone's top bar steps aside for it); the board's working
   // ring turns with the clock, given to the board alone (on the root it would restyle the whole scene each frame)
-  const wide = heroOutline(t).w > OUTLINE.bar.w + 1;
-  set(c, "hd", { st: wide ? "open" : "" });
+  const o = heroOutline(t);
+  set(c, "hd", { st: o.w > NOUT.rest.w + 1 || o.h > NOTCH.h + 1 ? "open" : "" });
   keys(c, [["fn", HB.fn], ["cmd2", HB.cmd2[0], HB.cmd2[1]], ["fnDone", HB.done], ["ret", HB.ret]]);
 
-  // the island: its outline, glass, ears and rim, the contents each in its own time, the notch on top
-  const o = heroOutline(t);
-  const x0 = STAGE.w / 2 - o.w / 2, g = glassAt(o.h);
-  set(c, "is:glass", { x: x0 + o.tr, w: o.w - 2 * o.tr, h: o.h + 6, o: g, v: { "--br": `${o.br.toFixed(1)}px` } });
-  set(c, "is:ears", { x: x0, w: o.w, h: o.tr + 1, o: g, d: earsPath(o) });
-  set(c, "is:rim", { x: x0, w: o.w, h: o.h, o: g, d: rimPath(o) });
-  set(c, "is:clip", { clip: `path("${pathAt(islandPath(o), x0)}")` });
-  for (const [id, spans] of Object.entries(HERO_SLOTS)) set(c, `is:${id}`, slotP(id, spans, t, opts.reduced));
+  // the island: the notch at rest, Wings while it listens and transcribes, the sentence, the board
+  notch(c, ISLAND, HERO_SLOTS);
+  const body = bodyOf(o);
+  wings(c, "wb", body, barAt(t, VOICE, TRANS, [HERO_SPEECH], { pileAt: LANDED, reduced: opts.reduced }));
   if (live(HERO_SLOTS.board, t)) set(c, "is:board", { v: { "--t": t.toFixed(3) } });
-  if (live(HERO_SLOTS.voice, t)) bars(level([HERO_SPEECH], t), t).forEach((h, i) => set(c, `vb:b${i}`, { h }));
-  if (live(HERO_SLOTS.trans, t)) set(c, "tr:dots", { st: String(Math.floor(t * 3) % 3) });
 
-  // ⌘ ⌘: a flash; the picture of the whole screen lifts from the screen inset 40 pt, then flies into the bar
+  // ⌘ ⌘: a flash; the picture of the whole screen lifts from the screen inset 40 pt, then flies into the bar's pile
   const fl = window01(t, HB.cap, HB.cap + CAPTURE.flash, 0.02, CAPTURE.flash - 0.02);
   if (fl > 0) set(c, "flash:screen", { o: fl * 0.35 });
-  if (t >= HB.cap && t < HB.fly + CAPTURE.flight + 0.05 && !opts.reduced) {
+  if (t >= HB.cap && t < LANDED + 0.05 && !opts.reduced) {
     const sc = opts.screen ?? { x: 0, y: 0, w: STAGE.w, h: STAGE.h }, i = CAPTURE.screenInset;
     const from: Rect = { x: sc.x + i, y: sc.y + i, w: sc.w - 2 * i, h: sc.h - 2 * i };
-    const p = t < HB.fly ? 0 : spring(seg(t, HB.fly, HB.fly + CAPTURE.flight));
-    const r = lerpRect(from, STACK[0], p);
+    const p = t < HB.fly ? 0 : spring(seg(t, HB.fly, LANDED));
+    const r = lerpRect(from, pileSlot(0, body), p);
     // the picture keeps the menu bar along its top, at the picture's own scale
-    set(c, "scr:fly", { x: r.x, y: r.y, w: r.w, h: r.h, o: ease.out(seg(t, HB.cap, HB.cap + 0.2)), v: { "--strip": `${((MENU * r.w) / sc.w).toFixed(2)}px`, "--rad": `${mix(10, 6, p).toFixed(2)}px` } });
+    set(c, "scr:fly", { x: r.x, y: r.y, w: r.w, h: r.h, o: ease.out(seg(t, HB.cap, HB.cap + 0.2)), v: { "--strip": `${((MENU * r.w) / sc.w).toFixed(2)}px`, "--rad": `${mix(10, 4.5, p).toFixed(2)}px` } });
   }
-  if (t >= HB.fly + CAPTURE.flight) set(c, "vb:t0", { o: 1 });
-  // the waveform moves aside for it from the moment it starts flying
-  const wx = t < HB.fly ? WAVE_X[0] : mix(WAVE_X[0], WAVE_X[1], opts.reduced ? 1 : spring(seg(t, HB.fly, HB.fly + SPRING.wave)));
-  set(c, "vb:wave", { x: wx - WAVE_X[0] });
+  if (t >= LANDED) set(c, "wb:c0", { o: 1 });
 
-  // Choose chat: the chat it belongs to is already picked, and lit a moment
+  // Choose chat: the chat it belongs to is already picked, and lit a moment; Send goes down with Return
   glow(c, "ch:glow", HB.choose + 0.35);
+  if (t >= HB.ret && t < HB.ret + press) set(c, "is:sent:send", { st: "down" });
 
   // the words, as subtitles, each as it is said
   const lo = lineOpacity(HERO_SPEECH, t);

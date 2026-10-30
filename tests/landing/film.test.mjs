@@ -71,7 +71,7 @@ const held = (key, min, step = 0.05, from = 0, to = DURATION) => {
 };
 
 test("every card stays whole long enough to read", () => {
-  for (const k of ["cd:title", "cd:eyes", "cd:eyesSmall", "cd:agents", "cd:agentsSmall", "cd:next", "cd:bar", "cd:wear", "cd:wearSmall", "cd:you", "cd:last"]) assert.equal(held(k, 1.25), true, k);
+  for (const k of ["cd:title", "cd:titleSmall", "cd:eyes", "cd:eyesSmall", "cd:agents", "cd:agentsSmall", "cd:next", "cd:bar", "cd:wear", "cd:wearSmall", "cd:you", "cd:last"]) assert.equal(held(k, 1.25), true, k);
 });
 
 test("every spoken line, once whole, stays on screen", () => {

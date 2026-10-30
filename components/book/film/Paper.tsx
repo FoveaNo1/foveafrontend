@@ -17,7 +17,11 @@ export function PaperLayer() {
     <div data-k="paper" className="paper">
       <span data-k="pnotch" className="pnotch" />
       {/* the opening line, a sentence a line */}
-      <Card k="cd:title" className="big title" text={CARDS.title.text.split(/(?<=\.) /).map((s, i) => <span key={i}>{s}</span>)} />
+      <Card k="cd:title" className="big title" text={<>
+        {CARDS.title.text.split(/(?<=\.) /).map((s, i) => <span key={i}>{s}</span>)}
+        {/* whose agents, right under the line however it wraps (Oct 24) */}
+        <span data-k="cd:titleSmall" className="pc-sub">{CARDS.title.small}</span>
+      </>} />
       <p data-k="cd:eyes" className="pc big">
         {CARDS.eyes.text.replace(/eyes\.$/, "")}<span className="eyes">eyes<span data-k="cd:eyesRing" className="pring" /></span>.
       </p>
@@ -88,7 +92,7 @@ export function Over() {
         ))}
       </div>
       <span data-k="tag:preview" className="tag">In preview</span>
-      <span data-k="tag:fast" className="tag tag2">The agent’s work, sped up</span>
+      <span data-k="tag:fast" className="tag tag2">Your Claude Code at work, sped up</span>
       <span data-k="tag:soon" className="tag">Coming soon</span>
       <span data-k="tag:next" className="tag">Next</span>
       <div className="subs">

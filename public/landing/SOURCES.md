@@ -1,7 +1,11 @@
 # Landing page assets
 
-`app/icon.svg` is Fovea's app icon, the highlighter loop (app-ui-v1 Brand/fovea-app-icon.svg), and
-`app/apple-icon.png` the icon's body drawn full-bleed on its ivory at 180 px. The page's pictures
+The tab icon is Fovea's app icon, the pressed loop (since Oct 13; app-ui-v1 Sources/FoveaCore/Resources/Brand,
+SOURCES.md there). `app/favicon.ico` holds the app's own 16 and 32 px icons (`AppIcon.iconset`, the artwork drawn for
+small sizes) and a 48 made the same way: the app's 1024 icon with the small-size artwork
+(`Source/fovea-pressed-loop-small.png`) laid into its body, halved down to 48. `app/apple-icon.png` is the icon's
+artwork full-bleed (`Source/fovea-pressed-loop.png`) at 180 px; iOS rounds it. There's no SVG: the icon is rendered,
+not drawn. The highlighter loop's SVG (Oct 10) was the tab icon until Oct 30. The page's pictures
 are drawn live in code (lib/landing/gradient.ts); there are no image files for them.
 
 The agent marks below are on page 2, beside "works with Claude Code and Codex". The photos are the
