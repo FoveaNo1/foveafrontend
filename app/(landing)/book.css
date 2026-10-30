@@ -467,6 +467,21 @@ a, button, input, select, label { -webkit-tap-highlight-color: transparent; touc
 .hx-dl { margin-top: 28px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 40px; text-align: center; }
 .hx-dl.left { display: grid; justify-items: start; gap: 8px; margin-top: 22px; font-family: var(--ui); font-size: 12px; color: var(--soft); text-align: left; }
 
+/* Where the landing page ends (Oct 30, Yulun; components/book/Ending.tsx): the page is a sheet over the first screen's
+   picture, its bottom corners rounded, a soft shadow under its edge; the picture is a band of the screen (44% of it, 300
+   to 460 px: never all of it) that runs up behind the corners, and the page's foot sits on it in white, a light scrim
+   under the words. The band's colour is the picture's (the sea's, round the horizon), for while it loads. */
+.hv-desktop { --end-r: clamp(22px, 2.6vw, 36px); }
+.hx-after.sheet-end { position: relative; z-index: 2; background: var(--paper); border-radius: 0 0 var(--end-r) var(--end-r);
+  padding-bottom: clamp(96px, 14vh, 150px); box-shadow: 0 22px 44px -26px rgb(0 0 0 / .28); }
+.end-pic { position: relative; z-index: 1; margin-top: calc(-1 * var(--end-r)); height: clamp(300px, 44vh, 460px); overflow: hidden;
+  display: flex; align-items: flex-end; background: #A3B09D; }
+.end-pic > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.end-scrim { position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: linear-gradient(to top, rgb(0 0 0 / .3), rgb(0 0 0 / 0)); pointer-events: none; }
+.end-foot { position: relative; width: 100%; }
+.end-pic .site-foot { padding-top: 0; padding-bottom: clamp(22px, 4vh, 36px); color: rgb(255 255 255 / .84); text-shadow: 0 1px 10px rgb(0 0 0 / .18); }
+@media (hover: hover) and (pointer: fine) { .end-pic .site-foot a:hover { color: #fff; } }
+
 /* ———————————— 1 · The notch opens: a menu bar, its notch, the line; the notch becomes the frame */
 .hv-notch .pin-stage { background: var(--paper); }
 .hx-menubar { position: absolute; left: 0; right: 0; top: 0; z-index: 4; height: 34px; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--g); }

@@ -242,6 +242,11 @@ the full-screen one) from round three (`landing/research/hero-round3-oct17.html`
     (Today, Soon, Next), draggable; no button, no times.
   - **Under it** "Download for Mac" and, beside it, "Learn about Fovea’s vision" (Oct 18), underlined words like the
     others (`After` in `heroes/shared.tsx`); then the foot.
+  - **The ending** (Oct 30, Yulun): the paper stops under those two links, a sheet with rounded corners lying over the
+    first screen's picture, a band of the screen (44% of it, 300 to 460 px) rather than all of it, and the foot sits
+    on the picture in white (`components/book/Ending.tsx`). The band shows the sea's middle, the horizon across it, and
+    asks for the same copy as the first screen, so the picture is already loaded. Fifteen pictures were tried there
+    side by side, the first screen's among them; Yulun chose it, and the band's height, the shortest of three.
   - **Coming back** (Oct 20, Yulun): back on `/` from another page, by "Fovea" at its top, any link home or the
     browser's Back, the reader is where they left it, not on the first screen: as far down, the first screen's scene at
     the moment it had reached, the film playing on from where it was, or held there paused or ended
@@ -263,7 +268,8 @@ the full-screen one) from round three (`landing/research/hero-round3-oct17.html`
   - The notch with the dancer three ways (`/hero/notch-wallpaper`, `-plate`, `-pointed`), and round one's six.
 - **The pictures are stand-ins** found on Cosmos and hotlinked: `lib/landing/pictures.ts` (five laptops for A, sixteen
   pictures for B and C, each with its Cosmos page) and the dancer (`lib/landing/book.ts`). None may go on the page as it
-  is: the chosen one gets licensed or commissioned, with leave to put interface over it.
+  is: the chosen one gets licensed or commissioned, with leave to put interface over it. The sea is on the page twice,
+  the first screen and the ending, so its licence covers both.
 - Kept in `landing/backups/2026-10-16-before-screening.tgz`: the hall photograph and its light (`Room.tsx`), "Watch
   the demo" with its pop-up player and dock (`WatchDemo.tsx`), the first round of page versions and the three
   directions.
@@ -494,7 +500,8 @@ app/(landing)/            the page's own root layout (Inter, the boot script), l
                           the reveal), the page, what-leaves-your-mac, share image
 app/(site)/               every other page, unchanged, under the site's own root layout (mint, Geist)
 app/global-not-found.tsx  the 404 (two root layouts leave no top-level one)
-app/icon.svg, apple-icon  the highlighter loop icon
+app/favicon.ico           the tab icon: the app's icon, the pressed loop (public/landing/SOURCES.md)
+app/apple-icon.png        the same for iOS, full-bleed at 180 px
 lib/landing/copy.ts       every word
 lib/landing/tokens.ts     Site, Reveal, and the app's island tokens (the old demo's)
 lib/landing/gradient.ts   the pictures' looks (pure, tested)
