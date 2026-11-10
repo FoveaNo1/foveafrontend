@@ -2,32 +2,40 @@
 // film, recorded (landing/research/launch-film, its README), in place of the film drawn live in the page (film.ts,
 // Film.tsx: on no page any more). v6 (Oct 27, Yulun's notes): a keyboard under the old way's typing, its keys lit as
 // they're typed; FoveaOS right after Next (Spotify opened, a jazz playlist found and played, by voice); and the
-// hardware card's "Fovea is not making another pair of glasses, rings, or necklaces." v7 (Oct 28, Yulun: "i have
+// hardware card's line that Fovea isn't making glasses, rings or necklaces (gone since v9). v7 (Oct 28, Yulun: "i have
 // changed the look of our app ui. update our website and launch video accordingly"): the same film with the notch as
 // FoveaV1 draws it now: Wings (a black bar at the menu bar's height, "Listening", five small bars and a little light in
 // its corner; Transcribing and its ring), the drop zone under it, Choose chat as one sentence, the board and the
 // sessions in dark glass blended into the notch, and Claude Code's answer popping up by itself when it's done. Every
-// key that sends reads "enter". Made small for the page from
-// its 4K master by webcut (landing/README.md): HEVC at 1440p for a wide screen and at 720p for a phone, and H.264 at
+// key that sends reads "enter". v8 (Nov 8, Yulun: "our app's ui has changed fundamentally ... update the film as
+// well"): the notch as the app draws it now (lib/landing/film/notch.ts): everything under it black, six bars, Ask your
+// agent lit in Sea Glass and dictation plain, what's taken going to the notch in one move with the pile's count,
+// Choose chat at its usual size and every chat a size up, the board as Focus, marks in one ink. v9 (Nov 9, Yulun: "we
+// are actually thinking of making glasses, so remove not making glasses"): v8 with the hardware card's one line alone.
+// Film A (Nov 9, Yulun: "change this onto the landing page"), "Another Way to Point": an animation of Fovea for Mac in
+// the Native look, on Yulun's wallpaper only (landing/research/launch-film/comp/filmA.js). What Fovea does today (the
+// notch, ⌘ and ⌘⌘, choosing the chat with ⌃⌃ on the app's every-chat page, the board as the app has it, dictation), then
+// eye tracking in beta (routing marked Coming), then what's coming (Fovea Bar, something you wear), then the app's icon
+// and "1 month free trial".
+// Made small for the page from its 4K master by webcut (landing/README.md): HEVC at 1440p for a wide screen and at 720p for a phone, and H.264 at
 // 1080p for a browser without HEVC; all at the film's 60 fps, the index first so it plays before the rest has come.
 // Its sound is Scott Buckley's "Petrichor" (CC BY 4.0), credited under the film. Pure.
 
 const DIR = "/landing/film";
 
 export const FILM_VIDEO = {
-  duration: 121.0,
-  /** The film's parts, named as its own cards name them: today's way ("Today, it takes all this."), Fovea, Next. */
-  chapters: [{ at: 0, title: "Today" }, { at: 14.5, title: "Fovea" }, { at: 69.9, title: "Next" }],
+  duration: 91.0,
+  /** The film's parts: what your hand does today, what your eyes do (beta), what's coming. */
+  chapters: [{ at: 0, title: "Your hand" }, { at: 42.8, title: "Your eyes" }, { at: 78.4, title: "Coming" }],
   /** In the order a browser tries them: the first whose `media` matches and whose `type` it can play. Each `type`
    *  is the file's own (tests/landing/video.test.mjs reads it from the file). */
   sources: [
-    { src: `${DIR}/fovea-film-v7-1440.mp4`, type: 'video/mp4; codecs="hvc1.1.6.L150.B0, mp4a.40.2"', media: "(min-width: 900px)" },
-    { src: `${DIR}/fovea-film-v7-720.mp4`, type: 'video/mp4; codecs="hvc1.1.6.L120.B0, mp4a.40.2"', media: "(max-width: 899px)" },
-    { src: `${DIR}/fovea-film-v7-1080.mp4`, type: 'video/mp4; codecs="avc1.64002A, mp4a.40.2"' },
+    { src: `${DIR}/fovea-film-a-1440.mp4`, type: 'video/mp4; codecs="hvc1.1.6.L150.B0, mp4a.40.2"', media: "(min-width: 900px)" },
+    { src: `${DIR}/fovea-film-a-720.mp4`, type: 'video/mp4; codecs="hvc1.1.6.L120.B0, mp4a.40.2"', media: "(max-width: 899px)" },
+    { src: `${DIR}/fovea-film-a-1080.mp4`, type: 'video/mp4; codecs="avc1.64002A, mp4a.40.2"' },
   ],
-  /** The title card, for where nothing plays until it is asked to (Reduce Motion). The film itself opens on black,
-   *  as the notch it grows from is. */
-  poster: `${DIR}/fovea-film-v7-poster.jpg`,
+  /** The title card, for where nothing plays until it is asked to (Reduce Motion). */
+  poster: `${DIR}/fovea-film-a-poster.jpg`,
   music: {
     title: "Petrichor", by: "Scott Buckley", href: "https://www.scottbuckley.com.au",
     license: "CC BY 4.0", licenseHref: "https://creativecommons.org/licenses/by/4.0/",
@@ -36,15 +44,13 @@ export const FILM_VIDEO = {
 
 /** The film in words, for screen readers: its cards, what is said, and what happens between. */
 export const FILM_VIDEO_TRANSCRIPT = [
-  "“Imagine interacting with agents, effortlessly.”",
-  "A shop's checkout, its pay button running off its card. “Today, it takes all this.”: a screenshot, finding it in Finder, switching through every agent's window, typing it all out, key after key lighting up on the keyboard, slowly and then faster and faster. “Your agents only know what you tell them.”",
-  "Fovea. “Stay in your window, dispatch any agent from the notch.”",
-  "In Safari, someone presses fn and control, and the notch widens into a black bar that says Listening. They say “The pay button looks like this. Make it match this, and use this icon.”, taking the broken button with ⌘, selecting the spec's lines and dragging the lock icon to the drop zone that opens under the notch, each landing in the bar; fn and control again, Transcribing, and Choose chat reads as one sentence: to Checkout polish in Claude Code; enter sends it there. Claude Code works, sped up; the page reloads with the button as the spec has it, and Claude Code's answer pops up from the notch by itself: “Done. The pay button is full width, 48 pt tall, in ink, with the lock before the label, as the spec has it.” No screenshots. No switching. No explaining.",
-  "Then the whole screen, with ⌘ twice, and a question, “What's wrong with this chart?”, moved to Codex's Signups dashboard with a click on the chat's name and another on its suggestion. Back in seconds, the answer opens in the notch: “Nothing's wrong with signups. The axis starts at 2,270, so a 3% dip on Thursday looks like a crash. Start it at zero and the week is flat.”",
-  "Wherever you type: dictated into Slack, “Fix is live. Can you check it on your phone?”",
-  "“It works with the agents you already use.” “Stay in the window you are in.”",
-  "Next. FoveaOS. “Say it, and your Mac does it.” In Safari, someone presses fn and control and says “Open Spotify, find a jazz playlist, and play it.”; the notch ticks off the three as FoveaOS does them: Spotify opens, finds Late Night Jazz and plays Miles Davis's So What, with nothing clicked or typed.",
-  "“All your agents, as one.” One sentence, “Fix the bug Dana found, and book dinner for Friday.”, finds its own chats while you watch: Checkout polish in Claude Code, thinking hard, and Dinner plans in Manus. “And soon, your eyes. Not a cursor but a brand new way of capturing attention.”: “Add this, and these, to the update for Maya.”, where the eyes rested. “There's only so much hardware one can wear. Fovea is not making another pair of glasses, rings, or necklaces.” “Talk to your agents from anywhere.”: “Did Dana like the render?” “She loved it. She wants a blue one too.” “It lives the day with you. Fovea knows the rest.”",
-  "Fovea. The last layer between you and your agents. Stay tuned for the update: hellofovea.com. Everything after Next is in development.",
+  "An animation of Fovea for Mac, at real speed except where marked.",
+  "In Safari, a shop's checkout has a small pay button that doesn't match the spec beside it. Someone presses fn and control, and the notch widens into a black bar that says Listening. They say “Make this match this.”, taking the button with ⌘ and a drag, then the spec's lines; each lands in the bar. fn and control again, and Choose chat opens on the chat they last sent to. They press control twice and the notch drops down to every chat: suggested ones, a new chat with Fovea, Claude Code or Codex, and the rest by today, this week and earlier. They pick Checkout polish in Claude Code; enter sends it there. The board shows the sessions that are running. Claude Code works, sped up, and the page reloads with the button as the spec has it. “Stay in your window. Talk to any agent from the notch.”",
+  "Then the whole screen, with ⌘ twice, and a question, “What's wrong with this chart?”. Control twice again, and they pick Signups dashboard in Codex. Back in seconds, the answer opens in the notch: “The axis starts at 2,270, so Thursday's 3% dip looks like a crash. The dip is real, though: sign-ups fell right after Thursday's deploy.”",
+  "Claude Code asks to run its tests; 1 allows it. Dictated into Messages: “Fix is live. Can you check it on your phone?” Claude Code is done: “All 42 tests pass.”",
+  "“Your hand points. So do your eyes.” Eye tracking, in beta: they look at the chart and then at a merged change, saying “Why did this chart drop? Was it this change?”, and Fovea takes what they were looking at, with the pointer never moving. “Today, you pick the chat. Coming: Fovea picks the chat and the model for you.” “Your eyes never click. They only say what “this” means.”",
+  "With Mail in front, they look at Messages and say “Running five minutes late.”; the words go where they look. “Paste where you look.” The Gaze Collector: “Fitted to your eyes in ten minutes. In beta.”",
+  "Coming: Fovea Bar. Then, something you wear.",
+  "Fovea, its app icon. 1 month free trial. Fovea is not affiliated with the companies named.",
   `Music: “${FILM_VIDEO.music.title}” by ${FILM_VIDEO.music.by}.`,
 ].join(" ");

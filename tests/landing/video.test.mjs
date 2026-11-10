@@ -56,7 +56,7 @@ function mp4(path) {
 
 test("the film's parts start at its start, in order, each long enough to name, as its own cards name them", () => {
   const { chapters, duration } = FILM_VIDEO;
-  assert.deepEqual([...chapters.map((c) => c.title)], ["Today", "Fovea", "Next"]);
+  assert.deepEqual([...chapters.map((c) => c.title)], ["Your hand", "Your eyes", "Coming"]);
   assert.equal(chapters[0].at, 0);
   chapters.forEach((c, i) => {
     const stop = chapters[i + 1]?.at ?? duration;
@@ -104,15 +104,13 @@ test("the title card stands in where nothing plays by itself; the music is credi
   const m = FILM_VIDEO.music;
   assert.deepEqual([m.title, m.by, m.license], ["Petrichor", "Scott Buckley", "CC BY 4.0"]);
   assert.match(m.licenseHref, /creativecommons\.org\/licenses\/by\/4\.0/);
-  assert.ok(FILM_VIDEO_TRANSCRIPT.startsWith("“Imagine interacting with agents, effortlessly.”"));
+  assert.ok(FILM_VIDEO_TRANSCRIPT.startsWith("An animation of Fovea for Mac"));
   assert.ok(FILM_VIDEO_TRANSCRIPT.includes("Petrichor") && FILM_VIDEO_TRANSCRIPT.includes("Scott Buckley"));
   assert.ok(FILM_VIDEO_TRANSCRIPT.includes("enter sends it") && !/\breturn\b/i.test(FILM_VIDEO_TRANSCRIPT), "the key that sends is enter");
-  // Yulun's notes (Oct 27): FoveaOS right after Next, and the hardware card's line
-  const next = FILM_VIDEO_TRANSCRIPT.indexOf("Next."), os = FILM_VIDEO_TRANSCRIPT.indexOf("FoveaOS");
-  assert.ok(next >= 0 && os > next && os < FILM_VIDEO_TRANSCRIPT.indexOf("All your agents, as one."), "FoveaOS comes right after Next");
-  assert.ok(FILM_VIDEO_TRANSCRIPT.includes("Open Spotify, find a jazz playlist, and play it."));
-  assert.ok(FILM_VIDEO_TRANSCRIPT.includes("Fovea is not making another pair of glasses, rings, or necklaces."));
-  // v7 (Oct 28): the notch as the app draws it now: Wings listening, Choose chat's sentence, the answer popping up
-  assert.ok(FILM_VIDEO_TRANSCRIPT.includes("a black bar that says Listening") && FILM_VIDEO_TRANSCRIPT.includes("reads as one sentence"));
-  assert.ok(FILM_VIDEO_TRANSCRIPT.includes("pops up from the notch by itself"));
+  // Film A (Nov 9): the chat is chosen by hand (control twice, every chat); routing is only Coming; eye tracking in beta
+  assert.ok(FILM_VIDEO_TRANSCRIPT.includes("They press control twice and the notch drops down to every chat"));
+  assert.ok(FILM_VIDEO_TRANSCRIPT.includes("Coming: Fovea picks the chat and the model for you."));
+  assert.ok(FILM_VIDEO_TRANSCRIPT.includes("in beta"));
+  assert.ok(FILM_VIDEO_TRANSCRIPT.includes("1 month free trial"));
+  assert.doesNotMatch(FILM_VIDEO_TRANSCRIPT, /glasses|necklace/i);
 });
