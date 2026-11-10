@@ -2,6 +2,15 @@
 
 ## The film, recorded (Oct 25)
 
+**Film A (Nov 9, night)** (Yulun: "pretty awesome, change this onto the landing page"): the page now plays film A,
+"Another Way to Point" (1:31, `landing/research/launch-film/comp/filmA.js`, master `out/fovea-film-a3-4k.mp4`), in
+place of v9. An animation of Fovea for Mac in the Native look on Yulun's wallpaper alone: ⌘ and ⌘⌘ taken to the notch,
+the chat chosen by hand with ⌃⌃ on the app's every-chat page (IslandChatStageView), the board as the app has it, a
+question to Codex, dictation; then eye tracking (beta), with routing "Coming"; then Fovea Bar and something you wear,
+"Coming"; then the app's icon and "1 month free trial". Chapters: Your hand · Your eyes · Coming. Copies made as below
+into `out/web-a3/` (1440p 35.0 MB, 720p 15.1 MB, 1080p H.264 35.3 MB) and `public/landing/film/fovea-film-a-*`; the
+poster is the title card at 16.8 s (1920 wide, JPEG 72, 272 KB). The older copies stay in `public/landing/film/`, unused.
+
 **v7 (Oct 28), the app's new look** (Yulun: "i have changed the look of our app ui. update our website and launch
 video accordingly"): the same 2:01.0 film, cut and music, with the notch redrawn as FoveaV1 draws it since Oct 28
 (app-ui-v1 `ddfa51a`: Wings, the Halo, the Sentence, one board, pop-ups; checked side by side with the app's own
