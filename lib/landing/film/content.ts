@@ -76,8 +76,8 @@ export const CARDS = {
   agents: { text: "And all your agents, as one.", small: "Fovea automatically routes the session and the model for you." },
   next: { text: BookCopy.s2.lead },
   bar: { text: BookCopy.s2.items[0][0], small: "A small bar that attaches to any computer, a laptop, a desktop or a tablet." },
-  /** Not glasses: the team is making no more of them, so the card says so. */
-  wear: { text: BookCopy.s2.items[1][0], small: "Not a pair of glasses. Not a ring. And not a necklace." },
+  /** One line, nothing under it saying what it isn’t (Nov 9, Yulun: "we are actually thinking of making glasses"). */
+  wear: { text: BookCopy.s2.items[1][0] },
   saw: { text: "what you saw, what you heard, what you said," },
   you: { text: BookCopy.s3.title },
   last: { text: BookCopy.last },
@@ -110,7 +110,8 @@ export const line = (id: string) => LINES.find((l) => l.id === id)!;
  *  ⌘ takes part of the screen, one press and a drag; ⌘ pressed twice takes the whole screen. Words and files need no
  *  key: words selected while Fovea listens are taken, and a file dragged onto the notch. */
 export const KEYS = {
-  fn: { caps: ["fn", "⌃"], label: "talk" },
+  // the three keys (Nov 7): fn says it where you're typing, fn ⌃ asks your agent, ⌃ makes the notch bigger
+  fn: { caps: ["fn", "⌃"], label: "ask your agent" },
   fnDone: { caps: ["fn", "⌃"], label: "done" },
   cmd: { caps: ["⌘"], label: "part of the screen" },
   cmd2: { caps: ["⌘", "⌘"], label: "whole screen" },

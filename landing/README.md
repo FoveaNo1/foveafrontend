@@ -2,6 +2,30 @@
 
 ## The film, recorded (Oct 25)
 
+**Film A (Nov 9, night)** (Yulun: "pretty awesome, change this onto the landing page"): the page now plays film A,
+"Another Way to Point" (1:31, `landing/research/launch-film/comp/filmA.js`, master `out/fovea-film-a3-4k.mp4`), in
+place of v9. An animation of Fovea for Mac in the Native look on Yulun's wallpaper alone: ⌘ and ⌘⌘ taken to the notch,
+the chat chosen by hand with ⌃⌃ on the app's every-chat page (IslandChatStageView), the board as the app has it, a
+question to Codex, dictation; then eye tracking (beta), with routing "Coming"; then Fovea Bar and something you wear,
+"Coming"; then the app's icon and "1 month free trial". Chapters: Your hand · Your eyes · Coming. Copies made as below
+into `out/web-a3/` (1440p 35.0 MB, 720p 15.1 MB, 1080p H.264 35.3 MB) and `public/landing/film/fovea-film-a-*`; the
+poster is the title card at 16.8 s (1920 wide, JPEG 72, 272 KB). The v9 copies stay in `public/landing/film/`, unused.
+
+**v9 (Nov 9)** (Yulun: "we are actually thinking of making glasses, so remove not making glasses"): v8 with the
+hardware card's second line, "Fovea is not making another pair of glasses, rings, or necklaces.", gone; the card is
+"There's only so much hardware one can wear." alone, its hold, the cut and the music unchanged. The page's other words
+about what you wear lost theirs too: Fovea Vision's "Then, something you wear." is "Small and light enough to sit on
+whatever you already wear, almost unnoticed." (`bookCopy.ts`, and `copy.ts` for the old page), the drawn film's wear
+card has no line under it, and a test keeps any "not … glasses" off the page (`tests/landing/book-copy.test.mjs`). How it
+was made: `landing/research/launch-film/README.md`, round eight.
+
+**v8 (Nov 8), the app's newest look** (Yulun: "our app's ui has changed fundamentally ... update the film as well"):
+the same 2:01.0 film, cut and music, with the notch as the page now draws it (below, "Round four"): everything under
+the notch black; six bars, Ask your agent lit in Sea Glass and dictation plain; what's taken going to the notch in one
+move, the pile with its count; Choose chat at its usual size, and in the chart scene every chat a size up; the board as
+Focus; ‹ in a chat's header and what was taken under its request; marks in one ink; the keys' words "ask your agent"
+and "say it". How it was made: `landing/research/launch-film/README.md`, round seven.
+
 **v7 (Oct 28), the app's new look** (Yulun: "i have changed the look of our app ui. update our website and launch
 video accordingly"): the same 2:01.0 film, cut and music, with the notch redrawn as FoveaV1 draws it since Oct 28
 (app-ui-v1 `ddfa51a`: Wings, the Halo, the Sentence, one board, pop-ups; checked side by side with the app's own
@@ -25,7 +49,7 @@ How it was made: `landing/research/launch-film/README.md`, round six.
 letter is typed ("so that it seems like the ppl is typing"); FoveaOS right after *Next*, using your voice to run the
 Mac: "Open Spotify, find a jazz playlist, and play it.", and Spotify does it, nothing clicked (its card's line "Say it,
 and your Mac does it.", the key caption and the island's step list are drafts); and the hardware card's "Fovea is not
-making another pair of glasses, rings, or necklaces." 2:01.0 now (1:47.7 before). How it was made:
+making another pair of glasses, rings, or necklaces." (gone since v9, Nov 9) 2:01.0 now (1:47.7 before). How it was made:
 `landing/research/launch-film/README.md`, round five. Spotify's name, mark and look are drawn; they join the agents'
 marks on the list for a trademark check.
 
@@ -45,13 +69,13 @@ footage captures (`capture-hd.mjs`) read that drawn film from `localhost:3000/`,
   at the top over an empty half.
 - **The copies,** made by `landing/research/launch-film/tools/webcut` (macOS's own encoder, Lanczos scaling, a keyframe
   every second, the index first, the sound copied as it is) from the 4K master:
-  - `public/landing/film/fovea-film-v7-1440.mp4`: HEVC, 2560 × 1440, 48.6 MB, for screens 900 px and wider.
-  - `fovea-film-v7-720.mp4`: HEVC, 1280 × 720, 20.8 MB, for phones.
-  - `fovea-film-v7-1080.mp4`: H.264, 1920 × 1080, 49.7 MB, for any browser without HEVC (Firefox, Chromium on Linux).
+  - `public/landing/film/fovea-film-v9-1440.mp4`: HEVC, 2560 × 1440, 48.6 MB, for screens 900 px and wider.
+  - `fovea-film-v9-720.mp4`: HEVC, 1280 × 720, 20.8 MB, for phones.
+  - `fovea-film-v9-1080.mp4`: H.264, 1920 × 1080, 49.6 MB, for any browser without HEVC (Firefox, Chromium on Linux).
     Cut at 3.3 Mb/s (v5's was 3.5) to stay under 50 MB at the film's length.
   - All 60 fps. Up close they match the master, apart from the wallpaper's grain (the 1080p copy is a little softer
     on the photographs).
-  - `fovea-film-v7-poster.jpg` is the title card, shown only under Reduce Motion, where the film waits to be played.
+  - `fovea-film-v9-poster.jpg` is the title card, shown only under Reduce Motion, where the film waits to be played.
     The film itself opens on black, as the notch it grows from is black.
 - **Sound:** it plays silently by itself, as a browser only allows. A button in the frame's corner turns the music on.
   Where a browser won't play it at all (iOS's Low Power Mode), the play mark shows and it waits.
@@ -61,14 +85,14 @@ footage captures (`capture-hd.mjs`) read that drawn film from `localhost:3000/`,
 - **Hosting:** the copies are served from `public/` like any other file, with byte ranges (Safari needs them).
   - A full viewing is 21–50 MB, depending on the copy, and counts against the Vercel plan's data transfer. For heavy
     launch traffic, a streaming host (Mux, Cloudflare Stream) would take that off the site.
-  - The three copies add about 119 MB to the repository (each under GitHub's 50 MB warning); v5's 107 MB and v6's 119 MB
-    stay in its history.
+  - The three copies add about 119 MB to the repository (each under GitHub's 50 MB warning); v5's 107 MB, v6's 119 MB
+    and v7's 119 MB stay in its history.
 
 ```
-tools/webcut ~/Desktop/fovea-demo-film-v7-4k.mp4 fovea-film-v7-1440.mp4 2560 3200000 hevc
-tools/webcut ~/Desktop/fovea-demo-film-v7-4k.mp4 fovea-film-v7-720.mp4 1280 1200000 hevc
-tools/webcut ~/Desktop/fovea-demo-film-v7-4k.mp4 fovea-film-v7-1080.mp4 1920 3300000 h264
-tools/stills ~/Desktop/fovea-demo-film-v7-4k.mp4 . 16.3   # the title card, then sips -s format jpeg -s formatOptions 82 -Z 2560
+tools/webcut out/fovea-demo-film-v9-4k.mp4 out/web-v9/fovea-film-v9-1440.mp4 2560 3200000 hevc
+tools/webcut out/fovea-demo-film-v9-4k.mp4 out/web-v9/fovea-film-v9-720.mp4 1280 1200000 hevc
+tools/webcut out/fovea-demo-film-v9-4k.mp4 out/web-v9/fovea-film-v9-1080.mp4 1920 3300000 h264
+tools/stills out/fovea-demo-film-v9-4k.mp4 out/web-v9 16.3   # the title card, then sips -s format jpeg -s formatOptions 82 -Z 2560
 ```
 
 The showcase's "return" key (scene 1, "to your Codex") reads "enter" too, as does the drawn film's.
@@ -140,6 +164,30 @@ Fovea's vision" now come after it. Nothing else was added: no privacy band, no "
     Codex's chat popping up done. Asking more by voice, Wings is drawn black on the session's glass beside the notch;
     the session stays where it was (no band any more).
   - The aurora along the island's edge (`aurora.ts`) is gone, from the scenes and the code.
+- **Round four: the app's newest look** (Yulun, Nov 8: "our app's ui has changed fundamentally. change the ui of our
+  landing page. reference the latest ui in our demo"). The reference is the demo, FoveaV1 in app-ui-v1 (the Focus
+  board, Oct 31; the notch on the sea, Nov 6), with the decisions since that the Mac app now ships (hellofovea/fovea-mac
+  `docs/onboarding/THREE_KEYS.md`, Nov 7–8; app-ui-v1 `docs/island/CAPTURE_FLIGHT.md`). Same parts, same scenes:
+  - **Everything under the notch is black**, as the notch is (no glass, no Halo), every neutral white at an opacity, a
+    hairline round what's open and a soft shadow under it. The pulled-out chat is plain black too.
+  - **Wings** has six white bars at its right (2.5 wide, 2.5 apart), 6 pt and still while nothing is said, a wave
+    flowing across them with the voice (up to 16). **Ask your agent** (fn ⌃) lights the corner in Sea Glass
+    (`#D7DBB4`, `#7FAD9B`, `#4F7A6C`); dictation and asking more (fn) are the plain notch.
+  - **What's taken goes to the notch in one move**: 0.38 s on one curved path, its size well ahead of its place, a
+    hairline and a soft shadow mid-flight; the bar makes room as it leaves; the card shows 70 ms before it lands and
+    nothing happens after; the selection stays where it was drawn until then. The pile: 18 pt cards, each behind 5 pt
+    further out, turned 4° and −3°, at .78, and the whole count beside them from two on.
+  - **Choose chat at its usual size** ("p6"): ‹, the words at 14 pt with what was taken at their right; a hairline; To
+    [the chat, its mark one ink, on a fill], "⌃ more chats", Send ↵ in the one blue.
+  - **The board is Focus** (Oct 31): the greeting, "Last hour" and the search; the session in focus as a card (its %,
+    its plan as segments, the step and where it runs, what it's doing, its requests as ticks); every other task a 21 pt
+    line on the last hour's clock with its %; then "Chats". The point scene's Codex walks its plan 0 → 50 → 100 %.
+  - **A chat that needs you** comes down with "Waiting for approval", the question, every choice numbered on a key cap
+    and a field for your own; the key **1** allows it (the scene's new key, "1 allow").
+  - **Agent marks at the notch are one ink** (the Mac app's silhouettes, `public/landing/agents/ink/`).
+  - The keys' words follow the three keys: fn ⌃ "ask your agent", fn "say it".
+  - The launch film has it too: v8 and v9 (above), drawn by `landing/research/launch-film/comp` (`v2-island.js`), which
+    follows these parts.
 - **The scenes**:
   - **point** (Stay in the window.): ⌘ and a drag over a button that sits low, again over one that's right, and a spec
     dragged to the notch, let go in the drop zone that opens under it. "Line this up with this one, like the spec." goes to the person's own Codex, and the button
@@ -222,13 +270,14 @@ the full-screen one) from round three (`landing/research/hero-round3-oct17.html`
     horizon, with nothing under it (a "Download for Mac" with its requirements was tried there on Oct 20 and taken out
     on Oct 21, Yulun). On arrival Fovea does what it does, once, as the app does it
     (`lib/landing/film/hero.ts`, drawn by `heroes/HeroDesk.tsx` with the showcase's notch, `components/book/film/Notch.tsx`,
-    and the film's keys, words, styles and renderer, so the notch is the app's as it is since Oct 28): fn ⌃ opens Wings,
-    "Listening"; ⌘ ⌘ takes the whole screen (a flash, a picture of what the screen shows lifting from it inset 40 pt
-    and flying into the bar's pile); "The future of human agent interaction is here." (Yulun's words) is said, as
-    subtitles; fn ⌃ again, Transcribing and its ring; Choose chat's sentence with "Landing page" (Claude Code) already
-    picked; Return; the board shows it at work for 3 s; the notch rests. About 13 s. Each key shows as the film shows
-    it. Nothing glows under the notch (Oct 18: the rainbow went from every hand-over and from the film's voice bar); since
-    Oct 28 a little light sits in Wings' corner while it listens, as in the app.
+    and the film's keys, words, styles and renderer, so the notch is the app's as it is since Nov 8): fn ⌃ asks your
+    agent, Wings opens, "Listening", its corner lit in Sea Glass; ⌘ ⌘ takes the whole screen (a flash, and a picture of
+    what the screen shows goes from it inset 40 pt into the bar's pile in one move); "The future of human agent
+    interaction is here." (Yulun's words) is said, as subtitles; fn ⌃ again, Transcribing and its ring; Choose chat at
+    its usual size with "Landing page" (Claude Code) already picked; enter; the board (Focus) holds it in focus, at work,
+    for 3 s; the notch rests. About 13 s. Each key shows as the film shows it. Nothing glows under the notch (Oct 18:
+    the rainbow went from every hand-over and from the film's voice bar); the only light is Ask your agent's, in Wings'
+    corner while it listens, as in the app.
     The clock runs only while the page is in front, from when the picture has loaded; under Reduce Motion one still
     (the session on the board). On a phone the island leans in so it can be read, and the top bar steps aside while
     the island is out past the notch (Wings, Choose chat, the board).
@@ -240,9 +289,10 @@ the full-screen one) from round three (`landing/research/hero-round3-oct17.html`
     it, unless the reader paused it or it had ended. It plays once and stops on its last frame with a replay mark; a
     click pauses and plays, and after the end plays it again from the start. Under it only a bar in its three parts
     (Today, Soon, Next), draggable; no button, no times.
-  - **Under it** "Download for Mac" and, beside it, "Learn about Fovea’s vision" (Oct 18), underlined words like the
-    others (`After` in `heroes/shared.tsx`); then the foot.
-  - **The ending** (Oct 30, Yulun): the paper stops under those two links, a sheet with rounded corners lying over the
+  - **Under it** "Download for Mac", underlined words like the others (`After` in `heroes/shared.tsx`); then the foot.
+    "Learn about Fovea’s vision" stood beside it from Oct 18 until Nov 8 (Yulun: "remove learn about fovea's
+    mission").
+  - **The ending** (Oct 30, Yulun): the paper stops under that link, a sheet with rounded corners lying over the
     first screen's picture, a band of the screen (44% of it, 300 to 460 px) rather than all of it, and the foot sits
     on the picture in white (`components/book/Ending.tsx`). The band shows the sea's middle, the horizon across it, and
     asks for the same copy as the first screen, so the picture is already loaded. Fifteen pictures were tried there
@@ -252,7 +302,8 @@ the full-screen one) from round three (`landing/research/hero-round3-oct17.html`
     the moment it had reached, the film playing on from where it was, or held there paused or ended
     (`lib/landing/place.ts`, kept in sessionStorage for the tab's life; `components/book/ReturnWatch.tsx` says when a
     return is coming; `tests/landing/place.test.mjs`). A fresh visit, a reload or a link to `/#…` opens as before.
-- **`/vision`, Fovea Vision**, beside the download under the film (Oct 18: not in the foot): the whole book, set as it was
+- **`/vision`, Fovea Vision**, linked from nowhere since Nov 8 (it was beside the download under the film; never in the
+  foot), still at its address and in the sitemap: the whole book, set as it was
   on the front page (`VisionBody` in `BookBody.tsx`): 1, "Fovea starts in your workspace." with the line on the eyes
   and the dancer back under it (Oct 18; a stand-in, `lib/landing/book.ts`); 2, "Then any
   device. Then anywhere." with its four parts; 3, "What personal agents are missing is you."; then "Today, the notch.
@@ -274,20 +325,19 @@ the full-screen one) from round three (`landing/research/hero-round3-oct17.html`
   the demo" with its pop-up player and dock (`WatchDemo.tsx`), the first round of page versions and the three
   directions.
 - **`/download`** is in `components/book/get/`. It holds:
-  - the download, as a real link to `DMG_URL`, with the install steps appearing under it
+  - the download, as a real link to `DMG_URL`, with the install steps appearing under it, and under the link
+    "macOS 14 or later · Apple silicon · Free trial"
   - a frame of four photographs in turn, with a slow dissolve and drift (`Rotation.tsx`)
-  - the plans as quiet lines in three columns (`Plans.tsx`)
-  - the checkout sheet (`CheckoutSheet.tsx`)
-  - the founding member's welcome (`Welcome.tsx`)
 
-  `?preview=welcome` opens the welcome directly.
+  **No pricing** (Nov 8, Yulun: "remove pricing, we will go with free trial"): the plans, the checkout sheet and
+  `/pricing`'s page are gone (`Plans.tsx`, `CheckoutSheet.tsx`, `PricingBody.tsx`, `account/Checkout.tsx`); `/pricing`
+  and `/checkout` go to `/download`; the foot has no Pricing; the account page shows the plan and Manage billing but
+  no way to buy. `/checkout/success` stays for a payment already made, and the founding welcome (`Welcome.tsx`) with
+  it. The trial's length isn't said anywhere.
 - **Type** is Cormorant Garamond and EB Garamond, loaded with `next/font`. Every style is in `app/(landing)/book.css`.
 - **Before launch:**
   - **Pictures.** Every picture is a stand-in hotlinked from cosmos (`lib/landing/book.ts`, `Pictures`). The hall
     is Olafur Eliasson's work and the rest belong to their photographers. Replace them with Fovea's own.
-  - **Payment.** It is a demo, as asked: `CHECKOUT_MODE = "demo"` charges nothing. Set it to `"stripe"` and the
-    pay line goes to the existing `/checkout`, which already starts a Stripe Checkout session.
-  - **Founding places.** The count ("588 of 1,000") is a placeholder (`Founding`).
 - **Moved and replaced:**
   - The old `/download` page (Geist, green) is replaced; `/download/beta` is unchanged.
   - "What leaves your Mac" is restyled in the same type.
@@ -353,7 +403,8 @@ the full-screen one) from round three (`landing/research/hero-round3-oct17.html`
   coordinates and scaled to its card, in the bar, the pile, the opened row and in flight: the board's glaze, the HDR
   as Finder shows it, the brief's words as a paper card, Maya's chart, the six merged pull requests, and the whole
   screen (a still copy of the desk).
-- **Next:** "Then, something you wear." over "Not a pair of glasses. Not a ring. And not a necklace."; six agents,
+- **Next:** "Then, something you wear." over "Not a pair of glasses. Not a ring. And not a necklace." (that line gone since
+  Nov 9, as in the recorded film's v9); six agents,
   each its real icon (Muse, Claude Code, Codex, Grok Bot, Instinct, Manus).
 - **Looking at any moment:** in development, `window.foveaFilm` (`seek`, `play`, `pause`); `?film=` is not wired.
 
@@ -500,7 +551,7 @@ app/(landing)/            the page's own root layout (Inter, the boot script), l
                           the reveal), the page, what-leaves-your-mac, share image
 app/(site)/               every other page, unchanged, under the site's own root layout (mint, Geist)
 app/global-not-found.tsx  the 404 (two root layouts leave no top-level one)
-app/favicon.ico           the tab icon: the app's icon, the pressed loop (public/landing/SOURCES.md)
+app/icon.svg, favicon.ico the tab icon: the app's icon, the notch on the sea (public/landing/SOURCES.md)
 app/apple-icon.png        the same for iOS, full-bleed at 180 px
 lib/landing/copy.ts       every word
 lib/landing/tokens.ts     Site, Reveal, and the app's island tokens (the old demo's)

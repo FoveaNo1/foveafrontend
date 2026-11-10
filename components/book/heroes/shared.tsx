@@ -35,15 +35,19 @@ export function Top({ className = "" }: { className?: string }) {
   );
 }
 
-/** Under the film, only the way in (Oct 17: no sentence, no button), and beside it the way to Fovea Vision (Oct 18),
- *  both set as the download page's "Download for Mac" is: EB Garamond on a hairline that inks in on hover. */
+/** Under the film, only the way in (Oct 17: no sentence, no button; Nov 8, Yulun: no "Learn about Fovea's vision"
+ *  beside it), set as the download page's "Download for Mac" is: EB Garamond on a hairline that inks in on hover.
+ *  Nov 9 (Ryan picked look C of /download-looks): the app's icon over the words, what you get under them; the whole
+ *  is the link, and the icon lifts on hover as in the Dock. The menu bar's link stays as it was. */
 export function After({ className = "" }: { className?: string }) {
   return (
-    <section id="download" className={`hx-after ${className}`} aria-label="Download and Fovea Vision">
-      <p className="hx-dl">
-        <Link className="act-line" href="/download" data-download="hero">{c.download}</Link>
-        <Link className="act-line" href="/vision">{c.visionLink}</Link>
-      </p>
+    <section id="download" className={`hx-after ${className}`} aria-label="Download">
+      <Link className="hx-dl-icon" href="/download" data-download="hero">
+        {/* eslint-disable-next-line @next/next/no-img-element -- the app's own icon, a static file */}
+        <img src="/landing/app-icon.png" width={84} height={84} alt="" />
+        <span className="act-line">{c.download}</span>
+        <span className="facts">1 month free trial · macOS 14 or later</span>
+      </Link>
     </section>
   );
 }

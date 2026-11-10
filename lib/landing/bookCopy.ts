@@ -34,7 +34,8 @@ export const BookCopy = {
     lead: "Then any device. Then anywhere.",
     items: [
       ["Fovea Bar.", "A small bar that attaches to any computer, a laptop, a desktop or a tablet. All your gaze tracking data stay local."],
-      ["Then, something you wear.", "Small and light enough to sit on whatever you already wear. We’re not making another pair of glasses, a necklace or a ring: whatever you choose, Fovea attaches to it, almost unnoticed."],
+      // Nov 9 (Yulun: "we are actually thinking of making glasses"): nothing here says what Fovea isn’t making
+      ["Then, something you wear.", "Small and light enough to sit on whatever you already wear, almost unnoticed."],
       ["Input, not another screen.", "Others are building better displays. Fovea builds the way in: where you look, what you say, and what’s worth keeping."],
       ["From anywhere.", "Your agents, and the devices around you, a sentence away wherever you are."],
     ] as [string, string][],
@@ -61,7 +62,7 @@ export const BookCopy = {
       {
         id: "notch", title: "Keep every agent moving.",
         text: "Every Claude Code and Codex chat you have running waits in the notch. Approve what it asks, read what it did, and ask a follow-up without leaving your window.",
-        label: "A Mac’s screen in dark mode. Claude Code’s chat pops up from the notch asking to run npm test, and the run is allowed right there; Codex’s chat pops up with its finished answer; a follow-up, “Mention the snow banner too.”, is asked by voice; then the chat is pulled out of the notch into a window of its own, where the new answer comes in, while the board shows both at work.",
+        label: "A Mac’s screen in dark mode. Claude Code’s chat pops up from the notch asking to run npm test, its choices numbered, and pressing 1 allows it; Codex’s chat pops up with its finished answer; a follow-up, “Mention the snow banner too.”, is asked by voice; then the chat is pulled out of the notch into a window of its own, where the new answer comes in, while the board shows both at work.",
       },
       {
         // Oct 24, Yulun's title; Oct 27, Yulun's words
@@ -72,7 +73,5 @@ export const BookCopy = {
     ],
   },
   last: "Today, the notch. Next, everything you look at.",
-  /** Beside "Download for Mac" under the film (Oct 18, Yulun's words): the way to Fovea Vision. */
-  visionLink: "Learn about Fovea’s vision",
-  foot: { vision: "Fovea Vision", pricing: "Pricing", account: "Account", feedback: "Feedback", leaves: "What leaves your Mac", privacy: "Privacy", terms: "Terms", contact: "Contact" },
+  foot: { vision: "Fovea Vision", account: "Account", feedback: "Feedback", leaves: "What leaves your Mac", privacy: "Privacy", terms: "Terms", contact: "Contact" },
 };

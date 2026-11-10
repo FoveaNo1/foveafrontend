@@ -41,7 +41,6 @@ export function PaperLayer() {
         <span data-k="ph:1ring" className="pring in" />
       </figure>
       <Card k="cd:wear" text={CARDS.wear.text} className="big" />
-      <Card k="cd:wearSmall" text={CARDS.wear.small} className="small below" />
 
       {/* the day, morning to evening, as it was seen: a line drawn across it, each moment with its time */}
       <span data-k="dayLine" className="dayline" />

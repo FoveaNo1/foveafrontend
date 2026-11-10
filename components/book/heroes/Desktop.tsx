@@ -80,7 +80,8 @@ export function OnDesktop({ pic, at }: { pic: Scene; at?: number }) {
   return (
     <>
       <Pin length="130vh" vars={vars} onProgress={opening(setOpen)} className="hx-pin hx-ondesk" label="Fovea">
-        <div className="hx-desk-full"><HeroDesk pic={pic} at={at} cover from={back?.hero} onTime={(t) => { here.hero = t; }} /></div>
+        {/* Nov 9 (Ryan): nothing plays as the page opens; the desktop is held at rest, the notch black */}
+        <div className="hx-desk-full"><HeroDesk pic={pic} at={at ?? 0} cover /></div>
         <Top className="hx-desk-top" />
         <h1 className={`hx-foot-line hx-${pic.foot ?? "ink"}`}>{LINE.map((s) => <span key={s}>{s}</span>)}</h1>
         <span className="hx-shape" aria-hidden="true" />

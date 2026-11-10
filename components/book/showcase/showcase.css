@@ -159,12 +159,11 @@
 .film .sc-anbody { position: absolute; left: 0; top: 0; width: 660px; height: 100%; }
 .film .sc-q2 { position: absolute; inset: 0; opacity: 0; }
 .film .sc-ring { display: block; flex: none; width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid rgb(var(--ink) / .14); border-top-color: rgb(var(--acc)); transform: rotate(calc(var(--t, 0) * 327deg)); }
-/* the chat pulled out (V2DetachedWindow, Compact): a small window 313 × 431 in the notch's glass, rounded 12, one rim,
-   a light close shadow; its words at the notch's sizes */
+/* the chat pulled out (V2DetachedWindow, Compact): a small window 313 × 431, plain black as the notch is (Nov 7),
+   rounded 12, one hairline, a soft shadow; its words at the notch's sizes */
 .film .sc-pull { position: absolute; left: 0; top: 0; width: 313px; height: 431px; }
-.film .sc-pull-glass { position: absolute; inset: 0; border-radius: 12px; opacity: 0; background: rgb(38 39 42 / .8);
-  -webkit-backdrop-filter: blur(30px) saturate(1.4) brightness(.6); backdrop-filter: blur(30px) saturate(1.4) brightness(.6);
-  box-shadow: inset 0 0 0 .75px rgb(255 255 255 / .14), 0 6px 12px rgb(0 0 0 / .3); }
+.film .sc-pull-glass { position: absolute; inset: 0; border-radius: 12px; opacity: 0; background: #000;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / .09), 0 12px 30px rgb(0 0 0 / .34); }
 .film .sc-pull-body { position: absolute; inset: 0; opacity: 0; --ink: 255 255 255; --acc: 10 132 255; color: rgb(var(--ink) / .9); font-size: 12px; }
 .film .pw-head { position: absolute; left: 12px; right: 12px; top: 12px; height: 22px; display: flex; align-items: center; gap: 8px; }
 .film .pw-head .mark { width: 14px; height: 14px; }

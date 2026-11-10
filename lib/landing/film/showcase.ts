@@ -1,12 +1,13 @@
 // The showcase after the film (Oct 24, Yulun: "an animation of a real person using Fovea on their Mac", set out the way
 // Dia's site shows its features; round two the same evening: the Mac in dark mode, the whole screen in every frame so
 // the notch is the size it is on a real Mac). Three short scenes, each one thing Fovea does today, with the notch as
-// FoveaV1 draws it since Oct 28 (notch.ts: Wings, the Halo, the Sentence, one board, a session popping up by itself):
+// the app draws it since Nov 8 (notch.ts: Wings with its six bars, Ask your agent lit in Sea Glass, what's taken in one
+// move to the notch, Choose chat at its usual size, the board as Focus, everything under the notch black):
 // - point: ⌘ and a drag over a button that sits low, again over one that's right, a spec dragged to the notch's drop
 //   zone, one sentence, and it goes to the person's own Codex, which lines the button up; they never leave the browser;
-// - notch: Claude Code's chat pops up from the notch asking to run the tests, and is allowed in place; Codex's chat
-//   pops up done; a follow-up is asked by voice over it; the chat is pulled out of the notch by its grab bar into a
-//   window of its own, where the answer comes in, while the board shows every session at work;
+// - notch: Claude Code's chat pops up from the notch asking to run the tests, every choice numbered, and 1 allows it;
+//   Codex's chat pops up done; a follow-up is asked by voice over it; the chat is pulled out of the notch by its grab
+//   bar into a window of its own, where the answer comes in, while the board shows every session at work;
 // - talk: Voiceflow as a person thinks out loud: a list, an item taken back, another subject with a picture taken by ⌘,
 //   a last item remembered; fn again, and the email reads as the list in order, the picture after the words.
 // Each loops: out of the dark, the one thing done, back into the dark. Pure: the scene at t. components/book/showcase
@@ -15,10 +16,10 @@
 import { clamp, ease, mix, seg, spring, window01 } from "./ease";
 import { outlineAt, type OutlineKey } from "./island";
 import { lineOpacity, shown, speak, type Line } from "./speech";
-import { CAPTURE, SPRING, STAGE, type Outline } from "./tokens";
-import { WIDE, clickAt, glow, lerpRect, live, pointer, press, set, type Ctx, type Frame, type Span } from "./film";
+import { SPRING, STAGE, type Outline } from "./tokens";
+import { WIDE, clickAt, glow, live, pointer, press, set, type Ctx, type Frame, type Span } from "./film";
 import { dragRect, pointerAt, type Pt } from "./pointer";
-import { DROP_ZONE, NOUT, PANEL_TOP, SIDE, barAt, bodyOf, boardH, dropZone, notch, pileSlot, pileW, sentenceH, wings } from "./notch";
+import { DROP_ZONE, FOCUS, MOVE, NOUT, PANEL_TOP, SIDE, barAt, bodyOf, boardH, chooseH, dropZone, flight, moveAt, notch, pile, pileSlot, pileW, selectionO, wings } from "./notch";
 import type { Rect } from "./content";
 
 export type SceneId = "point" | "notch" | "talk";
@@ -31,16 +32,17 @@ export function showFit(W: number, H: number) {
   return { s, tx: (W - STAGE.w * s) / 2, ty: 0 };
 }
 
-/** The keys the scenes press, each with what it does there (the film's caps; Voiceflow's and asking more are fn alone,
- *  as FoveaV1's FLOWS.md has them). */
+/** The keys the scenes press, each with what it does there (the three keys, Nov 7: fn says it where you're typing, fn ⌃
+ *  asks your agent; asking more is fn alone, as FoveaV1's FLOWS.md has it; a number answers what a chat asks). */
 export const SC_KEYS = {
-  fn: { caps: ["fn", "⌃"], label: "talk" },
+  fn: { caps: ["fn", "⌃"], label: "ask your agent" },
   cmd: { caps: ["⌘"], label: "part of the screen" },
   fnDone: { caps: ["fn", "⌃"], label: "done" },
   toCodex: { caps: ["enter"], label: "to your Codex" },
+  one: { caps: ["1"], label: "allow" },
   more: { caps: ["fn"], label: "ask more" },
   moreDone: { caps: ["fn"], label: "done" },
-  vf: { caps: ["fn"], label: "talk" },
+  vf: { caps: ["fn"], label: "say it" },
   vfDone: { caps: ["fn"], label: "done" },
 } as const;
 export type ScKey = keyof typeof SC_KEYS;
@@ -78,15 +80,6 @@ function dip(c: Ctx, len: number) {
 }
 
 const frameOf = (t: number, id: SceneId, reduced?: boolean): Ctx => ({ f: { t, chapter: 0, shot: id, aim: WIDE, k: {} } as Frame, t, reduced });
-
-/** A capture's flight from where it was taken into its place in the bar's pile (the film's 0.6 s; the app's spring). */
-function flight(c: Ctx, key: string, kind: string, from: Rect, start: number, slot: Rect) {
-  if (c.t < start || c.t > start + CAPTURE.flight + 0.05 || c.reduced) return;
-  const p = spring(seg(c.t, start, start + CAPTURE.flight));
-  const r = lerpRect(from, slot, p);
-  // it lifts off what it was taken from: the picture comes up over the first quarter of the flight
-  set(c, key, { x: r.x, y: r.y, w: r.w, h: r.h, o: clamp(p * 4), st: kind, v: { "--rad": `${mix(4, 4.5, p).toFixed(2)}px` } });
-}
 
 // ———————————————————————————— 1 · point: "Line this up with this one, like the spec."
 
@@ -127,15 +120,18 @@ const GRAB: Pt = { x: PT.file.x + 18, y: PT.file.y + 16 };
 /** Where it's let go: over the drop zone that opened under the bar. */
 export const DROP_AT: Pt = { x: DROP_ZONE.x + DROP_ZONE.w / 2 + 30, y: DROP_ZONE.y + DROP_ZONE.h / 2 };
 
-/** When each capture lands in the bar's pile, and so the bar's left becomes the pile, a card at a time. */
-export const P_LANDS = [PB.lift1, PB.lift2, PB.drop].map((a) => a + CAPTURE.flight);
+/** When each capture starts its one move to the notch, and when it lands as a card of the bar's pile. The bar makes
+ *  room for it as it leaves (on the island's spring, over before it lands). */
+export const P_FLIES = [PB.lift1, PB.lift2, PB.drop] as const;
+export const P_LANDS = P_FLIES.map((a) => a + MOVE.dur);
+const ROOM = 0.22;
 const P_ISLAND: OutlineKey[] = [
   I(0, NOUT.rest, 0),
   I(PB.fn + press, NOUT.wings(SIDE.listen), SPRING.barOpen),
-  ...P_LANDS.map((at, i) => I(at, NOUT.wings(pileW(i + 1)), SPRING.resize)),
+  ...P_FLIES.map((at, i) => I(at, NOUT.wings(pileW(i + 1)), ROOM)),
   I(PB.done + press, NOUT.wings(SIDE.trans, SIDE.ring), SPRING.resize),
-  I(PB.choose, NOUT.panel(sentenceH(1)), SPRING.open),
-  I(PB.ret + press, NOUT.board(boardH(2, 2)), SPRING.resize),
+  I(PB.choose, NOUT.panel(chooseH(1)), SPRING.open),
+  I(PB.ret + press, NOUT.board(boardH(FOCUS.card.task, 1)), SPRING.resize),
   I(PB.close, NOUT.rest, SPRING.close),
 ];
 /** The bar: listening from fn ⌃ to fn ⌃, then its words transcribed until Choose chat; the panels under the notch. */
@@ -150,7 +146,8 @@ export const pointOutline = (t: number) => notchOutline(P_ISLAND, t);
 function pointAt(t: number, opts: { reduced?: boolean } = {}): Frame {
   const c = frameOf(t, "point", opts.reduced), s = PB;
   const o = notch(c, P_ISLAND, P_SLOTS), body = bodyOf(o);
-  wings(c, "wb", body, barAt(t, P_VOICE, P_TRANS, [POINT_LINE], { pileAt: P_LANDS[0], reduced: c.reduced }));
+  wings(c, "wb", body, barAt(t, P_VOICE, P_TRANS, [POINT_LINE], { lit: true, pileAt: P_FLIES[0], reduced: c.reduced }));
+  pile(c, "wb", P_LANDS);
   keyCaps(c, [["fn", s.fn], ["cmd", s.cmd1], ["cmd", s.cmd2], ["fnDone", s.done], ["toCodex", s.ret]]);
   const r1 = PT_R1, r2 = PT_R2;
   const p = pointerAt({ x: 1000, y: 780 }, [
@@ -166,12 +163,13 @@ function pointAt(t: number, opts: { reduced?: boolean } = {}): Frame {
   const cross = (t >= s.cmd1 + press && t < s.up1) || (t >= s.cmd2 + press && t < s.up2);
   pointer(c, p, cross ? "cross" : "arrow", window01(t, 0.5, 9.4, 0.3, 0.4));
   clickAt(c, s.grab, p);
-  // each region follows the pointer, is held a moment once let go, then its picture lifts and flies
+  // each region follows the pointer and is held once let go; its picture goes to the notch in one move, and the
+  // selection stays where it was drawn until the picture lands
   for (const [r, down, up, lift] of [[r1, s.down1, s.up1, s.lift1], [r2, s.down2, s.up2, s.lift2]] as const) {
-    if (t < down || t >= lift + 0.15) continue;
+    if (t < down || t >= lift + MOVE.dur + MOVE.fade) continue;
     const a = { x: r.x, y: r.y }, b = { x: r.x + r.w, y: r.y + r.h };
     const sel = dragRect(a, t < up ? p : b);
-    set(c, "sel", { ...sel, o: t < lift ? 1 : 1 - seg(t, lift, lift + 0.15) });
+    set(c, "sel", { ...sel, o: selectionO(t, lift + MOVE.dur) });
   }
   // the spec: grabbed on the desktop and dragged to the notch, where the drop zone opens under the bar and lights as
   // it comes over it; let go there, it flies into the pile
@@ -179,21 +177,25 @@ function pointAt(t: number, opts: { reduced?: boolean } = {}): Frame {
   const dropRect: Rect = { x: DROP_AT.x - off.x, y: DROP_AT.y - off.y, w: SPEC_DRAG.w, h: SPEC_DRAG.h };
   if (t >= s.grab + 0.08 && t < s.drop && !c.reduced) {
     set(c, "fl:drag", { x: p.x - off.x, y: p.y - off.y, w: SPEC_DRAG.w, h: SPEC_DRAG.h, o: SPEC_DRAG.o * ease.out(seg(t, s.grab + 0.08, s.grab + 0.2)), st: "spec" });
-  } else if (t >= s.drop && t < s.drop + CAPTURE.flight + 0.05 && !c.reduced) {
-    const r = lerpRect(dropRect, pileSlot(2, body), spring(seg(t, s.drop, s.drop + CAPTURE.flight)));
-    set(c, "fl:drag", { x: r.x, y: r.y, w: r.w, h: r.h, o: mix(SPEC_DRAG.o, 1, seg(t, s.drop, s.drop + 0.2)), st: "spec", v: { "--rad": "4.5px" } });
+  } else if (t >= s.drop && t < s.drop + MOVE.dur && !c.reduced) {
+    const r = moveAt(dropRect, pileSlot(2, body), seg(t, s.drop, s.drop + MOVE.dur));
+    set(c, "fl:drag", { x: r.x, y: r.y, w: r.w, h: r.h, o: mix(SPEC_DRAG.o, 1, seg(t, s.drop, s.drop + 0.2)), st: "spec", v: { "--rad": `${r.rad.toFixed(2)}px`, "--sh": r.shadow.toFixed(3) } });
   }
   dropZone(c, window01(t, s.near, s.drop + 0.12, 0.15, 0.12), t >= s.drag[1] - 0.2 && t < s.drop + 0.12);
   flight(c, "fl:0", "low", r1, s.lift1, pileSlot(0, body));
   flight(c, "fl:1", "ok", r2, s.lift2, pileSlot(1, body));
-  P_LANDS.forEach((at, i) => { if (t >= at) set(c, `wb:c${i}`, { o: i === 0 ? 1 : 0.6, st: ["low", "ok", "spec"][i] }); });
-  // Choose chat: the chat it belongs in is already picked, and lit a moment; Send goes down with Return
+  // Choose chat: the chat it belongs in is already picked, and lit a moment; Send goes down with enter
   glow(c, "ch:glow", s.choose + 0.35);
   if (t >= s.ret && t < s.ret + press) set(c, "is:sent:send", { st: "down" });
-  // the board: Codex reads what it was given, edits the card, and the button comes up into line
-  if (live(P_SLOTS.board, t)) set(c, "is:board", { v: { "--t": t.toFixed(3) } });
-  set(c, "pt:row", { st: t < s.fixed ? "working" : "done" });
-  set(c, "pt:steps", { st: t < s.step ? "0" : "1" });
+  // the board (Focus): Codex in focus, its plan of two steps: it reads what it was given (0 %), edits the card (50 %),
+  // and the plan is done (100 %) as the button comes up into line
+  const k = t < s.step ? 0 : t < s.fixed ? 1 : 2;
+  set(c, "pt:now", { st: String(k) });
+  set(c, "pt:step", { st: String(k) });
+  set(c, "pt:card:pct", { text: ["0%", "50%", "100%"][k] });
+  set(c, "pt:card:s0", { st: k === 0 ? "now" : "done" });
+  set(c, "pt:card:s1", { st: k === 0 ? "todo" : k === 1 ? "now" : "done" });
+  if (live(P_SLOTS.board, t) && k < 2) set(c, "pt:now", { st: String(k), o: 0.55 + 0.45 * Math.abs(Math.sin((t - s.ret) * 2.6)) });
   const up = c.reduced ? (t >= s.fix[1] ? 1 : 0) : ease.inOut(seg(t, s.fix[0], s.fix[1]));
   set(c, "pt:low", { y: PT.low * (1 - up) });
   glow(c, "pt:glow", s.fix[1]);
@@ -212,17 +214,15 @@ export const NB = {
   grab: 12.55, pull: 12.8, drop: 14.3, rest: 16.9, answer: 17.3,
   len: 20.1, still: 15.6,
 } as const;
-/** A session (V2ChatContent, Compact; tops from the island's top): the header to 83.5 and its rule; the request in its
- *  bubble at the right; then, asking (it needs you): the question in amber, what it runs, what it changes, Allow's
- *  choices, the bar with Deny and the action's own verb; done: what the agent did, the answer and its draft, Open …,
- *  the bar. "Ask a follow-up" and the grab bar under them. */
-export const NA = { bubble: 93.5, q: 132, kv: [156, 176, 196], bar: 224, follow: 255, grab: 294, h: 302.5 } as const;
+/** A chat at the notch (Compact; tops from the island's top): ‹, its header to 83.5 and its rule; the request in its
+ *  bubble at the right; then, asking (it needs you, Nov 7): "Waiting for approval", the question, every choice numbered
+ *  on a key cap and a field for your own, the grab bar; answered, the agent back at work with Stop, a shorter chat;
+ *  done: what the agent did, the answer and its draft, Open …, the bar, "Ask a follow-up" and the grab bar. */
+export const NA = { bubble: 93.5, ask: 128, grab: 287, h: 295.5, work: 128, bar: 160, grabWork: 193, hWork: 201.5 } as const;
 export const NP = { bubble: 93.5, worked: 132, lead: 158, quote: 180, open: 222.5, bar: 251, follow: 282, grab: 321.5, h: 329.5 } as const;
 /** Asked more: both exchanges, the new request in its bubble and the agent at work under it, the words leaving the
  *  requests' outline a 22 pt gutter at the right (railGutter). */
 export const NQ = { bubble: 228.5, line: 265, bar: 295, follow: 326, grab: 365.5, h: 373.5, gutter: 22 } as const;
-/** Run Tests, where the pointer allows the run: the bar's right, its last button. */
-export const N_RUN: Pt = { x: STAGE.w / 2 + 258 - 32 - 30, y: NA.bar + 11 };
 /** The chat pulled out (V2DetachedLayout, Compact: 313 × 431), its top held 18 pt over the pointer; it comes out once
  *  the grab bar is pulled 28 pt below the notch (V2.pullThreshold). Where the pointer takes the grab bar, and lets go. */
 export const PULL = { w: 313, h: 431, grip: 18, threshold: 28 } as const;
@@ -235,10 +235,11 @@ export const MORE_LINE = speak("more", NB.say, "Mention the snow banner too.");
 const N_ISLAND: OutlineKey[] = [
   I(0, NOUT.rest, 0),
   I(NB.ask, NOUT.panel(NA.h), SPRING.open),
+  I(NB.allowed, NOUT.panel(NA.hWork), SPRING.resize),
   I(NB.gone, NOUT.rest, SPRING.close),
   I(NB.done, NOUT.panel(NP.h), SPRING.open),
   I(NB.back, NOUT.panel(NQ.h), SPRING.resize),
-  I(NB.drop, NOUT.board(boardH(2)), SPRING.resize),
+  I(NB.drop, NOUT.board(boardH(FOCUS.card.task, 1)), SPRING.resize),
   I(NB.rest, NOUT.rest, SPRING.close),
 ];
 export const N_SLOTS: Record<"asks" | "answer" | "board2", Span[]> = {
@@ -246,16 +247,14 @@ export const N_SLOTS: Record<"asks" | "answer" | "board2", Span[]> = {
   answer: [[NB.done, NB.drop, 0.2]],
   board2: [[NB.drop, NB.rest, 0.24]],
 };
-/** Asking more over the session: Wings on its glass beside the notch, listening from fn to fn, then transcribing. */
+/** Asking more over the chat: Wings drawn black on it beside the notch, listening from fn to fn, then transcribing. */
 export const N_VOICE: Span[] = [[NB.more + press, NB.moreDone + press]];
 export const N_TRANS: Span[] = [[NB.moreDone + press, NB.back, 0.2]];
 export const notchSceneOutline = (t: number) => notchOutline(N_ISLAND, t);
 
-/** Where the pointer is in the notch scene: it goes to Run Tests as the chat asks, allows the run, steps aside while the
- *  answer is read and the follow-up asked, then takes the grab bar, pulls the chat out and lets it go. */
-const notchPointer = (t: number) => pointerAt({ x: 640, y: 560 }, [
-  { at: 2.6, to: { x: N_RUN.x, y: N_RUN.y + 1 }, dur: 0.75 },
-  { at: 4.2, to: { x: 1110, y: 640 }, dur: 0.8 },
+/** Where the pointer is in the notch scene: aside while the chat asks (1 answers it) and while the answer is read and
+ *  the follow-up asked, then it takes the grab bar, pulls the chat out and lets it go. */
+const notchPointer = (t: number) => pointerAt({ x: 1110, y: 640 }, [
   { at: 11.65, to: N_GRAB, dur: 0.8 },
   { at: NB.grab + 0.05, to: { x: N_GRAB.x + 8, y: N_GRAB.y + 52 }, dur: 0.3, bend: 0 },
   { at: 12.95, to: N_DROP, dur: 1.25, bend: 0.08 },
@@ -265,16 +264,18 @@ const notchPointer = (t: number) => pointerAt({ x: 640, y: 560 }, [
 function notchAt(t: number, opts: { reduced?: boolean } = {}): Frame {
   const c = frameOf(t, "notch", opts.reduced), s = NB;
   notch(c, N_ISLAND, N_SLOTS);
-  // asking more: Wings drawn black on the session's glass, beside the notch, its body as wide as listening needs
+  // asking more: Wings drawn black on the chat, beside the notch, its body as wide as listening needs (fn: the plain
+  // notch, no light)
   const over = t < s.moreDone + press ? NOUT.wings(SIDE.listen) : NOUT.wings(SIDE.trans, SIDE.ring);
   wings(c, "wo", bodyOf(over), barAt(t, N_VOICE, N_TRANS, [MORE_LINE], { reduced: c.reduced }));
-  keyCaps(c, [["more", s.more], ["moreDone", s.moreDone]]);
+  keyCaps(c, [["one", s.allow], ["more", s.more], ["moreDone", s.moreDone]]);
   const p = notchPointer(t);
   pointer(c, p, "arrow", window01(t, 0.5, 15.6, 0.3, 0.4));
-  clickAt(c, s.allow, p);
-  // Run Tests: pressed; allowed, the chat is back at work and goes a moment later
-  if (t >= s.allow && t < s.allow + 0.16) set(c, "na:run", { st: "down" });
+  // 1 chooses "Allow once"; allowed, the chat is back at work and goes a moment later
+  if (t >= s.allow && t < s.allow + 0.16) set(c, "na:c0", { st: "down" });
   set(c, "na:body", { st: t < s.allowed ? "needs" : "working", v: { "--t": t.toFixed(3) } });
+  const work = c.reduced ? (t >= s.allowed ? 1 : 0) : spring(seg(t, s.allowed, s.allowed + SPRING.resize));
+  set(c, "na:grab", { y: (NA.grabWork - NA.grab) * work });
   // the question goes in: both exchanges show, the agent at work under the new one, the words narrowed for the outline
   const q = c.reduced ? (t >= s.back ? 1 : 0) : spring(seg(t, s.back, s.back + SPRING.resize));
   set(c, "an:b1", { x: -NQ.gutter * q });
@@ -284,8 +285,9 @@ function notchAt(t: number, opts: { reduced?: boolean } = {}): Frame {
   set(c, "an:bar", { y: (NQ.bar - NP.bar) * q, st: t < s.back ? "done" : "working" });
   set(c, "an:follow", { y: (NQ.follow - NP.follow) * q });
   set(c, "an:grab", { y: (NQ.grab - NP.grab) * q });
-  // pulled by its grab bar past 28 pt, the chat comes out as a window that follows the pointer, the session behind it
-  // dimmed; let go, it stays where it was let go, and the notch shows the board a moment, then rests
+  // pulled by its grab bar past 28 pt, the chat comes out as a window of its own, plain black, that follows the
+  // pointer, the chat behind it dimmed; let go, it stays where it was let go, and the notch shows the board a moment,
+  // then rests
   if (t >= s.pull && t < s.drop) set(c, "an:body", { o: 0.25 });
   if (t >= s.pull) {
     const r = pulledAt(t < s.drop ? p : N_DROP);
@@ -294,7 +296,7 @@ function notchAt(t: number, opts: { reduced?: boolean } = {}): Frame {
     set(c, "pw:glass", { o });
     set(c, "pw:body", { o, v: { "--t": t.toFixed(3) } });
   }
-  if (live(N_SLOTS.board2, t)) set(c, "is:board2", { v: { "--t": t.toFixed(3) } });
+  if (live(N_SLOTS.board2, t)) set(c, "nb:now", { o: 0.55 + 0.45 * Math.abs(Math.sin((t - s.drop) * 2.6)) });
   // in its window, the answer comes in where the agent was at work
   const a2 = c.reduced ? (t >= s.answer ? 1 : 0) : ease.out(seg(t, s.answer, s.answer + 0.3));
   set(c, "pw:a2", { o: a2 });
@@ -352,11 +354,11 @@ export const TK_LINES = (() => {
   return { lead: y, list, also, shot: also + line + 8 };
 })();
 
-const T_LAND = TB.lift + CAPTURE.flight;
+const T_LAND = TB.lift + MOVE.dur;
 const T_ISLAND: OutlineKey[] = [
   I(0, NOUT.rest, 0),
   I(TB.vf + press, NOUT.wings(SIDE.listen), SPRING.barOpen),
-  I(T_LAND, NOUT.wings(pileW(1)), SPRING.resize),
+  I(TB.lift, NOUT.wings(pileW(1)), ROOM),
   I(TB.done + press, NOUT.wings(SIDE.think, SIDE.ring), SPRING.resize),
   I(TB.paste, NOUT.rest, SPRING.barClose),
 ];
@@ -395,20 +397,21 @@ function transcript(c: Ctx) {
 function talkAt(t: number, opts: { reduced?: boolean } = {}): Frame {
   const c = frameOf(t, "talk", opts.reduced), s = TB;
   const o = notch(c, T_ISLAND, {}), body = bodyOf(o);
-  wings(c, "wb", body, barAt(t, T_VOICE, T_TRANS, TALK, { think: true, pileAt: T_LAND, reduced: c.reduced }));
+  wings(c, "wb", body, barAt(t, T_VOICE, T_TRANS, TALK, { think: true, pileAt: TB.lift, reduced: c.reduced }));
+  pile(c, "wb", [T_LAND]);
   keyCaps(c, [["vf", s.vf], ["cmd", s.cmd], ["vfDone", s.done]]);
   const p = talkPointer(t), r = TK_REGION;
   const cross = t >= s.cmd + press && t < s.up;
   const overMail = (t >= 1.0 && t < 12.25) || (t >= s.home + 0.55 && t < s.paste + 0.95);
   pointer(c, p, cross ? "cross" : overMail ? "ibeam" : "arrow", window01(t, 0.3, s.len - 0.8, 0.3, 0.4));
   clickAt(c, s.click, p);
-  // ⌘: the region follows the pointer, is held a moment once let go, then its picture lifts and flies into the bar
-  if (t >= s.down && t < s.lift + 0.15) {
+  // ⌘: the region follows the pointer and is held once let go; its picture goes to the notch in one move, the
+  // selection staying until it lands
+  if (t >= s.down && t < T_LAND + MOVE.fade) {
     const sel = dragRect({ x: r.x, y: r.y }, t < s.up ? p : { x: r.x + r.w, y: r.y + r.h });
-    set(c, "sel", { ...sel, o: t < s.lift ? 1 : 1 - seg(t, s.lift, s.lift + 0.15) });
+    set(c, "sel", { ...sel, o: selectionO(t, T_LAND) });
   }
   flight(c, "fl:0", "banner", r, s.lift, pileSlot(0, body));
-  if (t >= T_LAND) set(c, "wb:c0", { o: 1, st: "banner" });
   // the caret where the words will go; once cleaned up, the words, then the picture, into the email; the field they
   // went to lit a moment (IslandModel+Live markLanding)
   const blink = (from: number) => (Math.floor((t - from) / 0.53) % 2 === 0 ? 1 : 0);

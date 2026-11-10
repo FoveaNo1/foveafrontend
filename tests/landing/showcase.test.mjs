@@ -3,15 +3,16 @@ import { test } from "node:test";
 import { loadTs } from "./load-ts.mjs";
 
 // The showcase after the film (lib/landing/film/showcase.ts): three scenes, each one thing Fovea does today, drawn on a
-// Mac's whole screen in dark mode with the notch as FoveaV1 draws it since Oct 28 (notch.ts: Wings, the Halo, the
-// Sentence, one board, a session popping up by itself). Pure functions of time, so they can be checked without a
-// screen.
+// Mac's whole screen in dark mode with the notch as the app draws it since Nov 8 (notch.ts: Wings with six bars, Ask
+// your agent lit in Sea Glass, what's taken in one move to the notch, Choose chat at its usual size, the board as
+// Focus, everything under the notch black, a chat that needs you with its choices numbered). Pure functions of time, so
+// they can be checked without a screen.
 const {
-  SCENES, REST, SC_KEYS, showFit, PB, PT, DROP_AT, PT_R1, PT_R2, ptButton, POINT_LINE, POINT_CHAT, P_SLOTS, P_VOICE, P_TRANS, P_LANDS,
-  NB, NA, NP, NQ, N_RUN, N_GRAB, N_DROP, PULL, MORE_LINE, pulledAt, N_VOICE, N_TRANS,
+  SCENES, REST, SC_KEYS, showFit, PB, PT, DROP_AT, PT_R1, PT_R2, ptButton, POINT_LINE, POINT_CHAT, P_SLOTS, P_VOICE, P_TRANS, P_FLIES, P_LANDS,
+  NB, NA, NP, NQ, N_GRAB, N_DROP, PULL, MORE_LINE, pulledAt, N_VOICE, N_TRANS,
   TB, TK, TK_REGION, TALK, TALK_DROP, TALK_ADD, TALK_OUT, T_VOICE, T_TRANS, pointerOf, pointOutline, talkOutline,
 } = loadTs("lib/landing/film/showcase.ts");
-const { NOUT, SIDE, pileW, sentenceH, boardH, auroraAt, DROP_ZONE } = loadTs("lib/landing/film/notch.ts");
+const { NOUT, SIDE, pileW, chooseH, boardH, auroraAt, AURORA_COLORS, wingsBars, moveAt, pileSlot, bodyOf, DROP_ZONE, FOCUS, MOVE } = loadTs("lib/landing/film/notch.ts");
 const { STAGE, SPEECH, NOTCH } = loadTs("lib/landing/film/tokens.ts");
 const { CARDS, KEYS } = loadTs("lib/landing/film/content.ts");
 const { BookCopy } = loadTs("lib/landing/bookCopy.ts");
@@ -27,8 +28,9 @@ const held = (id, key, step = 0.05) => {
   for (const t of times(SCENES[id].len, step)) { run = o(SCENES[id].at(t), key) > 0.95 ? run + step : 0; best = Math.max(best, run); }
   return best;
 };
-/** The island's glass box at t (x, w, h from the frame). */
-const glass = (id, t) => SCENES[id].at(t).k["is:glass"];
+/** The island's black at t (x, w, h from the frame), and whether something is open under the notch (its hairline). */
+const box = (id, t) => SCENES[id].at(t).k["is:blk"];
+const opened = (id, t) => o(SCENES[id].at(t), "is:rim");
 const words = (line, idx) => idx.map((i) => line.words[i].text).join(" ");
 
 test("the copy: Yulun's words, a draft title for the second item, words for a screen reader", () => {
@@ -57,8 +59,7 @@ test("the same moment is always the same frame, and every scene loops through th
     assert.ok(sc.still > REST && sc.still < sc.len - 0.5, `${id}'s still is inside the scene`);
     // the notch is at rest, black, where the loop meets itself
     for (const t of [REST, sc.len - 0.05]) {
-      assert.equal(o(sc.at(t), "is:glass"), 0, `${id} ${t}: no glass`);
-      assert.equal(o(sc.at(t), "is:blk"), 1, `${id} ${t}: the notch's black`);
+      assert.equal(opened(id, t), 0, `${id} ${t}: nothing open`);
       assert.ok(near(sc.at(t).k["is:blk"].w, NOTCH.w), `${id} ${t}: the notch's width`);
     }
   }
@@ -79,12 +80,16 @@ test("a frame shows the whole screen, so the notch is the size it is on a real M
 });
 
 test("every key shown is whole long enough to read, and says what it does there", () => {
-  const caps = { point: ["fn", "cmd", "fnDone", "toCodex"], notch: ["more", "moreDone"], talk: ["vf", "cmd", "vfDone"] };
+  const caps = { point: ["fn", "cmd", "fnDone", "toCodex"], notch: ["one", "more", "moreDone"], talk: ["vf", "cmd", "vfDone"] };
   for (const [id, keys] of Object.entries(caps)) for (const k of keys) assert.ok(held(id, `key:${k}`) >= 0.8, `${id} ${k}: ${held(id, `key:${k}`)}`);
   assert.equal(SC_KEYS.toCodex.label, "to your Codex");
   assert.deepEqual([...SC_KEYS.toCodex.caps], ["enter"], "the key that sends is enter (Yulun, Oct 25), not return");
   assert.deepEqual([...SC_KEYS.vf.caps], ["fn"], "Voiceflow is fn alone");
   assert.deepEqual([...SC_KEYS.fn.caps], ["fn", "⌃"], "a request to an agent is fn ⌃, as in the film");
+  // the three keys' words (Nov 7): fn says it, fn ⌃ asks your agent; a number answers what a chat asks
+  assert.equal(SC_KEYS.fn.label, "ask your agent");
+  assert.equal(SC_KEYS.vf.label, "say it");
+  assert.deepEqual([...SC_KEYS.one.caps], ["1"]);
 });
 
 test("the words are said in order, each ending before its fn ends it, and stay whole long enough to read", () => {
@@ -113,72 +118,81 @@ test("point: ⌘ takes the button that sits low and the one that's right; the sp
   assert.ok(inside(ptButton(0), PT_R2), "the right one is inside the second");
   assert.equal(ptButton(1).y - ptButton(0).y, PT.low, "the middle button sits low");
   for (const r of [PT_R1, PT_R2]) assert.ok(inside(r, PT.win), "both are in the browser: the person stays in the window");
-  // the region follows the pointer while ⌘ drags, and is gone once its picture flies
+  // the region follows the pointer while ⌘ drags, stays while its picture is in the air, and is gone 0.16 s after it lands
   const mid = PB.down1 + (PB.up1 - PB.down1) / 2;
   assert.ok(o(SCENES.point.at(mid), "sel") === 1);
-  assert.equal(o(SCENES.point.at(PB.lift1 + 0.2), "sel"), 0);
+  assert.equal(o(SCENES.point.at(PB.lift1 + 0.2), "sel"), 1);
+  assert.equal(o(SCENES.point.at(PB.lift1 + MOVE.dur + MOVE.fade + 0.01), "sel"), 0);
   // dragged near the notch, the drop zone opens under the bar; over it, it lights; let go there, it closes
   assert.equal(SCENES.point.at(PB.near - 0.1).k.dz, undefined);
   const over = SCENES.point.at(PB.drop - 0.1);
   assert.ok(o(over, "dz") > 0.9 && over.k.dz.st === "on", JSON.stringify(over.k.dz));
   assert.equal(SCENES.point.at(PB.drop + 0.3).k.dz, undefined);
   assert.ok(inside({ x: DROP_AT.x, y: DROP_AT.y, w: 0, h: 0 }, DROP_ZONE), "let go over the drop zone");
-  // all three in the bar's pile once they've landed, before fn ⌃ ends the request; the bar's left is the pile
+  // all three in the bar's pile once they've landed, before fn ⌃ ends the request; the bar's left is the pile, the whole
+  // count beside it ("3", never "+2")
   const bar = SCENES.point.at(PB.done - 0.1);
   for (const i of [0, 1, 2]) assert.ok(o(bar, `wb:c${i}`) > 0.5, `wb:c${i}`);
-  assert.deepEqual([0, 1, 2].map((i) => bar.k[`wb:c${i}`].st), ["low", "ok", "spec"]);
   assert.ok(o(bar, "wb:pile") > 0.95 && o(bar, "wb:listen") < 0.05);
+  assert.ok(o(bar, "wb:n3") > 0.95 && o(bar, "wb:n2") === 0, "the count says 3");
+  assert.equal(o(SCENES.point.at(P_LANDS[0] + 0.5), "wb:n2"), 0, "no count for one card");
   assert.ok(same(pointOutline(PB.done - 0.1), NOUT.wings(pileW(3))), JSON.stringify(pointOutline(PB.done - 0.1)));
   assert.ok(P_LANDS.every((t, i) => i === 0 || t > P_LANDS[i - 1]));
+  // the bar makes room as each capture leaves, and is still before it lands
+  P_FLIES.forEach((at, i) => assert.ok(same(pointOutline(at + MOVE.dur - 0.01), NOUT.wings(pileW(i + 1))), `${i}`));
 });
 
 test("point: the notch is the app's, and it goes to the person's own Codex, which lines the button up", () => {
   assert.ok(same(pointOutline(PB.fn + 0.5), NOUT.wings(SIDE.listen)), "Wings, Listening");
   assert.ok(same(pointOutline(PB.done + 0.6), NOUT.wings(SIDE.trans, SIDE.ring)), "Wings, Transcribing");
-  assert.ok(same(pointOutline(PB.choose + 0.8), NOUT.panel(sentenceH(1))), "Choose chat's sentence");
-  assert.ok(same(pointOutline(PB.ret + 1.2), NOUT.board(boardH(2, 2))), "the board: the greeting over two kinds of row");
-  assert.ok(o(SCENES.point.at(PB.say + 0.5), "is:glass") === 0, "Wings is black, not glass");
-  const sent = glass("point", PB.choose + 0.8);
-  assert.ok(near(sent.w + 21, 516) && near(sent.h, sentenceH(1) + 6), JSON.stringify(sent));
+  assert.ok(same(pointOutline(PB.choose + 0.8), NOUT.panel(chooseH(1))), "Choose chat at its usual size");
+  assert.ok(same(pointOutline(PB.ret + 1.2), NOUT.board(boardH(FOCUS.card.task, 1))), "the board: Focus, Codex in focus, the vase a line");
+  assert.equal(opened("point", PB.say + 0.5), 0, "Wings is the bar alone, the menu bar's height");
+  const sent = box("point", PB.choose + 0.8);
+  assert.ok(near(sent.w + 21, 516) && near(sent.h, chooseH(1)), JSON.stringify(sent));
   assert.equal(POINT_CHAT.agent, "codex");
   // Transcribing between the bar and Choose chat; the board holds three seconds as the app's does
   assert.ok(near(P_SLOTS.sent[0][0] - P_TRANS[0][0], 1.0, 0.05));
   assert.ok(near(P_VOICE[0][1], P_TRANS[0][0], 0.001), "Transcribing as listening ends");
   assert.ok(near(P_SLOTS.board[0][1] - P_SLOTS.board[0][0], 3, 0.05));
-  // at work while the button is low; done, the button in line
-  assert.equal(SCENES.point.at(PB.ret + 0.5).k["pt:row"].st, "working");
-  assert.equal(SCENES.point.at(PB.fixed + 0.1).k["pt:row"].st, "done");
+  // in focus on the board, its plan of two steps: reading (0 %), editing (50 %), done (100 %) as the button comes into line
+  const at = (t) => SCENES.point.at(t).k;
+  assert.deepEqual([at(PB.ret + 0.5)["pt:now"].st, at(PB.step + 0.1)["pt:now"].st, at(PB.fixed + 0.1)["pt:now"].st], ["0", "1", "2"]);
+  assert.deepEqual([at(PB.ret + 0.5)["pt:card:pct"].text, at(PB.step + 0.1)["pt:card:pct"].text, at(PB.fixed + 0.1)["pt:card:pct"].text], ["0%", "50%", "100%"]);
+  assert.deepEqual([at(PB.step + 0.1)["pt:card:s0"].st, at(PB.step + 0.1)["pt:card:s1"].st], ["done", "now"]);
   assert.equal(SCENES.point.at(PB.ret).k["pt:low"].y, PT.low);
   assert.equal(SCENES.point.at(PB.fix[1] + 0.1).k["pt:low"].y, 0);
   assert.ok(held("point", "tag:fast") >= 1.5, "the sped-up work is said to be sped up");
 });
 
-test("notch: Claude Code's chat pops up asking, the run is allowed in place, and it goes; Codex's pops up done", () => {
-  // nothing opened it: it pops up by itself, the session's own chat with what it asks
-  assert.ok(near(glass("notch", NB.ask + 1).h, NA.h + 6));
+test("notch: Claude Code's chat pops up asking, every choice numbered, 1 allows it, and it goes; Codex's pops up done", () => {
+  // nothing opened it: it pops up by itself, the chat's own question and its choices
+  assert.ok(near(box("notch", NB.ask + 1).h, NA.h));
   assert.ok(o(SCENES.notch.at(NB.ask + 1), "is:asks") > 0.95);
-  // Run Tests is where the pointer clicks; allowed, it's back at work
-  const at = SCENES.notch.at(NB.allow).k.cursor;
-  assert.ok(near(at.x, N_RUN.x, 2) && near(at.y, N_RUN.y + 1, 2), JSON.stringify(at));
+  // the key 1 chooses "Allow once"; allowed, it's back at work, a shorter chat
+  assert.ok(held("notch", "key:one") >= 0.8);
+  assert.equal(SCENES.notch.at(NB.allow + 0.05).k["na:c0"].st, "down");
   assert.equal(SCENES.notch.at(NB.allow - 0.1).k["na:body"].st, "needs");
   assert.equal(SCENES.notch.at(NB.allowed + 0.1).k["na:body"].st, "working");
+  assert.ok(near(box("notch", NB.allowed + 0.7).h, NA.hWork));
   assert.ok(NB.gone - NB.allowed >= 1.1 && NB.gone - NB.allowed <= 1.3, "answered, it goes 1.2 s later (POP_UP.md)");
   // then the island rests, until Codex's chat pops up with its answer
-  assert.equal(o(SCENES.notch.at(NB.gone + 0.6), "is:glass"), 0);
-  assert.ok(near(glass("notch", NB.done + 1).h, NP.h + 6));
+  assert.equal(opened("notch", NB.gone + 0.6), 0);
+  assert.ok(near(box("notch", NB.done + 1).h, NP.h));
   assert.ok(held("notch", "is:answer") >= 4, "the answer stays long enough to read");
 });
 
-test("notch: a follow-up by voice over the session, Wings on its glass beside the notch; both exchanges after", () => {
+test("notch: a follow-up by voice over the chat, Wings on it beside the notch; both exchanges after", () => {
   const listen = SCENES.notch.at(NB.say + 0.5), trans = SCENES.notch.at(NB.moreDone + 0.5);
-  assert.ok(o(listen, "wo") > 0.95 && o(listen, "wo:listen") > 0.95 && o(listen, "wo:wave") > 0.95 && o(listen, "wo:aur") > 0.95);
+  assert.ok(o(listen, "wo") > 0.95 && o(listen, "wo:listen") > 0.95 && o(listen, "wo:wave") > 0.95);
+  assert.ok(o(listen, "wo:aur") < 0.01, "asking more is fn: the plain notch, no light");
   assert.ok(o(trans, "wo:trans") > 0.95 && o(trans, "wo:ring") > 0.95);
   // the session stays where it was
   assert.equal(listen.k["an:body"]?.y, undefined);
-  assert.ok(near(glass("notch", NB.say + 0.5).h, NP.h + 6));
+  assert.ok(near(box("notch", NB.say + 0.5).h, NP.h));
   assert.ok(near(N_VOICE[0][1], N_TRANS[0][0], 0.001));
   // the question goes in: both exchanges, the request's bubble in the column the outline's gutter leaves, Stop in the bar
-  assert.ok(near(glass("notch", NB.back + 1).h, NQ.h + 6));
+  assert.ok(near(box("notch", NB.back + 1).h, NQ.h));
   const asked = SCENES.notch.at(NB.back + 1);
   assert.ok(o(asked, "an:q2") > 0.95);
   assert.ok(near(asked.k["an:b1"].x, -NQ.gutter));
@@ -207,8 +221,8 @@ test("notch: the chat is pulled out by its grab bar into a window, where its ans
   assert.ok(near(after.k.pw.x, at.x, 0.01) && near(after.k.pw.y, at.y, 0.01));
   assert.ok(o(after, "pw:glass") > 0.99 && o(after, "pw:body") > 0.99);
   assert.ok(inside(at, { x: 0, y: 32, w: STAGE.w, h: STAGE.h - 32 }), JSON.stringify(at));
-  assert.ok(near(glass("notch", NB.drop + 1).h, boardH(2) + 6), "the board a moment");
-  assert.equal(o(SCENES.notch.at(NB.rest + 0.6), "is:glass"), 0, "then the notch rests");
+  assert.ok(near(box("notch", NB.drop + 1).h, boardH(FOCUS.card.task, 1)), "the board a moment");
+  assert.equal(opened("notch", NB.rest + 0.6), 0, "then the notch rests");
   // the answer comes in where it was at work, after the notch has rested, and stays to be read
   assert.equal(SCENES.notch.at(NB.answer - 0.1).k["pw:bar"].st, "working");
   assert.equal(SCENES.notch.at(NB.answer + 0.4).k["pw:bar"].st, "done");
@@ -249,7 +263,6 @@ test("talk: ⌘ takes the phone's banner while talking, and the words land in th
   assert.equal(TALK[2].words[7].at, TB.up);
   const bar = SCENES.talk.at(TB.done - 0.1);
   assert.ok(TB.lift < TB.done && o(bar, "wb:c0") > 0.95 && o(bar, "wb:pile") > 0.95);
-  assert.equal(bar.k["wb:c0"].st, "banner");
   // the pointer is back over the email's words when they land (IslandLive.findLanding: the field under the pointer)
   const p = pointerOf.talk(TB.paste);
   const body = { x: TK.win.x + 14, y: TK.win.y + 130, w: TK.win.w - 28, h: TK.win.h - 144 };
@@ -258,11 +271,13 @@ test("talk: ⌘ takes the phone's banner while talking, and the words land in th
   assert.ok(TK.win.y + TK.win.h <= STAGE.h * 0.68 && phone.y + phone.h <= STAGE.h * 0.68);
 });
 
-test("the light in the bar's corner: while it listens, Voiceflow and Dispatch alike; no aurora along the edge", () => {
-  for (const [id, k, voice] of [["point", "wb", P_VOICE], ["notch", "wo", N_VOICE], ["talk", "wb", T_VOICE]]) {
+test("Ask your agent's light: Sea Glass in the bar's corner while fn ⌃ listens; fn is the plain notch; no aurora along the edge", () => {
+  assert.deepEqual([...AURORA_COLORS], ["#D7DBB4", "#7FAD9B", "#4F7A6C"], "Sea Glass (Nov 7)");
+  for (const [id, k, voice, lit] of [["point", "wb", P_VOICE, true], ["notch", "wo", N_VOICE, false], ["talk", "wb", T_VOICE, false]]) {
     const [from, to] = voice[0];
-    assert.ok(o(SCENES[id].at((from + to) / 2), `${k}:aur`) > 0.95, `${id}: lit while listening`);
-    assert.ok(o(SCENES[id].at(to + 0.4), `${k}:aur`) < 0.01, `${id}: gone once it's done`);
+    if (lit) assert.ok(o(SCENES[id].at((from + to) / 2), `${k}:aur`) > 0.95, `${id}: lit while it asks your agent`);
+    else assert.ok(o(SCENES[id].at((from + to) / 2), `${k}:aur`) < 0.01, `${id}: fn, no light`);
+    assert.ok(o(SCENES[id].at(to + 0.4), `${k}:aur`) < 0.01, `${id}: none once it's done`);
     for (const t of times(SCENES[id].len, 0.25)) for (const key of Object.keys(SCENES[id].at(t).k)) assert.ok(!/^au/.test(key), `${id} ${t}: ${key}`);
   }
   // quiet, a little of it; the voice brightens and grows the lights
@@ -274,4 +289,31 @@ test("the light in the bar's corner: while it listens, Voiceflow and Dispatch al
 test("the film names the viewer's own agents: under its first line, at the first send, while the work runs", () => {
   assert.match(CARDS.title.small, /your own Claude Code and Codex/);
   assert.equal(KEYS.ret.label, "to your Claude Code");
+});
+
+test("six bars: still at 6 pt while the room is all it hears, a wave across them with a voice, never past 16", () => {
+  for (const t of [0, 0.4, 1.7]) assert.deepEqual([...wingsBars(0, t)], [6, 6, 6, 6, 6, 6]);
+  assert.deepEqual([...wingsBars(0.12, 1)], [6, 6, 6, 6, 6, 6], "under the voice floor");
+  const loud = wingsBars(0.8, 1.234);
+  assert.equal(loud.length, 6);
+  assert.ok(loud.some((h) => h > 9) && loud.every((h) => h >= 6 && h <= 16), JSON.stringify(loud));
+  assert.notDeepEqual([...wingsBars(0.8, 1.234)], [...wingsBars(0.8, 1.334)], "the wave moves");
+});
+
+test("what's taken goes to the notch in one move, its size ahead of its place, and is its card when it lands", () => {
+  // the banner: from where it was taken to its card in the bar's pile, in 0.38 s
+  const land = TB.lift + MOVE.dur, body = bodyOf(talkOutline(land)), slot = pileSlot(0, body);
+  const first = SCENES.talk.at(TB.lift + 0.0005).k["fl:0"];
+  assert.ok(near(first.x, TK_REGION.x, 1.5) && near(first.w, TK_REGION.w, 2), JSON.stringify(first));
+  const last = SCENES.talk.at(land - 0.0005).k["fl:0"];
+  for (const k of ["x", "y", "w", "h"]) assert.ok(near(last[k], slot[k], 1), `${k}: ${last[k]} vs ${slot[k]}`);
+  assert.equal(SCENES.talk.at(land + 0.01).k["fl:0"], undefined, "nothing after it lands");
+  // its card shows 70 ms before, so the two cross rather than blink
+  assert.ok(o(SCENES.talk.at(land - 0.03), "wb:c0") > 0.3 && o(SCENES.talk.at(land - 0.1), "wb:c0") === 0);
+  // the size leads the place: a third of the way, it's mostly small already, not yet mostly there
+  const from = { x: 200, y: 600, w: 800, h: 400 }, to = { x: 700, y: 7, w: 18, h: 18 };
+  const r = moveAt(from, to, 1 / 3);
+  assert.ok((from.w - r.w) / (from.w - to.w) > 0.6, `size ${r.w}`);
+  const cy = r.y + r.h / 2, travelled = (800 - cy) / (800 - 16);
+  assert.ok(travelled < 0.6, `place ${travelled}`);
 });

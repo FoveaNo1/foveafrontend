@@ -15,6 +15,15 @@ test("no empty strings and no exclamation marks", () => {
   }
 });
 
+test("nothing says Fovea isn't making glasses (Nov 9, Yulun: the team is considering them)", () => {
+  const { LandingCopy } = loadTs("lib/landing/copy.ts");
+  const { CARDS } = loadTs("lib/landing/film/content.ts");
+  const { FILM_VIDEO_TRANSCRIPT } = loadTs("lib/landing/film/video.ts");
+  for (const s of [...strings(BookCopy), ...strings(LandingCopy), ...strings(CARDS), FILM_VIDEO_TRANSCRIPT]) {
+    assert.doesNotMatch(s, /\bnot\b[^.:]*\bglasses\b/i, s);
+  }
+});
+
 test("the film's label says how long it runs", () => {
   assert.match(Demo.length, /^\d:\d\d$/);
 });

@@ -502,13 +502,12 @@ function next(c: Ctx) {
     card(c, "cd:bar", T.D1 + 1.0, T.D2 - 0.05, 6);
     card(c, "cd:barSmall", T.D1 + 1.3, T.D2 - 0.05, 4);
   }
-  // D2: something you wear (and what it is not), then the world through the eyes (the wearable is only the point of view)
+  // D2: something you wear, then the world through the eyes (the wearable is only the point of view)
   if (c.t >= T.D2 - 0.1 && c.t < T.D3 + 0.7) {
     const u = c.t - T.D2;
     notch = 0;
-    // the card first, whole long enough for both its lines, and gone before the photograph comes up in its place
+    // the card first, its one line whole for 3 s, and gone before the photograph comes up in its place
     card(c, "cd:wear", T.D2 + 0.1, T.D2 + 3.6, 6);
-    card(c, "cd:wearSmall", T.D2 + 0.6, T.D2 + 3.6, 4);
     const o1 = Math.min(ease.out(seg(u, 3.5, 4.0)), 1 - ease.inOut(seg(u, 6.7, 7.3)));
     if (o1 > 0) set(c, "ph:1", { o: o1, s: c.reduced ? 1 : mix(1, 1.05, seg(u, 3.5, 7.3)) });
     const fx = [{ at: 4.0, x: 50, y: 58 }, { at: 4.5, x: 54, y: 44 }, { at: 5.5, x: 50, y: 40 }].map((f) => ({ at: T.D2 + f.at, x: f.x, y: f.y }));

@@ -78,7 +78,7 @@ export const LandingCopy = {
             },
             {
               term: "Then, something you wear.",
-              text: "Small and light enough to sit on whatever you already wear. We're not making another pair of glasses, a necklace or a ring: whatever you choose, Fovea attaches to it, almost unnoticed.",
+              text: "Small and light enough to sit on whatever you already wear, almost unnoticed.",
             },
             {
               term: "Input, not another screen.",

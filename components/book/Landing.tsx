@@ -9,9 +9,10 @@ import { picture, type Scene } from "../../lib/landing/pictures";
 // agent interaction is here." is said and sent, once, as the app does it (heroes/HeroDesk.tsx). Scrolling, the notch
 // grows into the film's frame and the film plays from its very first screen, once. Oct 24 (Yulun): after the film,
 // what Fovea does today, one thing at a time, as Dia's site shows its features (showcase/Showcase.tsx); then
-// "Download for Mac" and "Learn about Fovea's vision" (heroes/shared.tsx). Oct 30 (Yulun): the page ends there as a
-// sheet with rounded corners over the first screen's picture, its foot on the picture (Ending.tsx). The book
-// (where Fovea starts, where it goes, why) is Fovea Vision (/vision). The other first screens: /hero.
+// "Download for Mac" (heroes/shared.tsx; Nov 8, Yulun: no "Learn about Fovea's vision" beside it). Oct 30 (Yulun):
+// the page ends there as a sheet with rounded corners over the first screen's picture, its foot on the picture
+// (Ending.tsx). The book (where Fovea starts, where it goes, why) is Fovea Vision (/vision), linked from nowhere now.
+// The other first screens: /hero.
 
 const SEA = picture("sea") as Scene;
 

@@ -31,7 +31,7 @@ export default function DownloadBlock() {
         </a>
         <span className={`progress${state !== "idle" ? " on" : ""}`} aria-hidden="true"><i /></span>
         <span className="req" id="dl-req" aria-live="polite">
-          {state === "started" ? "Fovea.dmg · in your Downloads folder" : `${REQUIREMENTS} · Free to start`}
+          {state === "started" ? "Fovea.dmg · in your Downloads folder" : `${REQUIREMENTS} · Free trial`}
         </span>
       </div>
       <ol className={`install${state === "started" ? " on" : ""}`} aria-hidden={state !== "started"}>

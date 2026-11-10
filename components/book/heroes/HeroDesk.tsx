@@ -5,17 +5,15 @@ import { KEYS } from "../../../lib/landing/film/content";
 import { HB, HERO_CHAT, HERO_LINE, HERO_SPEECH, heroAt } from "../../../lib/landing/film/hero";
 import { STAGE } from "../../../lib/landing/film/tokens";
 import type { Scene } from "../../../lib/landing/pictures";
-import { StepLine } from "../film/Island";
-import { Mark } from "../film/Minis";
-import { NotchShell, Search, Sentence, Wings } from "../film/Notch";
+import { BoardHead, ChatsHead, ChooseChat, FocusCard, FocusChat, FocusRow, NotchShell, Wings } from "../film/Notch";
 import { makeRenderer } from "../film/renderer";
 import "../film/film.css";
 
 // The first screen's Mac (Oct 18): the chosen picture as its desktop, and Fovea's island at its notch doing what it
-// does once (lib/landing/film/hero.ts), drawn with the parts the showcase and the launch film share, so the notch is
-// the app's as it is since Oct 28 (components/book/film/Notch.tsx): the notch black at rest, Wings while it listens
-// (the screen's picture in its pile, five small bars, a little light in its corner) and transcribes, Choose chat's
-// sentence and the board in dark glass, the notch's black blended into it. The island is drawn in a 1470 × 956-point screen scaled to its frame
+// does once (lib/landing/film/hero.ts), drawn with the parts the showcase shares, so the notch is the app's as it is
+// since Nov 8 (components/book/film/Notch.tsx): black at rest, Wings while it listens (the screen's picture in its pile,
+// six bars, Ask your agent's Sea Glass in its corner) and transcribes, Choose chat at its usual size and the board
+// (Focus) black under it. The island is drawn in a 1470 × 956-point screen scaled to its frame
 // (deskFit: the frame's width, a phone leaning in on the notch as the film does; or, with `cover`, the whole of a
 // frame of any shape, as the page's first screen is); the picture and the menu bar always cover the frame, and the
 // whole-screen capture is a picture of what the frame shows. The keys and the words sit over it at the frame's own
@@ -49,17 +47,19 @@ const Card = ({ pic }: { pic: Scene }) => <span data-m="screen" className="m-scr
 function Island({ pic }: { pic: Scene }) {
   return (
     <NotchShell bars={<Wings pile={<span data-k="wb:c0" className="mini" data-state="screen"><Card pic={pic} /></span>} />}>
-      <Sentence k="is:sent" request={HERO_LINE} chat={HERO_CHAT}
+      <ChooseChat k="is:sent" request={HERO_LINE} chat={HERO_CHAT} count={1}
         pile={<span className="mini" data-state="screen" style={{ ["--i" as string]: 0, zIndex: 3 }}><Card pic={pic} /></span>} />
+      {/* the board, Focus: the session just sent in focus, at work; the others a line each */}
       <div data-k="is:board" className="slot s-board">
-        <div className="sc-hello"><b>Hello, Ryan.</b><span className="sc-search"><Search /></span></div>
-        <div className="bsec">
-          <div className="brow focus" data-state="working">
-            <span className="ic"><Mark agent={HERO_CHAT.agent} size={20} /><span className="badge" /></span>
-            <span className="tx"><b>{HERO_CHAT.name}</b><span className="steps one"><StepLine s={HERO_CHAT.step} /></span></span>
-            <span className="tm">now</span>
-          </div>
-        </div>
+        <BoardHead />
+        <FocusCard agent={HERO_CHAT.agent} title={HERO_CHAT.name} pct="0%" segs={["now", "todo", "todo"]}
+          step="Step 1 of 3 · Read the screenshot" meta="Claude Code · landing · now" ticks={[0.97]}>
+          <p data-k="hb:now" className="fc-now">{HERO_CHAT.step}</p>
+        </FocusCard>
+        <FocusRow agent="codex" title="Checkout tests" from={0.38} to={0.92} state="working" pct="50%" />
+        <FocusRow agent="claude-code" title="Release note" from={0.08} to={0.52} state="done" pct="100%" />
+        <ChatsHead />
+        <FocusChat agent="claude-code" title="Launch email" reply="Drafted: the film first, then one line on the notch." time="4m" unread />
       </div>
     </NotchShell>
   );

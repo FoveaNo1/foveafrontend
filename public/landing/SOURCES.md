@@ -1,11 +1,12 @@
 # Landing page assets
 
-The tab icon is Fovea's app icon, the pressed loop (since Oct 13; app-ui-v1 Sources/FoveaCore/Resources/Brand,
-SOURCES.md there). `app/favicon.ico` holds the app's own 16 and 32 px icons (`AppIcon.iconset`, the artwork drawn for
-small sizes) and a 48 made the same way: the app's 1024 icon with the small-size artwork
-(`Source/fovea-pressed-loop-small.png`) laid into its body, halved down to 48. `app/apple-icon.png` is the icon's
-artwork full-bleed (`Source/fovea-pressed-loop.png`) at 180 px; iOS rounds it. There's no SVG: the icon is rendered,
-not drawn. The highlighter loop's SVG (Oct 10) was the tab icon until Oct 30. The page's pictures
+The tab icon is Fovea's app icon, the notch on the sea (since Nov 6; app-ui-v1 Sources/FoveaCore/Resources/Brand,
+SOURCES.md there): a paper disc with one notch cut from its top and the dot in it, leaned 5.2°, on Sea Glass's water.
+It's drawn, so `app/icon.svg` is the drawing itself: the disc and the dot (`AppIcon.icon/Assets`, the canvas scaled into
+the tile's 824 body) on the tile's continuous corners, the water `#64736E`, its deep `#1E2B28` when the Mac is dark.
+`app/favicon.ico` holds the app's own 16 and 32 px icons (`AppIcon.iconset`) and a 48 halved down from its 1024;
+`app/apple-icon.png` is the drawing full-bleed at 180 px (iOS rounds it). The pressed loop (Oct 13) was the tab icon
+from Oct 30 to Nov 8. The page's pictures
 are drawn live in code (lib/landing/gradient.ts); there are no image files for them.
 
 The agent marks below are on page 2, beside "works with Claude Code and Codex". The photos are the

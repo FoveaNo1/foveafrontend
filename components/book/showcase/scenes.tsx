@@ -1,27 +1,28 @@
 import { MORE_LINE, NA, NP, NQ, POINT_CHAT, POINT_LINE, PT, SC_KEYS, TALK, TALK_OUT, TK, TK_LINES, type ScKey, type SceneId } from "../../../lib/landing/film/showcase";
 import type { Line } from "../../../lib/landing/film/speech";
 import type { Agent } from "../../../lib/landing/film/content";
-import { Again, Close, Copy, Expand, Ext, OpenSq, Right, StepLine, Up } from "../film/Island";
+import { Again, Close, Copy, Expand, Ext, OpenSq, Right, Up } from "../film/Island";
 import { Mark } from "../film/Minis";
-import { DropZone, NotchShell, Search, Sentence, Wings } from "../film/Notch";
+import { Ask, Back, BoardHead, ChooseChat, DropZone, FocusCard, FocusRow, NotchShell, Wings } from "../film/Notch";
 
 // The showcase's three scenes, drawn (lib/landing/film/showcase.ts moves them): a Mac's whole screen in points, in dark
 // mode (its wallpaper at dusk, the menu bar, the windows of the moment, drawn in HTML with no app icons or logos),
-// Fovea's notch as FoveaV1 draws it since Oct 28 (components/book/film/Notch.tsx: the notch black at rest, Wings while
-// it listens, Choose chat's sentence, the board and the sessions in dark glass with the Halo), what moves over the
-// screen, and over all of it the keys and the words. Each scene is a World (under the frame's one transform) and an
-// Over (sized to the frame).
+// Fovea's notch as the app draws it since Nov 8 (components/book/film/Notch.tsx: black at rest, Wings while it
+// listens, Choose chat at its usual size, the board as Focus, every chat black under the notch, marks in one ink),
+// what moves over the screen, and over all of it the keys and the words. Each scene is a World (under the frame's one
+// transform) and an Over (sized to the frame).
 
 const Lights = () => <span className="lights"><i /><i /><i /></span>;
+// Nov 9 (Ryan): the showcase's wallpaper is the launch film's, Sonoma Horizon from his own Mac (horizon.jpg); the
+// page's own film keeps wall.jpg.
 const Wall = () => (
   // eslint-disable-next-line @next/next/no-img-element -- the film's wallpaper
-  <img className="wall" src="/landing/film/wall.jpg" alt="" />
+  <img className="wall" src="/landing/film/horizon.jpg" alt="" />
 );
 
 /** stop.fill, paperplane: the few glyphs the film's island doesn't draw. */
 const Stop = () => <svg viewBox="0 0 10 10" width="9" height="9" aria-hidden="true"><rect x="1.5" y="1.5" width="7" height="7" rx="1.4" fill="currentColor" /></svg>;
 const Plane = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M1.6 7.2 14.4 1.6 9.8 14.4 7.6 8.6Z M7.6 8.6 14.4 1.6" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" /></svg>;
-const Check = () => <svg viewBox="0 0 12 12" width="9" height="9" aria-hidden="true"><path d="M2.6 6.4 5 8.6l4.4-5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /** The pointer, in its three shapes, and a click made visible. */
 function Pointer() {
@@ -66,14 +67,13 @@ function Over({ keys, line, tag }: { keys: ScKey[]; line: Line; tag?: string }) 
   );
 }
 
-/** The board's bar on the real Mac (OpenChat.swift): the greeting, and the search beside it. */
-const Hello = () => <div className="sc-hello"><b>Hello, Ryan.</b><span className="sc-search"><Search /></span></div>;
-
-/** A session's header (V2ChatContent, Compact): its agent, the chat, the project; expand and close. */
+/** A chat's header at the notch (V2ChatContent, Compact): ‹ back to the board, its agent (one ink), the chat, the
+ *  project; grow and close. */
 function Head({ agent, title, badge }: { agent: Agent; title: string; badge: string }) {
   return (
     <div className="head">
-      <Mark agent={agent} size={14} />
+      <span className="hb"><Back /></span>
+      <Mark agent={agent} size={14} ink />
       <b>{title}</b>
       <span className="badge-t">{badge}</span>
       <span className="hg"><Expand /></span>
@@ -86,20 +86,6 @@ function Head({ agent, title, badge }: { agent: Agent; title: string; badge: str
 const Working = ({ verb, obj, time, k, style }: { verb: string; obj: string; time: string; k?: string; style?: React.CSSProperties }) => (
   <p data-k={k} className="sc-work" style={style}><i className="sc-ring" />{verb} <b>{obj}</b><em>{time}</em></p>
 );
-
-/** A row of the board: the agent's icon with its state, the title over one line, the time. */
-function Row({ agent, title, line, time, state, step }: { agent: Agent; title: string; line?: string; time: string; state: "done" | "working"; step?: { verb: string; obj: string; mono?: boolean } }) {
-  return (
-    <div className="brow" data-state={state}>
-      <span className="ic"><Mark agent={agent} size={20} /><span className="badge" /></span>
-      <span className="tx">
-        <b>{title}</b>
-        {step ? <span className="steps one"><StepLine s={{ glyph: "run", ...step }} /></span> : <span className="line">{line}</span>}
-      </span>
-      <span className="tm">{time}</span>
-    </div>
-  );
-}
 
 // ———————————————————————————— 1 · point
 
@@ -139,7 +125,7 @@ const PointMini = () => (
 /** The bar's pile: what's taken, the first in front, the next two behind it (keys wb:c0…). */
 const PilePoint = () => (
   <>
-    {[2, 1, 0].map((i) => <span key={i} data-k={`wb:c${i}`} className={`mini l${i}`}><PointMini /></span>)}
+    {[2, 1, 0].map((i) => <span key={i} data-k={`wb:c${i}`} className={`mini l${i}`} data-state={["low", "ok", "spec"][i]}><PointMini /></span>)}
   </>
 );
 
@@ -182,28 +168,21 @@ function PointWorld() {
         </section>
       </div>
       <DropZone />
-      <NotchShell bars={<Wings pile={<PilePoint />} />}>
-        <Sentence k="is:sent" request={POINT_LINE.plain} chat={POINT_CHAT}
+      <NotchShell bars={<Wings pile={<PilePoint />} count={3} />}>
+        <ChooseChat k="is:sent" request={POINT_LINE.plain} chat={POINT_CHAT} count={3}
           pile={<>{["low", "ok", "spec"].map((k, i) => <span key={k} className="mini" data-state={k} style={{ ["--i" as string]: i, zIndex: 3 - i }}><PointMini /></span>).reverse()}</>} />
+        {/* the board, Focus: Codex in focus on its plan of two steps; the vase done, a line */}
         <div data-k="is:board" className="slot s-board">
-          <Hello />
-          <div className="bsec">
-            <Row agent="claude-code" title="Studio Nord vase" line="Glazed, lit and framed." time="2m" state="done" />
-          </div>
-          <div className="bsec sep">
-            <div className="brow focus" data-k="pt:row" data-state="working">
-              <span className="ic"><Mark agent="codex" size={20} /><span className="badge" /></span>
-              <span className="tx">
-                <b>{POINT_CHAT.name}</b>
-                <span className="steps" data-k="pt:steps" data-state="0">
-                  <span data-i="0"><StepLine s={{ glyph: "read", verb: "Reading", obj: "3 attachments" }} /></span>
-                  <span data-i="1"><StepLine s={{ glyph: "edit", verb: "Editing", obj: "TrailCard.tsx", mono: true }} /></span>
-                </span>
-                <span className="line sc-done">Lined up with the others.</span>
-              </span>
-              <span className="tm">now</span>
-            </div>
-          </div>
+          <BoardHead />
+          <FocusCard k="pt:card" agent="codex" title={POINT_CHAT.name} pct="0%" segs={["now", "todo"]} meta="Codex · field-notes · now" ticks={[0.97]}
+            step={<span data-k="pt:step" className="fc-x" data-state="0"><span data-i="0">Step 1 of 2 · Read 3 attachments</span><span data-i="1">Step 2 of 2 · Edit TrailCard.tsx</span><span data-i="2">Plan done</span></span>}>
+            <p data-k="pt:now" className="fc-now" data-state="0">
+              <span data-i="0">Reading 3 attachments</span>
+              <span data-i="1">Editing <code>TrailCard.tsx</code></span>
+              <span data-i="2">Lined up with the others.</span>
+            </p>
+          </FocusCard>
+          <FocusRow agent="claude-code" title="Studio Nord vase" from={0.12} to={0.7} state="done" pct="100%" />
         </div>
       </NotchShell>
       <div className="marks">
@@ -264,7 +243,7 @@ function Pulled() {
     <div data-k="pw" className="sc-pull">
       <div data-k="pw:glass" className="sc-pull-glass" />
       <div data-k="pw:body" className="sc-pull-body">
-        <div className="pw-head"><Mark agent="codex" size={14} /><b>Release note</b><span className="hg"><Close /></span></div>
+        <div className="pw-head"><Mark agent="codex" size={14} ink /><b>Release note</b><span className="hg"><Close /></span></div>
         <p className="sc-bub" style={{ top: 44, right: R }}>Shorten the release note.</p>
         <span className="sc-rail" style={{ top: 50 }}><i className="on" /><i /></span>
         <p className="worked" style={{ top: 82, left: L }}>Worked for 48s · Edited 1 file<Right /></p>
@@ -306,25 +285,21 @@ function NotchWorld() {
         <Pulled />
       </div>
       <NotchShell bars={<Wings k="wo" over />}>
-        {/* Claude Code's chat, popped up by itself: it needs you, Allow and Deny in place */}
+        {/* Claude Code's chat, popped up by itself: it needs you, every choice numbered, 1 allows it */}
         <div data-k="is:asks" className="slot s-answer">
           <div data-k="na:body" className="sc-anbody na" data-state="needs">
             <Head agent="claude-code" title="Checkout page" badge="field-notes" />
             <p className="sc-bub" style={{ top: NA.bubble, right: 32 }}>Run the checkout tests and fix what fails.</p>
-            <p className="ask-q" style={{ top: NA.q }}>Run <code>npm test</code>?</p>
-            <p className="ask-kv" style={{ top: NA.kv[0] }}><span>Runs</span><code>npm test</code></p>
-            <p className="ask-kv" style={{ top: NA.kv[1] }}><span>Changes</span><span>No files</span></p>
-            <p className="ask-kv" style={{ top: NA.kv[2] }}><span>Allow</span><span className="opt"><span className="on">Just This Once<Check /></span><span>For This Session</span></span></p>
-            <Working verb="Running" obj="npm test" time="0:01" style={{ top: NA.q, left: 32, right: 32 }} />
-            <div className="sc-sbar" style={{ top: NA.bar }}>
+            <div style={{ position: "absolute", left: 0, right: 0, top: NA.ask }}>
+              <Ask k="na" q={<>Run <code>npm test</code>?</>} choices={["Allow once", "Always allow npm test in this project", "Deny, and tell it why"]} />
+            </div>
+            <Working verb="Running" obj="npm test" time="0:01" style={{ top: NA.work, left: 32, right: 32 }} />
+            <div className="sc-sbar work-b" style={{ top: NA.bar }}>
               <span className="sc-chip"><Ext />Open in Claude Code</span>
               <span className="sp" />
-              <span className="sc-chip ask-b">Deny</span>
-              <span data-k="na:run" className="sc-chip pri ask-b">Run Tests</span>
-              <span className="sc-chip work-b"><Stop />Stop</span>
+              <span className="sc-chip"><Stop />Stop</span>
             </div>
-            <Follow top={NA.follow} />
-            <span className="grab" style={{ top: NA.grab }} />
+            <span data-k="na:grab" className="grab" style={{ top: NA.grab }} />
           </div>
         </div>
         {/* Codex's chat, popped up done; asked more by voice, both exchanges */}
@@ -346,13 +321,13 @@ function NotchWorld() {
             <span data-k="an:grab" className="grab" style={{ top: NP.grab }} />
           </div>
         </div>
-        {/* let go out of the notch, the board a moment: every session at work, the pulled-out one too */}
+        {/* let go out of the notch, the board a moment (Focus): every session at work, the pulled-out one in focus */}
         <div data-k="is:board2" className="slot s-board">
-          <Hello />
-          <div className="bsec">
-            <Row agent="claude-code" title="Checkout page" time="now" state="working" step={{ verb: "Running", obj: "npm test", mono: true }} />
-            <Row agent="codex" title="Release note" time="now" state="working" step={{ verb: "Editing", obj: "CHANGELOG.md", mono: true }} />
-          </div>
+          <BoardHead />
+          <FocusCard agent="codex" title="Release note" pct="50%" segs={["done", "now"]} step="Step 2 of 2 · Add the snow banner" meta="Codex · field-notes · now" ticks={[0.62, 0.97]}>
+            <p data-k="nb:now" className="fc-now">Editing <code>CHANGELOG.md</code></p>
+          </FocusCard>
+          <FocusRow agent="claude-code" title="Checkout page" from={0.55} to={0.93} state="working" pct="67%" />
         </div>
       </NotchShell>
       <div className="marks"><Pointer /></div>
@@ -407,7 +382,7 @@ function TalkWorld() {
           </div>
         </div>
       </div>
-      <NotchShell bars={<Wings pile={<span data-k="wb:c0" className="mini"><TalkMini /></span>} />} />
+      <NotchShell bars={<Wings pile={<span data-k="wb:c0" className="mini" data-state="banner"><TalkMini /></span>} />} />
       <div className="marks">
         <span data-k="sel" className="capsel" />
         <span data-k="fl:0" className="mini flight"><TalkMini /></span>
@@ -436,6 +411,6 @@ function TalkOver() {
 
 export const VIEWS: Record<SceneId, { World: () => React.ReactElement; Over: () => React.ReactElement }> = {
   point: { World: PointWorld, Over: () => <Over keys={["fn", "cmd", "fnDone", "toCodex"]} line={POINT_LINE} tag="Your Codex at work, sped up" /> },
-  notch: { World: NotchWorld, Over: () => <Over keys={["more", "moreDone"]} line={MORE_LINE} /> },
+  notch: { World: NotchWorld, Over: () => <Over keys={["one", "more", "moreDone"]} line={MORE_LINE} /> },
   talk: { World: TalkWorld, Over: TalkOver },
 };
