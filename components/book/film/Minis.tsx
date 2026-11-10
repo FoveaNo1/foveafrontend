@@ -105,7 +105,13 @@ export function Mini({ screen }: { screen?: React.ReactNode }) {
   );
 }
 
-export const Mark = ({ agent, size = 18 }: { agent: Agent; size?: number }) => (
+/** At the notch every mark is one ink (Nov 5, Ryan: "black and white only so that it's not too noisy"): the Mac app's
+ *  silhouettes, drawn white; an agent with none, its icon in grey. */
+const INK: Partial<Record<Agent, string>> = { "claude-code": "claude-code", codex: "codex", fovea: "fovea" };
+
+export const Mark = ({ agent, size = 18, ink }: { agent: Agent; size?: number; ink?: boolean }) => {
+  const one = ink ? INK[agent] : undefined;
+  const src = one ? `/landing/agents/ink/${one}.png` : agent === "fovea" ? "/landing/film/fovea-mark.png" : `/landing/agents/${agent}.png`;
   // eslint-disable-next-line @next/next/no-img-element -- a small static mark inside the film
-  <img className="mark" src={agent === "fovea" ? "/landing/film/fovea-mark.png" : `/landing/agents/${agent}.png`} alt="" width={size} height={size} />
-);
+  return <img className={`mark${ink ? (one ? " ink" : " grey") : ""}`} src={src} alt="" width={size} height={size} />;
+};

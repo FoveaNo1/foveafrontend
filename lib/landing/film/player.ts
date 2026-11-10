@@ -4,8 +4,33 @@
 
 export type FilmEvent = "play" | "pause" | "ended" | "timeupdate" | "seeked" | "loadedmetadata";
 type Clock = { now: () => number; raf: (cb: () => void) => number; caf: (id: number) => void };
+type Chapters = readonly { at: number; title: string }[];
 
-export class FilmPlayer {
+/** What the page that plays a film needs of it: this drawn film's player and the recorded film's
+ *  (components/book/film/FilmVideo.tsx) alike. `muted` only where the film has sound to turn on. */
+export interface FilmHandle {
+  readonly duration: number;
+  readonly chapters: Chapters;
+  readonly currentTime: number;
+  readonly paused: boolean;
+  readonly ended: boolean;
+  muted?: boolean;
+  play(): Promise<void>;
+  pause(): void;
+  seek(v: number): void;
+  chapterAt(t?: number): number;
+  addEventListener(type: FilmEvent, fn: () => void): void;
+  removeEventListener(type: FilmEvent, fn: () => void): void;
+}
+
+/** The chapter t is in. */
+export function chapterOf(chapters: Chapters, t: number) {
+  let i = 0;
+  while (i + 1 < chapters.length && chapters[i + 1].at <= t + 1e-6) i++;
+  return i;
+}
+
+export class FilmPlayer implements FilmHandle {
   readonly duration: number;
   readonly chapters: readonly { at: number; title: string }[];
   paused = true;
@@ -61,12 +86,8 @@ export class FilmPlayer {
     this.emit("timeupdate");
   }
 
-  /** The chapter t is in, and the next and previous chapters' times. */
-  chapterAt(t = this.t) {
-    let i = 0;
-    while (i + 1 < this.chapters.length && this.chapters[i + 1].at <= t + 1e-6) i++;
-    return i;
-  }
+  /** The chapter t is in. */
+  chapterAt(t = this.t) { return chapterOf(this.chapters, t); }
 
   private tick = () => {
     if (this.paused) return;

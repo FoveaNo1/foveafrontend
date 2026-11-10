@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -32,19 +32,23 @@ test("the app hears of a payment with its Checkout session", () => {
   assert.equal(appHref(null), "fovea://billing/success");
 });
 
-test("the checkout is real: no card fields drawn by the site, and paying goes through the backend", () => {
-  const sheet = read("components/book/get/CheckoutSheet.tsx");
-  assert.ok(!/cc-number|cc-csc|cc-exp/.test(sheet), "the sheet draws card fields");
-  assert.match(sheet, /startCheckout\(cycle\)/);
+test("nothing to buy (Nov 8, Yulun: \"remove pricing, we will go with free trial\"): no plans, no checkout, no Pricing", () => {
+  for (const f of ["components/book/get/Plans.tsx", "components/book/get/CheckoutSheet.tsx", "components/book/PricingBody.tsx", "components/book/account/Checkout.tsx"]) {
+    assert.ok(!existsSync(path.join(root, f)), `${f} is still there`);
+  }
+  // an old link to the plans or the checkout goes to the download, the free trial
+  for (const p of ["pricing/page.tsx", "checkout/page.tsx"]) assert.match(read(`app/(landing)/${p}`), /redirect\("\/download"\)/, p);
+  assert.ok(!/\/pricing/.test(read("components/book/SiteFoot.tsx")), "Pricing in the foot");
+  assert.ok(!/Upgrade to Pro|Subscribe to Pro|href="\/checkout"/.test(read("components/book/account/Account.tsx")), "a way to buy on the account page");
+  assert.match(read("components/book/get/DownloadBlock.tsx"), /Free trial/);
   assert.ok(!/CHECKOUT_MODE/.test(read("lib/landing/book.ts")), "a demo mode is still there");
-  // the earlier pages' addresses, which the backend sends Stripe back to, still exist
-  for (const p of ["checkout/page.tsx", "checkout/success/page.tsx", "account/page.tsx", "login/page.tsx", "auth/callback/page.tsx"]) {
+  // the addresses the backend sends Stripe back to, and signing in, still exist
+  for (const p of ["checkout/success/page.tsx", "account/page.tsx", "login/page.tsx", "auth/callback/page.tsx"]) {
     assert.ok(read(`app/(landing)/${p}`).length > 0, p);
   }
 });
 
-test("no made-up numbers on a real page: places left, or a founding number outside the preview", () => {
-  assert.ok(!/places left/.test(read("components/book/get/Plans.tsx").replace(/\{\/\*[\s\S]*?\*\/\}/g, "")), "a places-left count is shown");
+test("no made-up numbers on a real page: a founding number outside the preview", () => {
   const welcome = read("components/book/get/Welcome.tsx");
   assert.match(welcome, /const no = demo \?/, "the founding number isn't kept to the preview");
 });
