@@ -104,13 +104,11 @@ test("the title card stands in where nothing plays by itself; the music is credi
   const m = FILM_VIDEO.music;
   assert.deepEqual([m.title, m.by, m.license], ["Petrichor", "Scott Buckley", "CC BY 4.0"]);
   assert.match(m.licenseHref, /creativecommons\.org\/licenses\/by\/4\.0/);
-  assert.ok(FILM_VIDEO_TRANSCRIPT.startsWith("An animation of Fovea for Mac"));
+  assert.ok(FILM_VIDEO_TRANSCRIPT.startsWith("“The last layer between you and your agents.”"));
   assert.ok(FILM_VIDEO_TRANSCRIPT.includes("Petrichor") && FILM_VIDEO_TRANSCRIPT.includes("Scott Buckley"));
-  assert.ok(FILM_VIDEO_TRANSCRIPT.includes("enter sends it") && !/\breturn\b/i.test(FILM_VIDEO_TRANSCRIPT), "the key that sends is enter");
-  // Film A (Nov 9): the chat is chosen by hand (control twice, every chat); routing is only Coming; eye tracking in beta
-  assert.ok(FILM_VIDEO_TRANSCRIPT.includes("They press control twice and the notch drops down to every chat"));
-  assert.ok(FILM_VIDEO_TRANSCRIPT.includes("Coming: Fovea picks the chat and the model for you."));
-  assert.ok(FILM_VIDEO_TRANSCRIPT.includes("in beta"));
-  assert.ok(FILM_VIDEO_TRANSCRIPT.includes("1 month free trial"));
-  assert.doesNotMatch(FILM_VIDEO_TRANSCRIPT, /glasses|necklace/i);
+  // Film S (Nov 15): under a minute; the marketing lines carry it; no chat is chosen; it goes to the person's own agents
+  assert.ok(FILM_VIDEO.duration < 60);
+  for (const line of ["Gaze isn’t your cursor. It’s your attention.", "Just look, speak, and let agents work with you.", "their own Claude Code", "their own Codex", "in beta", "something you wear"])
+    assert.ok(FILM_VIDEO_TRANSCRIPT.includes(line), line);
+  assert.doesNotMatch(FILM_VIDEO_TRANSCRIPT, /Choose chat|every chat|Fovea Bar|free trial|glasses|necklace/i);
 });

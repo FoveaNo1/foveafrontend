@@ -2,6 +2,25 @@
 
 ## The film, recorded (Oct 25)
 
+**Film S, second cut, 56 s (Nov 15, later)** (Yulun: "after sending the request, the notch will immediately be the screen
+for the answer, not the control board"; the attachments' explanations under the request; "then something you wear can
+be shorter"): master `out/fovea-film-s2-4k.mp4`, copies in `out/web-s2/`. Sending opens the agent's chat at the notch
+at once (the request, what was taken, "… is working" and one line of what it's doing, Stop), and the answer comes in
+there; no board. In the eye-tracking part the request's bubble carries Fovea's note for each picture (Evidence 1/2, the
+reference phrase, "The blue outline marks the approximate area the user was looking at while saying this phrase.").
+The Coming card is 3 s, so the end starts at 49 s.
+
+**Film S, 58 s (Nov 15)** (Yulun: "i need the film to be under 1 min … pick the most iconic ones … not show the part of
+choosing chat … these goes to the user's own coding agents"): the page plays film S (`comp/filmS.js`, master
+`out/fovea-film-s1-4k.mp4`) in place of film A. 0–4 "The last layer between you and your agents."; 4–24 normal use
+(two ⌘ captures, "Make this match this.", fn ⌃ sends it straight to Claude Code, the board, the page fixed, its answer
+at the notch, "Your own Claude Code and Codex, from the notch."); 24–28 "Gaze isn’t your cursor. It’s your attention.";
+28–46 eye tracking, beta (the app's ring; each "this" a picture of the screen with the ring on the picture only; sent
+straight to Codex; its answer at the notch); 46–51 "Coming · Then, something you wear." (no Fovea Bar); 51–58 the icon,
+Fovea, "Just look, speak, and let agents work with you." (no free-trial line). No Choose chat anywhere. Copies in
+`out/web-s1/` and `public/landing/film/fovea-film-s-*` (1440p 20.9 MB, 720p 9.1 MB, 1080p H.264 21.2 MB; the poster the
+"Your own Claude Code and Codex" frame at 21.5 s, 281 KB); film A's copies are removed from `public/`.
+
 **Film A (Nov 9, night)** (Yulun: "pretty awesome, change this onto the landing page"): the page now plays film A,
 "Another Way to Point" (1:31, `landing/research/launch-film/comp/filmA.js`, master `out/fovea-film-a3-4k.mp4`), in
 place of v9. An animation of Fovea for Mac in the Native look on Yulun's wallpaper alone: ⌘ and ⌘⌘ taken to the notch,
@@ -98,6 +117,28 @@ tools/stills out/fovea-demo-film-v9-4k.mp4 out/web-v9 16.3   # the title card, t
 The showcase's "return" key (scene 1, "to your Codex") reads "enter" too, as does the drawn film's.
 
 ## After the film: what Fovea does today (Oct 24)
+
+**How eye tracking is shown (Nov 15, Ryan, from the app):** the gaze is the app's Gaze Halo, a glowing ring in the system
+blue (190 pt across), open in the middle, never a disc or a dot. Saying “this” crops nothing and leaves nothing on the
+screen: what goes to the agent is a picture of the whole screen, with the same ring, dimmer, drawn on that picture where
+the eyes were. Scene 4 below follows this. The launch film (film A) still leaves dimmer rings on the screen; it is to be
+redone with this rule, not patched.
+
+**4 · Look at it, say “this.” (Nov 14)** (Ryan: "a part here that demonstrates our eye tracking ability … it should go
+last"). Decided from `/proto/look` (three directions behind a picker; the prototype is deleted):
+- Direction: **to your agent**. The eyes say what “this” means, and it goes to the agent as an attachment. fn ⌃; a look
+  at the signups chart's dip, “Why did this drop?”; a look at the captcha change, “Was it this change?”; each is
+  outlined where the eyes are and goes to the notch; Choose chat on the chat last sent to (Codex's Signups dashboard),
+  enter sends both. The pointer never moves. 12.6 s a loop (`LB` in `lib/landing/film/showcase.ts`).
+- The eyes as film A draws them: a soft region 180 pt across (a laptop camera's error), never a dot; at “this”, an
+  outline grows from it to the thing's edges in 0.42 s (ease in-out), numbered, held until its picture lands, then gone
+  in 0.16 s as captures are; a pulse where the eyes were. Blue `rgb(82 180 245)`. “Eye tracking · Beta” in the corner.
+- Words: title Ryan's; “Fovea follows your eyes, so “this” is whatever you’re looking at. It goes to your agent as an
+  attachment, with no drag and no click. Eye tracking is in beta.”
+- Rejected: **done for you** (a look at Ines's message, “Reply to this: running five minutes late.”, the reply sent
+  while Mail kept its caret): the most surprising, but Fovea sending a message by itself claims more than the app
+  does today. **Into your words** (dictating, “Here's the view from the top, this one.”, the photo pasted into the
+  email): the most everyday, but it reads as item 3 again, dictation with a picture.
 
 Yulun asked for a showcase after the film: each thing Fovea does today shown the way Dia's site shows its features,
 with an animation of a person using Fovea on their Mac rather than still pictures. "Download for Mac" and "Learn about

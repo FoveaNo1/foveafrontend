@@ -3,8 +3,10 @@
 // The Chinese edition (/zh) was taken down on Oct 13: landing/backups/2026-10-13-chinese-edition.tgz.
 
 export const BookCopy = {
-  /** The one line a first screen opens on (the film's opening card's words, Oct 17). */
-  hero: "Stay in your window. Talk to any agent from the notch.",
+  /** What a first screen opens on (Nov 15, Ryan's words; was "Stay in your window. Talk to any agent from the notch."). */
+  heroLines: ["The last layer between you and your agents."],
+  /** The same, as one line (the drawn film's opening card). */
+  hero: "The last layer between you and your agents.",
   title: "Talk to your agents from the notch.",
   titleSoft: "Just for now.",
   download: "Download for Mac",
@@ -69,6 +71,12 @@ export const BookCopy = {
         id: "talk", title: "Talk, and it cleans up for you.",
         text: "Press fn and think out loud: change your mind, come back to a point, and add attachments.",
         label: "A Mac’s screen in dark mode, an email open. fn is pressed and a list is talked through: the pricing page, the demo video, the press kit and the FAQ; then “Actually, drop the video”; the banner cut off on mobile, taken with ⌘; then one more for Friday, the launch email. fn again, and the email reads as a list of four without the video, the late item in it, and the banner’s picture after the words.",
+      },
+      {
+        // Nov 14, Ryan's title ("look at it, say this") and idea; the words polished, picked from three (proto/look)
+        id: "look", title: "Look at it, say “this.”",
+        text: "Fovea follows your eyes, so “this” is whatever you’re looking at. It goes to your agent as an attachment, with no drag and no click. Eye tracking is in beta.",
+        label: "A Mac’s screen in dark mode, a signups chart in Safari and this week’s merged changes beside it. fn and control are pressed; the person looks at the chart’s dip and says “Why did this drop?”: a blue ring follows their eyes, and a picture of the screen goes to the notch with the spot they looked at marked on it; they look at the captcha change and say “Was it this change?”, and a second picture follows, marked there. The pointer never moves. Choose chat opens on the Signups dashboard in Codex with the request as Codex will get it: the question, and for each picture the phrase said with it and a note that the blue outline marks where the user was looking. Enter sends it.",
       },
     ],
   },

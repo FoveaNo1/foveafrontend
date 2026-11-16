@@ -17,6 +17,12 @@
 // notch, ⌘ and ⌘⌘, choosing the chat with ⌃⌃ on the app's every-chat page, the board as the app has it, dictation), then
 // eye tracking in beta (routing marked Coming), then what's coming (Fovea Bar, something you wear), then the app's icon
 // and "1 month free trial".
+// Film S (Nov 15, Yulun: "i need the film to be under 1 min … pick the most iconic ones … not show the part of choosing
+// chat … these goes to the user's own coding agents"): 56 s, cut from film A (comp/filmS.js). The marketing lines carry
+// it: "The last layer between you and your agents."; normal use (two ⌘ captures, "Make this match this.", sent straight
+// to the person's own Claude Code, the notch its chat at once, at work then its answer; no board); "Gaze isn’t your cursor. It’s your attention."; eye tracking
+// in beta (the app's ring, each "this" a picture of the screen with the ring on the picture only, sent to Codex, its
+// answer at the notch); "Then, something you wear."; the app's icon and "Just look, speak, and let agents work with you."
 // Made small for the page from its 4K master by webcut (landing/README.md): HEVC at 1440p for a wide screen and at 720p for a phone, and H.264 at
 // 1080p for a browser without HEVC; all at the film's 60 fps, the index first so it plays before the rest has come.
 // Its sound is Scott Buckley's "Petrichor" (CC BY 4.0), credited under the film. Pure.
@@ -24,18 +30,19 @@
 const DIR = "/landing/film";
 
 export const FILM_VIDEO = {
-  duration: 91.0,
+  duration: 56.0,
   /** The film's parts: what your hand does today, what your eyes do (beta), what's coming. */
-  chapters: [{ at: 0, title: "Your hand" }, { at: 42.8, title: "Your eyes" }, { at: 78.4, title: "Coming" }],
+  chapters: [{ at: 0, title: "Your hand" }, { at: 24, title: "Your eyes" }, { at: 46, title: "Coming" }],
   /** In the order a browser tries them: the first whose `media` matches and whose `type` it can play. Each `type`
    *  is the file's own (tests/landing/video.test.mjs reads it from the file). */
   sources: [
-    { src: `${DIR}/fovea-film-a-1440.mp4`, type: 'video/mp4; codecs="hvc1.1.6.L150.B0, mp4a.40.2"', media: "(min-width: 900px)" },
-    { src: `${DIR}/fovea-film-a-720.mp4`, type: 'video/mp4; codecs="hvc1.1.6.L120.B0, mp4a.40.2"', media: "(max-width: 899px)" },
-    { src: `${DIR}/fovea-film-a-1080.mp4`, type: 'video/mp4; codecs="avc1.64002A, mp4a.40.2"' },
+    { src: `${DIR}/fovea-film-s-1440.mp4`, type: 'video/mp4; codecs="hvc1.1.6.L150.B0, mp4a.40.2"', media: "(min-width: 900px)" },
+    { src: `${DIR}/fovea-film-s-720.mp4`, type: 'video/mp4; codecs="hvc1.1.6.L120.B0, mp4a.40.2"', media: "(max-width: 899px)" },
+    { src: `${DIR}/fovea-film-s-1080.mp4`, type: 'video/mp4; codecs="avc1.64002A, mp4a.40.2"' },
   ],
-  /** The title card, for where nothing plays until it is asked to (Reduce Motion). */
-  poster: `${DIR}/fovea-film-a-poster.jpg`,
+  /** A still for where nothing plays until it is asked to (Reduce Motion): the fixed checkout, Claude Code's answer at
+   *  the notch, "Your own Claude Code and Codex, from the notch." */
+  poster: `${DIR}/fovea-film-s-poster.jpg`,
   music: {
     title: "Petrichor", by: "Scott Buckley", href: "https://www.scottbuckley.com.au",
     license: "CC BY 4.0", licenseHref: "https://creativecommons.org/licenses/by/4.0/",
@@ -44,13 +51,11 @@ export const FILM_VIDEO = {
 
 /** The film in words, for screen readers: its cards, what is said, and what happens between. */
 export const FILM_VIDEO_TRANSCRIPT = [
-  "An animation of Fovea for Mac, at real speed except where marked.",
-  "In Safari, a shop's checkout has a small pay button that doesn't match the spec beside it. Someone presses fn and control, and the notch widens into a black bar that says Listening. They say “Make this match this.”, taking the button with ⌘ and a drag, then the spec's lines; each lands in the bar. fn and control again, and Choose chat opens on the chat they last sent to. They press control twice and the notch drops down to every chat: suggested ones, a new chat with Fovea, Claude Code or Codex, and the rest by today, this week and earlier. They pick Checkout polish in Claude Code; enter sends it there. The board shows the sessions that are running. Claude Code works, sped up, and the page reloads with the button as the spec has it. “Stay in your window. Talk to any agent from the notch.”",
-  "Then the whole screen, with ⌘ twice, and a question, “What's wrong with this chart?”. Control twice again, and they pick Signups dashboard in Codex. Back in seconds, the answer opens in the notch: “The axis starts at 2,270, so Thursday's 3% dip looks like a crash. The dip is real, though: sign-ups fell right after Thursday's deploy.”",
-  "Claude Code asks to run its tests; 1 allows it. Dictated into Messages: “Fix is live. Can you check it on your phone?” Claude Code is done: “All 42 tests pass.”",
-  "“Your hand points. So do your eyes.” Eye tracking, in beta: they look at the chart and then at a merged change, saying “Why did this chart drop? Was it this change?”, and Fovea takes what they were looking at, with the pointer never moving. “Today, you pick the chat. Coming: Fovea picks the chat and the model for you.” “Your eyes never click. They only say what “this” means.”",
-  "With Mail in front, they look at Messages and say “Running five minutes late.”; the words go where they look. “Paste where you look.” The Gaze Collector: “Fitted to your eyes in ten minutes. In beta.”",
-  "Coming: Fovea Bar. Then, something you wear.",
-  "Fovea, its app icon. 1 month free trial. Fovea is not affiliated with the companies named.",
+  "“The last layer between you and your agents.”",
+  "An animation of Fovea for Mac, at real speed except where marked. In Safari, a shop's checkout has a small pay button that doesn't match the spec beside it. Someone presses fn and control, and the notch widens into a black bar that says Listening. They say “Make this match this.”, taking the button with ⌘ and a drag, then the spec's lines; each lands in the bar. fn and control again sends it to their own Claude Code, and the notch opens as its chat at once: the request, what was taken, and Claude Code at work, sped up. The page reloads with the button as the spec has it, and Claude Code's answer comes in there: “Done. The pay button is full width, 48 pt tall, in ink, with the lock before the label, as the spec has it.” “Your own Claude Code and Codex, from the notch.”",
+  "“Gaze isn’t your cursor. It’s your attention.”",
+  "Eye tracking, in beta. A signups chart and this week's merged changes. fn and control; a blue ring follows the person's eyes. They look at the chart's dip and say “Why did this chart drop?”, then at the captcha change, “Was it this change?”. Each time a picture of the screen goes to the notch with the spot they looked at marked on it; the pointer never moves. fn and control again sends it to their own Codex, and the notch opens as its chat at once: under the request, a note for each picture says the phrase said with it and that the blue outline marks where the person was looking. Codex's answer comes in there: “Yes. Sign-ups fell right after Thursday's captcha change: the form got a step longer, and phones dropped the most.” “Your eyes never click. They only say what “this” means.”",
+  "Coming: then, something you wear.",
+  "Fovea, its app icon. “Just look, speak, and let agents work with you.” Fovea is not affiliated with the companies named.",
   `Music: “${FILM_VIDEO.music.title}” by ${FILM_VIDEO.music.by}.`,
 ].join(" ");

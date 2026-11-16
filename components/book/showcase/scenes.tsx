@@ -1,11 +1,11 @@
-import { MORE_LINE, NA, NP, NQ, POINT_CHAT, POINT_LINE, PT, SC_KEYS, TALK, TALK_OUT, TK, TK_LINES, type ScKey, type SceneId } from "../../../lib/landing/film/showcase";
+import { BOARD, LB, LK, LK_SCREEN, LOOK_CHAT, LOOK_MESSAGE, LOOK_LINES, MORE_LINE, NA, NP, NQ, POINT_ANSWER, POINT_CHAT, POINT_LINE, PP, PT, SC_KEYS, TALK, TALK_OUT, TK, TK_LINES, lookGaze, type ScKey, type SceneId } from "../../../lib/landing/film/showcase";
 import type { Line } from "../../../lib/landing/film/speech";
 import type { Agent } from "../../../lib/landing/film/content";
 import { Again, Close, Copy, Expand, Ext, OpenSq, Right, Up } from "../film/Island";
 import { Mark } from "../film/Minis";
-import { Ask, Back, BoardHead, ChooseChat, DropZone, FocusCard, FocusRow, NotchShell, Wings } from "../film/Notch";
+import { Ask, Back, ChooseChat, DropZone, NotchShell, Search, Wings } from "../film/Notch";
 
-// The showcase's three scenes, drawn (lib/landing/film/showcase.ts moves them): a Mac's whole screen in points, in dark
+// The showcase's four scenes, drawn (lib/landing/film/showcase.ts moves them): a Mac's whole screen in points, in dark
 // mode (its wallpaper at dusk, the menu bar, the windows of the moment, drawn in HTML with no app icons or logos),
 // Fovea's notch as the app draws it since Nov 8 (components/book/film/Notch.tsx: black at rest, Wings while it
 // listens, Choose chat at its usual size, the board as Focus, every chat black under the notch, marks in one ink),
@@ -171,18 +171,27 @@ function PointWorld() {
       <NotchShell bars={<Wings pile={<PilePoint />} count={3} />}>
         <ChooseChat k="is:sent" request={POINT_LINE.plain} chat={POINT_CHAT} count={3}
           pile={<>{["low", "ok", "spec"].map((k, i) => <span key={k} className="mini" data-state={k} style={{ ["--i" as string]: i, zIndex: 3 - i }}><PointMini /></span>).reverse()}</>} />
-        {/* the board, Focus: Codex in focus on its plan of two steps; the vase done, a line */}
-        <div data-k="is:board" className="slot s-board">
-          <BoardHead />
-          <FocusCard k="pt:card" agent="codex" title={POINT_CHAT.name} pct="0%" segs={["now", "todo"]} meta="Codex · field-notes · now" ticks={[0.97]}
-            step={<span data-k="pt:step" className="fc-x" data-state="0"><span data-i="0">Step 1 of 2 · Read 3 attachments</span><span data-i="1">Step 2 of 2 · Edit TrailCard.tsx</span><span data-i="2">Plan done</span></span>}>
-            <p data-k="pt:now" className="fc-now" data-state="0">
-              <span data-i="0">Reading 3 attachments</span>
-              <span data-i="1">Editing <code>TrailCard.tsx</code></span>
-              <span data-i="2">Lined up with the others.</span>
+        {/* Nov 14 (Ryan): after enter, the chat it went to, not the board: Codex at work on one line, then its answer */}
+        <div data-k="is:answer" className="slot s-answer" style={{ height: PP.h }}>
+          <div className="sc-anbody">
+            <Head agent="codex" title={POINT_CHAT.name} badge="field-notes" />
+            <p className="sc-bub" style={{ top: PP.bubble, right: 32 }}>{POINT_LINE.plain}</p>
+            <p data-k="pt:work" className="sc-work" style={{ top: PP.work, left: 32, right: 32 }}>
+              <i className="sc-ring" />
+              <span data-k="pt:now" className="fc-x" data-state="0">
+                <span data-i="0">Reading <b>3 attachments</b></span>
+                <span data-i="1">Editing <b>TrailCard.tsx</b></span>
+              </span>
+              <em>0:04</em>
             </p>
-          </FocusCard>
-          <FocusRow agent="claude-code" title="Studio Nord vase" from={0.12} to={0.7} state="done" pct="100%" />
+            <div data-k="pt:done">
+              <p className="worked" style={{ top: PP.worked }}>Worked for 14s · Edited 1 file<Right /></p>
+              <p className="ans" style={{ top: PP.ans, left: 32, right: 32 }}>{POINT_ANSWER}</p>
+            </div>
+            <Bar k="pt:bar" top={PP.bar} agent="Codex" />
+            <Follow top={PP.follow} />
+            <span className="grab" style={{ top: PP.grab }} />
+          </div>
         </div>
       </NotchShell>
       <div className="marks">
@@ -302,7 +311,24 @@ function NotchWorld() {
             <span data-k="na:grab" className="grab" style={{ top: NA.grab }} />
           </div>
         </div>
-        {/* Codex's chat, popped up done; asked more by voice, both exchanges */}
+        {/* let go out of the notch, the board a moment, as the app has it (Nov 14): the sessions at work, the pulled-out
+            one in focus, lit */}
+        <div data-k="is:board2" className="slot s-sboard" style={{ width: BOARD.w, height: BOARD.out(BOARD.rows).h }}>
+          <div data-k="nb:rows" className="sb">
+            <p className="sb-head" style={{ top: BOARD.head }}>Hello, Ryan.<span className="sp" /><span className="sb-srch"><Search /></span></p>
+            {([["codex", "Release note", "Editing CHANGELOG.md", "now"], ["claude-code", "Checkout page", "Running npm test", "2m"]] as const).map(([agent, title, line, time], i) => (
+              <div key={title} className={`sb-row${i === 0 ? " lit" : ""}`} style={{ top: BOARD.top + i * BOARD.row }}>
+                <span className="sb-ic"><Mark agent={agent} size={16} ink /><i className="sb-badge"><svg viewBox="0 0 10 10" width="7" height="7" aria-hidden="true"><circle cx="5" cy="5" r="3.6" /><circle className="arc" cx="5" cy="5" r="3.6" /></svg></i></span>
+                <span className="sb-tx"><b>{title}</b><span>{line}</span></span>
+                <span className="sb-time">{time}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </NotchShell>
+      {/* Codex's chat, popped up done; asked more by voice, both exchanges. Drawn over the island so that, asked more,
+          it floats under the bar as a panel of its own (showcase.ts, FLOAT) */}
+      <div className="isl nt sc-float">
         <div data-k="is:answer" className="slot s-answer" style={{ height: NQ.h }}>
           <div data-k="an:body" className="sc-anbody">
             <Head agent="codex" title="Release note" badge="field-notes" />
@@ -321,15 +347,7 @@ function NotchWorld() {
             <span data-k="an:grab" className="grab" style={{ top: NP.grab }} />
           </div>
         </div>
-        {/* let go out of the notch, the board a moment (Focus): every session at work, the pulled-out one in focus */}
-        <div data-k="is:board2" className="slot s-board">
-          <BoardHead />
-          <FocusCard agent="codex" title="Release note" pct="50%" segs={["done", "now"]} step="Step 2 of 2 · Add the snow banner" meta="Codex · field-notes · now" ticks={[0.62, 0.97]}>
-            <p data-k="nb:now" className="fc-now">Editing <code>CHANGELOG.md</code></p>
-          </FocusCard>
-          <FocusRow agent="claude-code" title="Checkout page" from={0.55} to={0.93} state="working" pct="67%" />
-        </div>
-      </NotchShell>
+      </div>
       <div className="marks"><Pointer /></div>
     </>
   );
@@ -409,8 +427,124 @@ function TalkOver() {
   );
 }
 
+// ———————————————————————————— 4 · look
+
+/** The signups chart: a week, Thursday's dip; a picture of it for the pile. */
+const POINTS = [150, 122, 98, 300, 140, 96, 62];
+const ChartSvg = ({ mini }: { mini?: boolean }) => (
+  <svg className={mini ? "shot" : "lk-chart"} viewBox="0 0 718 360" preserveAspectRatio={mini ? "xMidYMid slice" : "none"} aria-hidden="true">
+    <rect width="718" height="360" fill="#fff" />
+    {[60, 150, 240, 330].map((y) => <path key={y} d={`M24 ${y}H700`} stroke="rgba(0,0,0,.07)" />)}
+    <path d={POINTS.map((y, i) => `${i ? "L" : "M"}${30 + i * 109.7} ${y}`).join(" ")} fill="none" stroke="#2F6FED" strokeWidth="3" strokeLinejoin="round" />
+    {POINTS.map((y, i) => <circle key={i} cx={30 + i * 109.7} cy={y} r="5.5" fill="#fff" stroke="#2F6FED" strokeWidth="2.5" />)}
+    {!mini && ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d, i) => <text key={d} x={30 + i * 109.7} y="352" fontSize="12" textAnchor="middle" fill="rgba(0,0,0,.4)">{d}</text>)}
+  </svg>
+);
+/** This week's merged changes on the team's code host (a fictional one); the captcha change is the one looked at. */
+const MERGED: [string, string, string][] = [
+  ["Checkout: one pay button style", "!412 · merged today by you", "+38 −12"],
+  ["Map links open in a new tab", "!411 · merged Friday by theo", "+6 −2"],
+  ["Captcha on the sign-up form", "!410 · merged Thursday by ines", "+142 −9"],
+  ["First-snow banner", "!409 · merged Wednesday by dana", "+57 −0"],
+  ["Fix 404s on old links", "!408 · merged Tuesday by theo", "+21 −33"],
+];
+/** What goes with the words: the whole screen as it was, the ring drawn on it, dimmer, where the eyes were (`at`). */
+const ScreenSvg = ({ at }: { at: { x: number; y: number } }) => {
+  const m = LK.met, cd = LK.code, ch = LK.chart;
+  return (
+    <svg className="shot" viewBox={`${LK_SCREEN.x} ${LK_SCREEN.y} ${LK_SCREEN.w} ${LK_SCREEN.h}`} preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <image href="/landing/film/horizon.jpg" x="0" y="0" width="1470" height="956" preserveAspectRatio="xMidYMid slice" />
+      <rect x={m.x} y={m.y} width={m.w} height={m.h} rx="12" fill="#2A2A2C" />
+      <rect x={m.x} y={m.y + 78} width={m.w} height={m.h - 78} fill="#F7F5EF" />
+      <rect x={ch.x} y={ch.y} width={ch.w} height={ch.h} rx="10" fill="#fff" />
+      <path d={POINTS.map((y, i) => `${i ? "L" : "M"}${ch.x + 30 + i * 109.7} ${ch.y + y}`).join(" ")} fill="none" stroke="#2F6FED" strokeWidth="5" />
+      <rect x={cd.x} y={cd.y} width={cd.w} height={cd.h} rx="12" fill="#2A2A2C" />
+      <rect x={cd.x} y={cd.y + 78} width={cd.w} height={cd.h - 78} fill="#F7F5EF" />
+      {MERGED.map((_, i) => { const r = LK.row(i); return <rect key={i} x={r.x} y={r.y} width={r.w} height={r.h} rx="8" fill="#fff" />; })}
+      <circle cx={at.x} cy={at.y} r="80" fill="none" stroke="rgb(64 186 245)" strokeWidth="26" opacity=".55" />
+    </svg>
+  );
+};
+const LookMini = () => (
+  <>
+    <span data-m="s1"><ScreenSvg at={lookGaze(LB.m1)} /></span>
+    <span data-m="s2"><ScreenSvg at={lookGaze(LB.m2)} /></span>
+  </>
+);
+
+/** Safari, dark, its page on paper under the tabs and the address (78 pt). */
+function Safari({ r, tab, url, children }: { r: { x: number; y: number; w: number; h: number }; tab: string; url: string; children: React.ReactNode }) {
+  return (
+    <section className="win sc-win sc-br" style={{ left: r.x, top: r.y, width: r.w, height: r.h }}>
+      <header className="sc-tabs"><Lights /><span className="on">{tab}</span></header>
+      <div className="sc-url"><span>{url}</span></div>
+      <div className="sc-page lk-page">{children}</div>
+    </section>
+  );
+}
+
+function LookWorld() {
+  const m = LK.met, cd = LK.code;
+  const kinds = ["s1", "s2"];
+  return (
+    <>
+      <div className="desk">
+        <Wall />
+        <div className="menubar" />
+        <Safari r={m} tab="Signups" url="metrics.northwind.co/growth">
+          <p className="lk-crumb">Growth · this week</p>
+          <h4 className="lk-h">Signups</h4>
+          <div className="lk-chartbox" style={{ left: LK.chart.x - m.x, top: LK.chart.y - m.y - 78, width: LK.chart.w, height: LK.chart.h }}><ChartSvg /></div>
+        </Safari>
+        <Safari r={cd} tab="Merged" url="code.northwind.co/shop/merged">
+          <p className="lk-crumb"><b>northwind</b> / shop</p>
+          <h4 className="lk-h sm">Merged this week</h4>
+          {MERGED.map(([title, sub, diff], i) => {
+            const r = LK.row(i);
+            return (
+              <div key={title} className="lk-row" style={{ left: r.x - cd.x, top: r.y - cd.y - 78, width: r.w, height: r.h }}>
+                <i /><span><b>{title}</b><small>{sub}</small></span><em>{diff}</em>
+              </div>
+            );
+          })}
+        </Safari>
+      </div>
+      <NotchShell bars={<Wings pile={<>{[1, 0].map((i) => <span key={i} data-k={`wb:c${i}`} className={`mini l${i}`} data-state={kinds[i]}><LookMini /></span>)}</>} count={2} />}>
+        <ChooseChat k="is:sent" request={LOOK_MESSAGE} chat={LOOK_CHAT} count={2}
+          pile={<>{kinds.map((k, i) => <span key={k} className="mini" data-state={k} style={{ ["--i" as string]: i, zIndex: 3 - i }}><LookMini /></span>).reverse()}</>} />
+      </NotchShell>
+      <div className="marks">
+        {/* the eyes: the app's ring while you talk (the mark of each "this" is only on the picture that's sent) */}
+        <span data-k="lk:gz" className="lk-ring" />
+        {[0, 1].map((i) => <span key={i} data-k={`fl:${i}`} className="mini flight"><LookMini /></span>)}
+        <Pointer />
+      </div>
+    </>
+  );
+}
+
+/** Over the screen in the look scene: the keys, "Eye tracking · Beta", and each line as it's said, one at a time. */
+function LookOver() {
+  return (
+    <div className="over" aria-hidden="true">
+      <Keys keys={["fn", "fnDone", "toCodex"]} />
+      <span data-k="tag:beta" className="tag tag1">Eye tracking · Beta</span>
+      <div className="subs">
+        {LOOK_LINES.map((line) => (
+          <p key={line.id} data-k={`sub:${line.id}`} className="sub">
+            {line.words.map((w, i) => (
+              <span key={i}><span data-k={`sw:${line.id}:${i}`} className={`w${w.mark ? ` ${w.mark}` : ""}`}>{w.text}</span>{i < line.words.length - 1 ? " " : ""}</span>
+            ))}
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export const VIEWS: Record<SceneId, { World: () => React.ReactElement; Over: () => React.ReactElement }> = {
   point: { World: PointWorld, Over: () => <Over keys={["fn", "cmd", "fnDone", "toCodex"]} line={POINT_LINE} tag="Your Codex at work, sped up" /> },
   notch: { World: NotchWorld, Over: () => <Over keys={["one", "more", "moreDone"]} line={MORE_LINE} /> },
   talk: { World: TalkWorld, Over: TalkOver },
+  look: { World: LookWorld, Over: LookOver },
 };

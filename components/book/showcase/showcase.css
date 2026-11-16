@@ -156,7 +156,7 @@
 .film .sc-abtn.pri[data-state="down"] { background: rgb(var(--acc) / .7); }
 .film .sc-hov { position: absolute; inset: 0; border-radius: 9px; background: rgb(var(--ink) / .06); opacity: 0; }
 /* the session opened from the board, and asked more: its exchanges, the outline's gutter at the right */
-.film .sc-anbody { position: absolute; left: 0; top: 0; width: 660px; height: 100%; }
+.film .sc-anbody { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .film .sc-q2 { position: absolute; inset: 0; opacity: 0; }
 .film .sc-ring { display: block; flex: none; width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid rgb(var(--ink) / .14); border-top-color: rgb(var(--acc)); transform: rotate(calc(var(--t, 0) * 327deg)); }
 /* the chat pulled out (V2DetachedWindow, Compact): a small window 313 × 431, plain black as the notch is (Nov 7),
@@ -222,3 +222,66 @@
 .film .sub.tr-box .w.capture .t { text-decoration: underline; text-decoration-color: rgb(0 0 0 / .35); text-underline-offset: .2em; }
 .film .sub.tr-box .w[data-state="x"] .t { color: #96968F; text-decoration: line-through; text-decoration-thickness: 1.5px; text-decoration-color: #6B6B67; }
 .film .sub.tr-box .w[data-state="add"] .t { background: rgb(255 214 10 / .38); border-radius: 2px; box-shadow: 0 0 0 1px rgb(255 214 10 / .38); }
+
+/* ———— 4 · look (Nov 14; the ring Nov 15): the eyes as the app draws them while you talk (Gaze Halo): a glowing ring in the
+   system's blue, 190 pt across, open in the middle; the mark of each "this" is drawn only on the picture that's sent */
+.film .lk-ring { position: absolute; left: 0; top: 0; width: 190px; height: 190px; border-radius: 50%; opacity: 0; pointer-events: none;
+  background: radial-gradient(circle closest-side, transparent 64%, rgb(64 186 245 / .55) 70%, rgb(52 176 242 / .95) 77%, rgb(40 160 235 / .8) 84%,
+    rgb(40 160 235 / .28) 93%, transparent 100%);
+  filter: blur(1.5px); }
+/* one line at a time, in the same place */
+.film.sc-look .subs .sub { grid-area: 1 / 1; }
+/* what's taken: the chart, the change */
+.film .mini[data-state="s1"] > [data-m="s1"], .film .mini[data-state="s2"] > [data-m="s2"] { display: block; }
+/* the pages on paper: the signups chart, this week's merged changes */
+.film .lk-page { color: #1F2328; }
+.film .lk-crumb { position: absolute; left: 36px; top: 26px; margin: 0; font-size: 12.5px; color: rgb(0 0 0 / .5); }
+.film .lk-crumb b { font-weight: 600; color: rgb(0 0 0 / .72); }
+.film .lk-h { position: absolute; left: 36px; top: 46px; margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -.01em; color: #1F2328; }
+.film .lk-h.sm { font-size: 21px; }
+.film .lk-chartbox { position: absolute; overflow: hidden; border-radius: 10px; background: #fff; box-shadow: 0 0 0 1px rgb(0 0 0 / .08); }
+.film .lk-chart { display: block; width: 100%; height: 100%; }
+.film .lk-row { position: absolute; box-sizing: border-box; display: flex; align-items: center; gap: 12px; padding: 0 12px; border-radius: 8px; background: #fff; box-shadow: 0 0 0 1px rgb(0 0 0 / .06); }
+.film .lk-row i { flex: none; width: 10px; height: 10px; border-radius: 50%; background: #2DA44E; }
+.film .lk-row span { display: grid; min-width: 0; }
+.film .lk-row b { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.film .lk-row small { font-size: 10.5px; color: rgb(0 0 0 / .5); }
+.film .lk-row em { margin-left: auto; font-style: normal; font-size: 11px; color: #2DA44E; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Nov 14 (Ryan): a black band along the screen's top edge, as a Mac's own bezel, so the notch hangs from it and its
+   curved corners run into black rather than into the grey menu bar; the screen sits under the band (its last few
+   points go under the frame's foot). In all four scenes, whatever the notch is doing. */
+.film.sc { --bez: clamp(3px, calc(var(--fw, 900px) * .006), 7px); }
+.film.sc::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: var(--bez); background: #000; z-index: 5; pointer-events: none; }
+.film.sc .f-world { top: var(--bez); }
+
+/* Nov 14 (Ryan): asking more, the notch is the bar alone, as Voiceflow's, and the chat stays, a panel of its own
+   floating a little under it. The chat is drawn over the island (sc-float): joined, it has no ground of its own and the
+   island is its panel; come away, it is black with its corners rounded, its top FLOAT.top under the island's top
+   (showcase.ts sets --away, --cut, --bot and --rad). */
+.film .isl.nt.sc-float { z-index: 1; }
+.film .isl.nt.sc-float .s-answer { background: rgb(0 0 0 / var(--away, 0)); border-radius: 0 0 21.5px 21.5px;
+  clip-path: inset(var(--cut, 0px) 0 var(--bot, 0px) 0 round var(--rad, 0px) var(--rad, 0px) 21.5px 21.5px); }
+
+/* Nov 14 (Ryan, after film A): the board as the app has it now (IslandSessionBoardView, V1QATokens.Board), a moment
+   after the chat is dragged out: "Hello, Ryan." quiet, the search; each session a 32 pt row, its agent's mark with its
+   state on a 9 pt badge (running: a blue arc turning), the chat over what it is doing now, how long; the one in focus
+   lit. showcase.ts BOARD has its sizes. */
+.film .isl.nt .s-sboard { left: calc(735px - 194.5px); }
+.film .isl.nt .sb { position: absolute; inset: 0; }
+.film .isl.nt .sb-head { position: absolute; left: 24px; right: 18px; height: 28px; display: flex; align-items: center; font-size: 11px; color: rgb(255 255 255 / .5); }
+.film .isl.nt .sb-srch { width: 20.5px; height: 20.5px; border-radius: 50%; background: rgb(255 255 255 / .08); display: grid; place-items: center; color: rgb(255 255 255 / .72); }
+.film .isl.nt .sb-row { position: absolute; left: 16px; right: 16px; height: 32px; padding: 0 8px; border-radius: 8px; display: flex; align-items: center; gap: 9px; }
+.film .isl.nt .sb-row.lit { background: rgb(255 255 255 / .06); }
+.film .isl.nt .sb-ic { position: relative; flex: none; width: 16px; height: 16px; }
+.film .isl.nt .sb-ic .mark { width: 16px; height: 16px; }
+.film .isl.nt .sb-badge { position: absolute; right: -2.5px; bottom: -2.5px; width: 9px; height: 9px; border-radius: 50%; display: grid; place-items: center; background: #2a2a2d; box-shadow: 0 0 0 1.5px #000; }
+.film .isl.nt .sb-badge svg { display: block; }
+.film .isl.nt .sb-badge circle { fill: none; stroke: rgb(255 255 255 / .22); stroke-width: 1.6; }
+.film .isl.nt .sb-badge circle.arc { stroke: rgb(10 132 255); stroke-linecap: round; stroke-dasharray: 6.8 22.6; transform-origin: 5px 5px; transform: rotate(calc(var(--t, 0) * 400deg)); }
+.film .isl.nt .sb-tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.film .isl.nt .sb-tx b { font-size: 12.5px; line-height: 15px; font-weight: 500; color: rgb(255 255 255 / .92); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.film .isl.nt .sb-tx span { font-size: 11px; line-height: 13px; color: rgb(255 255 255 / .5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.film .isl.nt .sb-time { flex: none; width: 28px; text-align: right; font-size: 11px; color: rgb(255 255 255 / .38); font-variant-numeric: tabular-nums; }
+/* Choose chat's words: the question and what each picture is, line by line, as the agent will get them */
+.film.sc-look .ch-words { white-space: pre-wrap; }

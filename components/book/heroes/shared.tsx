@@ -9,8 +9,8 @@ import InlineFilm from "../InlineFilm";
 // What the first screens share (the notch on the page, and the others under review at /hero): the line, the top
 // bar, the film as they show it, what follows it, and the small sums their hand-overs are made of.
 
-/** The line, a sentence a line. */
-export const LINE = c.hero.split(/(?<=\.) /);
+/** The headline (one line since Nov 15; kept as a list so a second can come back). */
+export const LINE = c.heroLines;
 export const n = (v: number, d = 3) => v.toFixed(d);
 export const px = (v: number) => `${v.toFixed(1)}px`;
 
