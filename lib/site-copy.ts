@@ -10,9 +10,9 @@ const siteCopy = {
     },
     metadata: {
       home: {
-        title: "Fovea · Talk to your agents from the notch. Just for now.",
-        description:
-          "Fovea is the way in for every agent: your voice and, soon, your eyes. It starts in your workspace.",
+        // Nov 20: the share card's words, the three lines of Max's card (opengraph-image.jpg)
+        title: "Fovea · The last layer between you and your agents.",
+        description: "Gaze isn’t your cursor. It’s your attention. Just look, speak, and let agents work with you.",
       },
       download: {
         title: "Fovea - Beta Downloads",
