@@ -1,23 +1,8 @@
-import type { Metadata } from "next";
-import Checkout from "../../../components/book/account/Checkout";
-import SiteFoot from "../../../components/book/SiteFoot";
-import TopBar from "../../../components/book/TopBar";
-import { cycleOf } from "../../../lib/account";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Checkout · Fovea",
-  description: "Choose your billing cycle for Fovea Pro.",
-  robots: { index: false, follow: false },
-};
-
-// Stripe sends a canceled payment back here with ?canceled=1 (the backend's STRIPE_CANCEL_URL).
-export default async function CheckoutPage({ searchParams }: { searchParams: Promise<{ canceled?: string; cycle?: string }> }) {
-  const params = await searchParams;
-  return (
-    <>
-      <TopBar />
-      <Checkout initialCycle={cycleOf(params.cycle)} canceled={params.canceled === "1"} />
-      <SiteFoot />
-    </>
-  );
+// Nov 8 (Yulun: "remove pricing, we will go with free trial"): nothing to buy. An old link to /checkout (and Stripe's
+// canceled payment, ?canceled=1) goes to the download, the free trial. /checkout/success stays, for a payment already
+// made.
+export default function CheckoutPage() {
+  redirect("/download");
 }

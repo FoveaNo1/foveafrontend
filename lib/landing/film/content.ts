@@ -67,16 +67,17 @@ export const BEATS = {
 
 /** The cards, on paper. */
 export const CARDS = {
-  /** The film opens on what the product is, on paper, in one line. */
-  title: { text: BookCopy.hero },
+  /** The film opens on what the product is, on paper, in one line; under it, whose agents (Oct 24, Yulun: the viewer's
+   *  own Claude Code and Codex; a draft line). */
+  title: { text: BookCopy.hero, small: "Starting with your own Claude Code and Codex." },
   eyes: { text: "And soon, your eyes.", small: "Not a cursor but a brand new way of capturing attention." },
   /** Session routing, coming with the eyes: every agent you have running answers as one being, and Fovea sends each
    *  request to the session it belongs to (Oct 17). */
   agents: { text: "And all your agents, as one.", small: "Fovea automatically routes the session and the model for you." },
   next: { text: BookCopy.s2.lead },
   bar: { text: BookCopy.s2.items[0][0], small: "A small bar that attaches to any computer, a laptop, a desktop or a tablet." },
-  /** Not glasses: the team is making no more of them, so the card says so. */
-  wear: { text: BookCopy.s2.items[1][0], small: "Not a pair of glasses. Not a ring. And not a necklace." },
+  /** One line, nothing under it saying what it isn’t (Nov 9, Yulun: "we are actually thinking of making glasses"). */
+  wear: { text: BookCopy.s2.items[1][0] },
   saw: { text: "what you saw, what you heard, what you said," },
   you: { text: BookCopy.s3.title },
   last: { text: BookCopy.last },
@@ -109,11 +110,13 @@ export const line = (id: string) => LINES.find((l) => l.id === id)!;
  *  ⌘ takes part of the screen, one press and a drag; ⌘ pressed twice takes the whole screen. Words and files need no
  *  key: words selected while Fovea listens are taken, and a file dragged onto the notch. */
 export const KEYS = {
-  fn: { caps: ["fn", "⌃"], label: "talk" },
+  // the three keys (Nov 7): fn says it where you're typing, fn ⌃ asks your agent, ⌃ makes the notch bigger
+  fn: { caps: ["fn", "⌃"], label: "ask your agent" },
   fnDone: { caps: ["fn", "⌃"], label: "done" },
   cmd: { caps: ["⌘"], label: "part of the screen" },
   cmd2: { caps: ["⌘", "⌘"], label: "whole screen" },
-  ret: { caps: ["return"], label: "send" },
+  // where it goes (Oct 24): every request the film sends goes to the viewer's own Claude Code
+  ret: { caps: ["enter"], label: "to your Claude Code" },
   esc: { caps: ["esc"], label: "close" },
   back: { caps: ["esc"], label: "back" },
 } as const;

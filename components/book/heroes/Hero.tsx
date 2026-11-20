@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { BookCopy as c } from "../../../lib/landing/bookCopy";
 import { ease, mix, seg } from "../../../lib/landing/film/ease";
-import type { FilmPlayer } from "../../../lib/landing/film/player";
+import type { FilmHandle } from "../../../lib/landing/film/player";
 import { ROUND3, type HeroId } from "../../../lib/landing/heroes";
 import { picture, type Laptop, type Scene } from "../../../lib/landing/pictures";
 import { InFrame, OnDesktop } from "./Desktop";
@@ -117,7 +117,7 @@ function Spec() {
  *  shrinks into a card with soft corners and a soft shadow, then clears (after Apple Vision Pro's frosted sheet). */
 function Frost() {
   const frame = useRef<HTMLDivElement>(null);
-  const player = useRef<FilmPlayer | null>(null);
+  const player = useRef<FilmHandle | null>(null);
   const restarted = useRef(false);
   const vars: PinVars = (k, st) => {
     const f = box(frame.current?.querySelector(".inline-film"), st.el);
@@ -192,7 +192,7 @@ export default function Hero({ id, pic, at }: { id: HeroId; pic?: string; at?: n
   const r3 = ROUND3.find((h) => h.id === id);
   const chosen = picture(pic) ?? picture(r3?.pic);
   if (id === "screen") return <Screen pic={(chosen?.kind === "laptop" ? chosen : picture("blinds")) as Laptop} />;
-  if (id === "desktop") return <OnDesktop pic={(chosen?.kind === "scene" ? chosen : picture("green-hills")) as Scene} at={at} />;
+  if (id === "desktop") return <><OnDesktop pic={(chosen?.kind === "scene" ? chosen : picture("green-hills")) as Scene} at={at} /><After /></>;
   if (id === "framed") return <InFrame pic={(chosen?.kind === "scene" ? chosen : picture("misty-hills")) as Scene} at={at} />;
   switch (id) {
     case "notch": return <Notch />;

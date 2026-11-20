@@ -5,15 +5,15 @@ import { KEYS } from "../../../lib/landing/film/content";
 import { HB, HERO_CHAT, HERO_LINE, HERO_SPEECH, heroAt } from "../../../lib/landing/film/hero";
 import { STAGE } from "../../../lib/landing/film/tokens";
 import type { Scene } from "../../../lib/landing/pictures";
-import { Brain, Chevron, StepLine, Up } from "../film/Island";
-import { Mark } from "../film/Minis";
+import { BoardHead, ChatsHead, ChooseChat, FocusCard, FocusChat, FocusRow, NotchShell, Wings } from "../film/Notch";
 import { makeRenderer } from "../film/renderer";
 import "../film/film.css";
 
 // The first screen's Mac (Oct 18): the chosen picture as its desktop, and Fovea's island at its notch doing what it
-// does once (lib/landing/film/hero.ts), drawn with the film's own parts and styles so the notch is exactly the
-// film's, which is the app's: the glass and its ears, the black notch on top, the voice bar's picture and nine bars,
-// Transcribing, Choose chat, the board. The island is drawn in a 1470 × 956-point screen scaled to its frame
+// does once (lib/landing/film/hero.ts), drawn with the parts the showcase shares, so the notch is the app's as it is
+// since Nov 8 (components/book/film/Notch.tsx): black at rest, Wings while it listens (the screen's picture in its pile,
+// six bars, Ask your agent's Sea Glass in its corner) and transcribes, Choose chat at its usual size and the board
+// (Focus) black under it. The island is drawn in a 1470 × 956-point screen scaled to its frame
 // (deskFit: the frame's width, a phone leaning in on the notch as the film does; or, with `cover`, the whole of a
 // frame of any shape, as the page's first screen is); the picture and the menu bar always cover the frame, and the
 // whole-screen capture is a picture of what the frame shows. The keys and the words sit over it at the frame's own
@@ -46,50 +46,22 @@ const Card = ({ pic }: { pic: Scene }) => <span data-m="screen" className="m-scr
 
 function Island({ pic }: { pic: Scene }) {
   return (
-    <div className="isl">
-      <div data-k="is:glass" className="is-glass" />
-      <svg data-k="is:ears" className="is-ears" aria-hidden="true"><path /></svg>
-      <svg data-k="is:rim" className="is-rim" aria-hidden="true"><path /></svg>
-      <div data-k="is:clip" className="is-clip">
-        <div data-k="is:voice" className="slot s-voice">
-          <span className="stack"><span data-k="vb:t0" className="mini th th0" data-state="screen"><Card pic={pic} /></span></span>
-          <span data-k="vb:wave" className="wave">{Array.from({ length: 9 }, (_, i) => <i key={i} data-k={`vb:b${i}`} />)}</span>
-        </div>
-        <div data-k="is:trans" className="slot s-trans">
-          <p>Transcribing<span data-k="tr:dots" className="ell"><i /><i /><i /></span></p>
-        </div>
-        <div data-k="is:choose" className="slot s-choose">
-          <div className="cwrap">
-            <p className="creq">{HERO_LINE}</p>
-            <div className="row">
-              <span className="pile"><span className="mini" data-state="screen" style={{ ["--i" as string]: 0, zIndex: 3 }}><Card pic={pic} /></span></span>
-              <span className="pills">
-                <span className="pill chat">
-                  <span data-k="ch:glow" className="glow" />
-                  <span className="settled"><Mark agent={HERO_CHAT.agent} /><span className="name">{HERO_CHAT.name}</span><Chevron /></span>
-                </span>
-                <span className="pill model"><Brain />Auto<Chevron /></span>
-                <span className="send"><Up /></span>
-              </span>
-            </div>
-            <div className="sug">
-              <span className="lab">Suggested</span>
-              {HERO_CHAT.chips.map((ch, i) => <span key={ch.name} className={`chip${i === 0 ? " on" : ""}`}><Mark agent={ch.agent} size={14} />{ch.name}</span>)}
-            </div>
-          </div>
-        </div>
-        <div data-k="is:board" className="slot s-board">
-          <div className="bsec">
-            <div className="brow" data-state="working">
-              <span className="ic"><Mark agent={HERO_CHAT.agent} size={26} /><span className="badge" /></span>
-              <span className="tx"><b>{HERO_CHAT.name}</b><span className="steps one"><StepLine s={HERO_CHAT.step} /></span></span>
-              <span className="tm">now</span>
-            </div>
-          </div>
-        </div>
+    <NotchShell bars={<Wings pile={<span data-k="wb:c0" className="mini" data-state="screen"><Card pic={pic} /></span>} />}>
+      <ChooseChat k="is:sent" request={HERO_LINE} chat={HERO_CHAT} count={1}
+        pile={<span className="mini" data-state="screen" style={{ ["--i" as string]: 0, zIndex: 3 }}><Card pic={pic} /></span>} />
+      {/* the board, Focus: the session just sent in focus, at work; the others a line each */}
+      <div data-k="is:board" className="slot s-board">
+        <BoardHead />
+        <FocusCard agent={HERO_CHAT.agent} title={HERO_CHAT.name} pct="0%" segs={["now", "todo", "todo"]}
+          step="Step 1 of 3 · Read the screenshot" meta="Claude Code · landing · now" ticks={[0.97]}>
+          <p data-k="hb:now" className="fc-now">{HERO_CHAT.step}</p>
+        </FocusCard>
+        <FocusRow agent="codex" title="Checkout tests" from={0.38} to={0.92} state="working" pct="50%" />
+        <FocusRow agent="claude-code" title="Release note" from={0.08} to={0.52} state="done" pct="100%" />
+        <ChatsHead />
+        <FocusChat agent="claude-code" title="Launch email" reply="Drafted: the film first, then one line on the notch." time="4m" unread />
       </div>
-      <div className="is-notch" />
-    </div>
+    </NotchShell>
   );
 }
 

@@ -65,11 +65,9 @@ export default function Account() {
         <p className="acct-label">Plan</p>
         <h2 id="plan-title">{loading ? "Checking your plan" : billing.plan}</h2>
         <p className={billing.paymentFailed ? "acct-warn" : undefined}>{loading ? "Loading your subscription." : billing.description}</p>
-        {!loading && (billing.buy || billing.manage) && (
+        {/* no way to buy here (Nov 8, Yulun: "remove pricing, we will go with free trial") */}
+        {!loading && billing.manage && (
           <div className="acct-actions">
-            {billing.buy && (
-              <Link className="act-line" href="/checkout">{status?.manual_entitlement ? "Subscribe to Pro" : "Upgrade to Pro"} <span className="ar" aria-hidden="true">→</span></Link>
-            )}
             {billing.manage && (
               <button className="act-line small" type="button" onClick={manage} disabled={portal}>
                 <span className="swap" key={String(portal)}>

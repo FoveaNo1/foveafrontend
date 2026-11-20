@@ -2,15 +2,15 @@
 
 import Link from "next/link";
 import { BookCopy as c } from "../../../lib/landing/bookCopy";
-import type { FilmPlayer } from "../../../lib/landing/film/player";
+import type { FilmHandle } from "../../../lib/landing/film/player";
 import type { FilmPlace } from "../../../lib/landing/place";
 import InlineFilm from "../InlineFilm";
 
 // What the first screens share (the notch on the page, and the others under review at /hero): the line, the top
 // bar, the film as they show it, what follows it, and the small sums their hand-overs are made of.
 
-/** The line, a sentence a line. */
-export const LINE = c.hero.split(/(?<=\.) /);
+/** The headline (one line since Nov 15; kept as a list so a second can come back). */
+export const LINE = c.heroLines;
 export const n = (v: number, d = 3) => v.toFixed(d);
 export const px = (v: number) => `${v.toFixed(1)}px`;
 
@@ -35,15 +35,19 @@ export function Top({ className = "" }: { className?: string }) {
   );
 }
 
-/** Under the film, only the way in (Oct 17: no sentence, no button), and beside it the way to Fovea Vision (Oct 18),
- *  both set as the download page's "Download for Mac" is: EB Garamond on a hairline that inks in on hover. */
+/** Under the film, only the way in (Oct 17: no sentence, no button; Nov 8, Yulun: no "Learn about Fovea's vision"
+ *  beside it), set as the download page's "Download for Mac" is: EB Garamond on a hairline that inks in on hover.
+ *  Nov 9 (Ryan picked look C of /download-looks): the app's icon over the words, what you get under them; the whole
+ *  is the link, and the icon lifts on hover as in the Dock. The menu bar's link stays as it was. */
 export function After({ className = "" }: { className?: string }) {
   return (
-    <section id="download" className={`hx-after ${className}`} aria-label="Download and Fovea Vision">
-      <p className="hx-dl">
-        <Link className="act-line" href="/download" data-download="hero">{c.download}</Link>
-        <Link className="act-line" href="/vision">{c.visionLink}</Link>
-      </p>
+    <section id="download" className={`hx-after ${className}`} aria-label="Download">
+      <Link className="hx-dl-icon" href="/download" data-download="hero">
+        {/* eslint-disable-next-line @next/next/no-img-element -- the app's own icon, a static file */}
+        <img src="/landing/app-icon.png" width={84} height={84} alt="" />
+        <span className="act-line">{c.download}</span>
+        <span className="facts">1 month free trial · macOS 14 or later</span>
+      </Link>
     </section>
   );
 }
@@ -52,7 +56,7 @@ export function After({ className = "" }: { className?: string }) {
 export const START = 0;
 
 type HeroFilmProps = {
-  play?: boolean; onPlayer?: (p: FilmPlayer) => void; start?: number;
+  play?: boolean; onPlayer?: (p: FilmHandle) => void; start?: number;
   /** As the reader left it, when they come back to the page; and who is told how it is (lib/landing/place.ts). */
   resume?: FilmPlace; onPlace?: (p: FilmPlace | undefined) => void;
 };
