@@ -23,7 +23,7 @@ export default function Plans({ onJoin, headingLevel = "h2", downloadHref = "#to
           <p className="k">Free</p>
           <p className="bigp">$0</p>
           <ul className="sl" role="list">
-            <li>2,000 words a week, resetting weekly.</li>
+            <li>2,000 words a week, including requests sent to your own Claude Code or Codex; resets weekly.</li>
             <li>10 answers a week from Fovea&apos;s own model, on the standard model.</li>
             <li>Eye tracking and taking the screen within the word limit.</li>
             <li>The dictionary, the notch board, and capture history.</li>
@@ -34,6 +34,7 @@ export default function Plans({ onJoin, headingLevel = "h2", downloadHref = "#to
           <p className="k">Pro</p>
           <p className="bigp">$99/year</p>
           <p className="cond">$8.25/month, billed yearly. Or $12/month.</p>
+          <p className="founding-note">The first 500 yearly members keep $99 a year for life.</p>
           <ul className="sl" role="list">
             <li>Unlimited words, eye tracking, and taking the screen.</li>
             <li>100 answers a month from Fovea&apos;s own model on the best model, then the standard model, up to 500 a month.</li>
@@ -46,7 +47,6 @@ export default function Plans({ onJoin, headingLevel = "h2", downloadHref = "#to
           </p>
         </div>
       </div>
-      <p className="founding-note">The first 500 yearly members keep $99 a year for life.</p>
     </section>
   );
 }

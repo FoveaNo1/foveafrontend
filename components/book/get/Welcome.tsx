@@ -3,12 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Founding, Pictures, sized } from "../../../lib/landing/book";
 
-// After paying: the founding card arrives unlit, then the hall inside it warms on, as the landing page's does
-// (light before colour); then its words are set, the number last, and the rest follows: a letter, the hall in
-// print, the credits. research/rewards.md (the post-payment moment) and research/emil.md (the numbers).
-// Oct 21: it opens for real on /checkout/success once the backend says Pro is on. Nothing yet keeps a founding
-// number, a print request or a name for the credits, so a real welcome shows no number and doesn't offer those;
-// the design preview (/download?preview=welcome, `demo`) still shows all of it.
+// After paying: the welcome card arrives unlit, then the hall inside it warms on (light before colour);
+// its words appear and the letter follows. It opens on /checkout/success only after the backend confirms Pro.
+// The optional design preview (`demo`) still uses a sample number and print/credits controls.
 
 type Props = {
   open: boolean;
@@ -24,7 +21,6 @@ export default function Welcome({ open, onClose, demo = false, appLink = "fovea:
   const card = useRef<HTMLDivElement>(null);
   const [set, setSet] = useState(false);
   const [shown, setShown] = useState(false);
-  const [name, setName] = useState("");
   const [print, setPrint] = useState<"ask" | "yes" | "no">("ask");
 
   useEffect(() => {
@@ -78,7 +74,7 @@ export default function Welcome({ open, onClose, demo = false, appLink = "fovea:
             {/* eslint-disable-next-line @next/next/no-img-element -- a stand-in hotlinked picture (lib/landing/book.ts) */}
             <div className="ph"><img src={sized(Pictures.hall.src, 800)} alt="" /></div>
             <div className="tx">
-              <div><b>Founding member</b><span className="nm">{name.trim()}</span><small suppressHydrationWarning>Since {since} · Fovea</small></div>
+              <div><b>Fovea Pro</b><span className="nm">Ready on your Mac</span><small suppressHydrationWarning>Since {since} · Fovea</small></div>
               {no && <span className="no">{no}</span>}
             </div>
             <div className="sheen" />
@@ -86,18 +82,14 @@ export default function Welcome({ open, onClose, demo = false, appLink = "fovea:
         </div>
         <div className="w-txt">
           <h2 id="w-title">Welcome to Fovea.</h2>
-          <p>Pro is on. Open Fovea on your Mac and it is already there. Your founding price is kept for as long as you stay.</p>
-          <label className="namefield">
-            <input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" placeholder="Your name, for your card" maxLength={40} />
-            <span>It is only on your card.</span>
-          </label>
+          <p>Pro is on. Open Fovea on your Mac and it is already there.</p>
         </div>
         <article className="letter" aria-label="A letter from Fovea">
-          <p>Dear founding member,</p>
-          <p>Thank you for joining Fovea this early.{no && ` You are ${no}.`}</p>
-          <p>We started Fovea because we wanted to talk to our agents the way we would talk to someone beside us: point at the thing, say what we mean, and get back to work. You are helping us find out how far that goes.</p>
-          <p>Your price stays where it is for as long as you are with us. When eye tracking is ready, it comes to you first, and so will the first chance to reserve a Fovea Bar.</p>
-          <p>If something feels wrong, or right, write back to the email this came with. It comes to us.</p>
+          <p>Hello,</p>
+          <p>Thank you for choosing Fovea Pro.{no && ` You are ${no}.`}</p>
+          <p>Pro is active on your account. Open Fovea on your Mac with the same account to use it.</p>
+          <p>You can manage your subscription from your account on hellofovea.com.</p>
+          <p>If you need help, email hello@hellofovea.com.</p>
           <p className="sig" aria-label="Signed, Fovea">Fovea</p>
           <p className="from">From all of us at Fovea</p>
         </article>
