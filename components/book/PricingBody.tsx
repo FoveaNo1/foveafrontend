@@ -20,6 +20,7 @@ const Rows: [string, string, string][] = [
 
 const Faq: [string, string][] = [
   ["How does the trial work?", "Every new account starts with 14 days of Pro, no card required."],
+  ["How do I cancel?", "From your account on hellofovea.com or inside the Fovea Mac app. You keep Pro until the end of the billing period."],
   ["What happens to Memory on Free?", "It is off; what it already has is kept and resumes on upgrade."],
   ["Who keeps the yearly price?", "The first 500 yearly members keep $99 a year for life."],
 ];

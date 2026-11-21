@@ -24,7 +24,7 @@ export default function Plans({ onJoin, headingLevel = "h2", downloadHref = "#to
           <p className="bigp">$0</p>
           <ul className="sl" role="list">
             <li>2,000 words a week, resetting weekly.</li>
-            <li>10 requests a week on the standard model.</li>
+            <li>10 answers a week from Fovea&apos;s own model, on the standard model.</li>
             <li>Eye tracking and taking the screen within the word limit.</li>
             <li>The dictionary, the notch board, and capture history.</li>
           </ul>
@@ -36,7 +36,7 @@ export default function Plans({ onJoin, headingLevel = "h2", downloadHref = "#to
           <p className="cond">$8.25/month, billed yearly. Or $12/month.</p>
           <ul className="sl" role="list">
             <li>Unlimited words, eye tracking, and taking the screen.</li>
-            <li>100 requests a month on the best model, then the standard model, up to 500 a month.</li>
+            <li>100 answers a month from Fovea&apos;s own model on the best model, then the standard model, up to 500 a month.</li>
             <li>Memory on for every capture, never counted.</li>
             <li>Priority email support.</li>
           </ul>
