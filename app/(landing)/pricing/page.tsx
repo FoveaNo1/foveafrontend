@@ -1,7 +1,21 @@
-import { redirect } from "next/navigation";
+import type { Metadata } from "next";
+import PricingBody from "../../../components/book/PricingBody";
+import SiteFoot from "../../../components/book/SiteFoot";
+import TopBar from "../../../components/book/TopBar";
 
-// Nov 8 (Yulun: "remove pricing, we will go with free trial"): no plans to show. An old link to /pricing goes to the
-// download, the free trial.
+// The plans, as on the download page, with everything side by side and the common questions.
+export const metadata: Metadata = {
+  title: "Pricing · Fovea",
+  description: "Fovea is free to start. Pro is $9 a month for founding members, billed yearly, or $20 month to month.",
+  alternates: { canonical: "/pricing" },
+};
+
 export default function PricingPage() {
-  redirect("/download");
+  return (
+    <>
+      <TopBar />
+      <PricingBody />
+      <SiteFoot />
+    </>
+  );
 }
