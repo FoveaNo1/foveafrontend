@@ -41,8 +41,8 @@ export type Cycle = "yearly" | "monthly";
 /** What each cycle costs, as the checkout shows it. The amount charged is Stripe's (the backend's
  *  STRIPE_PRICE_PRO_YEARLY / _MONTHLY): keep these in step with those prices. */
 export const Prices: Record<Cycle, { line: string; total: string; name: string; then: string }> = {
-  yearly: { line: "$9 × 12 months", total: "$108", name: "Yearly", then: "$108 today, then yearly. Cancel any time." },
-  monthly: { line: "1 month", total: "$20", name: "Monthly", then: "$20 today, then monthly. Cancel any time." },
+  yearly: { line: "$8.25 × 12 months", total: "$99", name: "Yearly", then: "$99 today, then yearly." },
+  monthly: { line: "1 month", total: "$12", name: "Monthly", then: "$12 today, then monthly." },
 };
 
 /** A founding number, for the welcome's design preview only (/download?preview=welcome). Real numbers aren't given

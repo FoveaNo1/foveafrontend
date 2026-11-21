@@ -46,7 +46,7 @@ export function After({ className = "" }: { className?: string }) {
         {/* eslint-disable-next-line @next/next/no-img-element -- the app's own icon, a static file */}
         <img src="/landing/app-icon.png" width={84} height={84} alt="" />
         <span className="act-line">{c.download}</span>
-        <span className="facts">1 month free trial · macOS 14 or later</span>
+        <span className="facts">14-day free trial · macOS 14 or later</span>
       </Link>
     </section>
   );

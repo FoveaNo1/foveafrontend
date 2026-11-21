@@ -5,29 +5,23 @@ import type { Cycle } from "../../lib/landing/book";
 import CheckoutSheet from "./get/CheckoutSheet";
 import Plans from "./get/Plans";
 
-// /pricing: the same three plans as the download page, then everything side by side as a quiet ledger, then the
-// questions people ask (the site's own answers, word for word). Joining opens the same checkout, on to Stripe; the
-// Mac app sends people here to upgrade.
+// /pricing: Free and Pro, compared against the current offer. Joining opens checkout; the Mac app links here.
 
 const Rows: [string, string, string][] = [
-  ["Captures", "50 a week", "Unlimited"],
-  ["Voice, text and images", "✓", "✓"],
-  ["History kept on your Mac", "✓", "✓"],
-  ["A dictionary of your own words", "✓", "✓"],
-  ["Priority model routing", "—", "✓"],
-  ["Your own hotkeys and templates", "—", "✓"],
-  ["Early access to new places to send to", "—", "✓"],
-  ["Your requests heard first", "—", "✓"],
-  ["Founding member: your price kept, a numbered card, first to try what comes next", "—", "✓"],
+  ["Price", "$0", "$12/month, or $99/year ($8.25/month)"],
+  ["Words — dictation with Fn, and Fn+Ctrl requests sent to your own Claude Code or Codex", "2,000 words a week", "Unlimited"],
+  ["Fovea's own model — Fn+Ctrl requests that Fovea answers itself", "10 a week, on the standard model", "100 a month on the best model, then the standard model, up to 500 a month"],
+  ["Eye tracking — look at something and say “this”; the eye model runs on the Mac", "Yes, within the word limit", "Unlimited"],
+  ["Memory — Fovea learns from every capture, and you can search what it remembers", "Off; what it already has is kept and resumes on upgrade", "On for every capture, never counted"],
+  ["Taking the screen — part of the screen (⌘ drag), the whole screen (⌘ twice), the highlighter (⌥)", "Yes, within the word limit", "Unlimited"],
+  ["Everything else — the dictionary, the notch board, capture history", "Yes", "Yes"],
+  ["Support", "Help docs", "Priority email"],
 ];
 
 const Faq: [string, string][] = [
-  ["When does paid billing start?", "Early-bird pricing is available during the beta rollout. Existing beta users will receive advance notice before any plan change affects their account."],
-  ["Is there a Free plan?", "Yes. Free includes 50 captures per week with voice, text, and image input. Pro removes the weekly capture limit and adds advanced delivery features."],
-  ["How do I cancel?", "From your account on hellofovea.com or inside the Fovea Mac app. You keep Pro until the end of the billing period."],
-  ["What counts as a capture?", "One delivery action — including any voice, text selections, and screenshots packaged in that session."],
-  ["What payment methods do you accept?", "All major cards via Stripe. Team plans support invoicing."],
-  ["Do you offer refunds?", "14-day refund on first paid month, no questions asked."],
+  ["How does the trial work?", "Every new account starts with 14 days of Pro, no card required."],
+  ["What happens to Memory on Free?", "It is off; what it already has is kept and resumes on upgrade."],
+  ["Who keeps the yearly price?", "The first 500 yearly members keep $99 a year for life."],
 ];
 
 export default function PricingBody() {

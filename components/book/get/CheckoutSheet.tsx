@@ -82,13 +82,13 @@ export default function CheckoutSheet({ open, cycle, onClose }: Props) {
         <div ref={grab} className="grab" aria-hidden="true" />
         <div className="sheet-in">
           <div className="sheet-head">
-            <div><h2 id="sheet-title">Fovea Pro</h2><p>Founding member · {P.name}</p></div>
+            <div><h2 id="sheet-title">Fovea Pro</h2><p>{P.name}</p></div>
             <button className="x" type="button" onClick={onClose} aria-label="Close">×</button>
           </div>
           <div className="sum">
             <div><span>{P.line}</span><span>{P.total}</span></div>
             <div className="total"><span>Total today</span><span>{P.total}<small>USD</small></span></div>
-            <p>Your founding price is kept for as long as your membership is active.</p>
+            {cycle === "yearly" && <p>The first 500 yearly members keep $99 a year for life.</p>}
           </div>
           {/* what happens next, set as the download page's install steps are */}
           <ol className="sheet-steps" aria-label="What happens next">
@@ -107,7 +107,7 @@ export default function CheckoutSheet({ open, cycle, onClose }: Props) {
             </span>
           </button>
           <p className="fine">
-            You pay on Stripe’s secure page. If Fovea isn’t for you, write to us within 14 days and we’ll refund you in full.{" "}
+            You pay on Stripe’s secure page.{" "}
             <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a>
           </p>
         </div>

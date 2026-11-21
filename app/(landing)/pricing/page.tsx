@@ -6,7 +6,7 @@ import TopBar from "../../../components/book/TopBar";
 // The plans, as on the download page, with everything side by side and the common questions.
 export const metadata: Metadata = {
   title: "Pricing · Fovea",
-  description: "Fovea is free to start. Pro is $9 a month for founding members, billed yearly, or $20 month to month.",
+  description: "Fovea is free to start. Pro is $12 a month, or $99 a year ($8.25 a month). Every new account starts with 14 days of Pro, no card required.",
   alternates: { canonical: "/pricing" },
 };
 

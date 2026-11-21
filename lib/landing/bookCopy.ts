@@ -81,5 +81,5 @@ export const BookCopy = {
     ],
   },
   last: "Today, the notch. Next, everything you look at.",
-  foot: { vision: "Fovea Vision", account: "Account", feedback: "Feedback", leaves: "What leaves your Mac", privacy: "Privacy", terms: "Terms", contact: "Contact" },
+  foot: { vision: "Fovea Vision", pricing: "Pricing", account: "Account", feedback: "Feedback", leaves: "What leaves your Mac", privacy: "Privacy", terms: "Terms", contact: "Contact" },
 };

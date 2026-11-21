@@ -6,8 +6,7 @@ import DownloadBlock from "./DownloadBlock";
 import Rotation from "./Rotation";
 
 // The download page (/download): the download and a frame of four photographs in turn. Design and research:
-// landing/research/drafts (get.html, research/*.md). Nov 8 (Yulun: "remove pricing, we will go with free trial"): no
-// plans and no paying; Fovea is a free trial.
+// landing/research/drafts (get.html, research/*.md). Pricing and checkout live on their own pages.
 export default function GetFovea() {
   return (
     <>

@@ -33,7 +33,7 @@ export default function Checkout({ initialCycle, canceled }: { initialCycle: Bil
   return (
     <main className="text-page acct">
       <h1 className="rise">Fovea Pro</h1>
-      <p className="rise" style={{ ["--i" as string]: 1 }}>Founding member. Your founding price is kept for as long as your membership is active.</p>
+      {cycle === "yearly" && <p className="rise" style={{ ["--i" as string]: 1 }}>The first 500 yearly members keep $99 a year for life.</p>}
       {canceled && <p className="acct-note" role="status">{CANCELED}</p>}
 
       <fieldset className="fb-kind acct-cycle">
@@ -61,7 +61,7 @@ export default function Checkout({ initialCycle, canceled }: { initialCycle: Bil
         </button>
       </p>
       <p className="acct-fine">
-        You pay on Stripe’s secure page. If Fovea isn’t for you, write to us within 14 days and we’ll refund you in full.{" "}
+        You pay on Stripe’s secure page.{" "}
         <Link href="/terms">Terms</Link> · <Link href="/privacy">Privacy</Link>
       </p>
     </main>
