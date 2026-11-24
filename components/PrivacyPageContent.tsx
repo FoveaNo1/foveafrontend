@@ -23,7 +23,7 @@ export default function PrivacyPageContent() {
           <h1 className="text-3xl font-semibold tracking-tight text-[#111315] sm:text-4xl">
             Privacy Policy
           </h1>
-          <p className="mt-2 text-sm text-[#6A756E]">Last updated: June 2026</p>
+          <p className="mt-2 text-sm text-[#6A756E]">Last updated: November 2026</p>
 
           <div className="mt-10 space-y-8 text-[15px] leading-7">
             <LegalSection title="Introduction">
@@ -86,10 +86,39 @@ export default function PrivacyPageContent() {
 
               <h3 className="mt-4 font-semibold text-[#111315]">Usage Data</h3>
               <p className="mt-2">
-                We may collect information related to how you interact with the
-                Services, including device type, app version, and performance
-                metrics. This data is used to improve the Services and is not
-                linked to your prompt content.
+                When you use the Fovea app, it automatically sends us product
+                usage events — for example, when you start or finish a dictation
+                or a request to an AI agent, which screens and settings you open,
+                your progress through the first-run guide, upgrade clicks, and
+                errors shown to you. Each event includes the app version, your
+                device model, macOS version, language, time zone, and screen
+                size. When you use Fovea while another app is in front, we record
+                that app&apos;s name only if it is on a fixed list of common apps;
+                otherwise we record &quot;other&quot;.
+              </p>
+              <p className="mt-2">
+                Usage events never include what you say or type, transcripts,
+                screenshots, clipboard contents, file names, web addresses, or the
+                text of error messages.
+              </p>
+              <p className="mt-2">
+                Before you sign in, usage events are linked to a random identifier
+                created for this installation. After you sign in, they are also
+                linked to a one-way hash of your account identifier. Our servers
+                also receive your IP address, from which an approximate location
+                (such as city or region) may be derived.
+              </p>
+              <p className="mt-2">
+                We store usage data on servers we operate in the United States and
+                use it only to understand and improve the Services. We do not use
+                it for advertising, and we do not sell or share it. We keep usage
+                data for as long as it is useful for understanding and improving
+                the Services. To request deletion of your usage data, contact us
+                through our{" "}
+                <Link href="/feedback" className="font-semibold text-[#0D8F69] hover:underline">
+                  feedback page
+                </Link>
+                .
               </p>
             </LegalSection>
 
