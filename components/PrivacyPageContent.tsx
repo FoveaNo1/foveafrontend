@@ -90,9 +90,9 @@ export default function PrivacyPageContent() {
                 usage events — for example, when you start or finish a dictation
                 or a request to an AI agent, which screens and settings you open,
                 your progress through the first-run guide, upgrade clicks, and
-                errors shown to you. Each event includes the app version, your
-                device model, macOS version, language, time zone, and screen
-                size. When you use Fovea while another app is in front, we record
+                errors shown to you. Each event includes information such as the
+                app version, your device model, macOS version, language, time
+                zone, and screen size. When you use Fovea while another app is in front, we record
                 that app&apos;s name only if it is on a fixed list of common apps;
                 otherwise we record &quot;other&quot;.
               </p>
